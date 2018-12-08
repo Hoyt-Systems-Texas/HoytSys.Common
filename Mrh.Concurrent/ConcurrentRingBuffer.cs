@@ -19,40 +19,50 @@ namespace Mrh.Concurrent
 
         private const int PENDING_CLEAR = 3;
 
-        private readonly ulong length;
+        public readonly long Length;
 
-        private readonly ulong mask;
+        public readonly long Mask;
 
         private readonly Node[] buffer;
 
         public ConcurrentRingBuffer(uint length)
         {
-            this.length = (ulong) Pow2.NextPowerOf2((int) length);
-            this.mask = this.length - 1;
-            this.buffer = new Node[this.length];
+            if (!Pow2.IsPowerOfTwo((int) length))
+            {
+                this.Length = Pow2.NextPowerOf2((int) length);
+            }
+            this.Length = length;
+            this.Mask = this.Length - 1;
+            this.buffer = new Node[this.Length];
         }
 
-        public bool Set(ulong position, T value)
+        public bool Set(long position, T value)
         {
             var pos = CalculatePosition(position);
             return this.buffer[pos].Set(value);
         }
 
-        public bool Clear(ulong position)
+        public bool Clear(long position)
         {
             var pos = CalculatePosition(position);
             return this.buffer[pos].Clear();
         }
 
-        public bool TryGet(ulong position, out T value)
+        public bool TryGet(long position, out T value)
         {
             var pos = CalculatePosition(position);
             return this.buffer[pos].GetValue(out value);
         }
 
-        private ulong CalculatePosition(ulong position)
+        public bool HasValue(long position)
         {
-            return position & mask;
+            var pos = CalculatePosition(position);
+            return this.buffer[pos].HasValue();
+        }
+
+        private long CalculatePosition(long position)
+        {
+            return position & Mask;
         }
         
         private struct Node
@@ -95,6 +105,11 @@ namespace Mrh.Concurrent
                     return version == Volatile.Read(ref this.version);
                 }
                 return false;
+            }
+
+            public bool HasValue()
+            {
+                return Volatile.Read(ref this.nodeValue) == VALUE;
             }
         }
     }
