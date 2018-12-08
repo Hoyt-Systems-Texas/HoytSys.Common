@@ -39,7 +39,7 @@ namespace Mrh.Concurrent.Test
         public void ZBrutalTest()
         {
             var buffer = new MpmcRingBuffer<ClassTest>(0x100);
-            var goThrough = 100;
+            var goThrough = 1000;
             var threadCount = 5;
             var writeThreads = new Thread[threadCount];
             var readThreads = new Thread[threadCount];

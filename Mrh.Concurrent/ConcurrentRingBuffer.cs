@@ -60,6 +60,12 @@ namespace Mrh.Concurrent
             return this.buffer[pos].HasValue();
         }
 
+        public bool IsEmpty(long position)
+        {
+            var pos = CalculatePosition(position);
+            return this.buffer[pos].IsEmpty();
+        }
+
         private long CalculatePosition(long position)
         {
             return position & Mask;
@@ -110,6 +116,11 @@ namespace Mrh.Concurrent
             public bool HasValue()
             {
                 return Volatile.Read(ref this.nodeValue) == VALUE;
+            }
+
+            public bool IsEmpty()
+            {
+                return Volatile.Read(ref this.nodeValue) == EMPTY;
             }
         }
     }

@@ -33,11 +33,11 @@ namespace Mrh.Concurrent
                 {
                     return false;
                 }
-            } while (this.buffer.HasValue(pIndex + 1) // Need to go around again if a value is still at that position.
+            } while (!this.buffer.IsEmpty(pIndex + 1) // Need to go around again if a value is still at that position.
                 || !this.producerIndex.CompareExchange(pIndex + 1, pIndex));
 
             var set = this.buffer.Set(pIndex + 1, value);
-            Debug.Assert(set, "Did not find an open position correctly");
+            Debug.Assert(set, $"Did not find an open position correctly {pIndex + 1}");
             return true;
         }
         
@@ -54,12 +54,12 @@ namespace Mrh.Concurrent
                     value = default(T);
                     return false;
                 }
-            } while (!this.consumuerIndex.CompareExchange(consumerIndex + 1, consumerIndex));
+            } while (!this.buffer.HasValue(consumerIndex + 1) || !this.consumuerIndex.CompareExchange(consumerIndex + 1, consumerIndex));
 
             var pos = consumerIndex + 1;
             var get = this.buffer.TryGet(pos, out value);
             this.buffer.Clear(pos);
-            Debug.Assert(get, "Failed to set the value.");
+            Debug.Assert(get, $"Failed to get the value. {pos}");
             return true;
         }
 
