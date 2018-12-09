@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Mrh.Concurrent
@@ -11,9 +12,9 @@ namespace Mrh.Concurrent
         /// </summary>
         private readonly PaddedLong ____additionalPadding;
 
-        private PaddedLong producerIndex;
+        private PaddedLong producerIndex = new PaddedLong();
 
-        private PaddedLong consumuerIndex;
+        private PaddedLong consumuerIndex = new PaddedLong();
         
         public MpmcRingBuffer(uint size)
         {
@@ -33,11 +34,11 @@ namespace Mrh.Concurrent
                 {
                     return false;
                 }
-            } while (!this.buffer.IsEmpty(pIndex + 1) // Need to go around again if a value is still at that position.
+            } while (!this.buffer.IsEmpty(pIndex) // Need to go around again if a value is still at that position.
                 || !this.producerIndex.CompareExchange(pIndex + 1, pIndex));
 
-            var set = this.buffer.Set(pIndex + 1, value);
-            Debug.Assert(set, $"Did not find an open position correctly {pIndex + 1}");
+            var set = this.buffer.Set(pIndex, value);
+            Debug.Assert(set, $"Did not find an open position correctly {pIndex}");
             return true;
         }
         
@@ -54,12 +55,11 @@ namespace Mrh.Concurrent
                     value = default(T);
                     return false;
                 }
-            } while (!this.buffer.HasValue(consumerIndex + 1) || !this.consumuerIndex.CompareExchange(consumerIndex + 1, consumerIndex));
+            } while (!this.buffer.HasValue(consumerIndex) || !this.consumuerIndex.CompareExchange(consumerIndex + 1, consumerIndex));
 
-            var pos = consumerIndex + 1;
-            var get = this.buffer.TryGet(pos, out value);
-            this.buffer.Clear(pos);
-            Debug.Assert(get, $"Failed to get the value. {pos}");
+            var get = this.buffer.TryGet(consumerIndex, out value);
+            this.buffer.Clear(consumerIndex);
+            Debug.Assert(get, $"Failed to get the value. {consumerIndex}");
             return true;
         }
 
@@ -73,5 +73,33 @@ namespace Mrh.Concurrent
             return this.buffer.TryGet(this.consumuerIndex.VolatileRead(), out value);
         }
 
+        public int Drain(Action<T> act, int limit)
+        {
+            long consumerIndex;
+            long pIndex;
+            for (var i = 0; i < limit; i++)
+            {
+                do
+                {
+                    pIndex = this.producerIndex.VolatileRead();
+                    consumerIndex = this.consumuerIndex.VolatileRead();
+                    if (consumerIndex >= pIndex)
+                    {
+                        return i;
+                    }
+                } while (!buffer.HasValue(consumerIndex)
+                         || !this.consumuerIndex.CompareExchange(
+                             consumerIndex + 1,
+                             consumerIndex));
+
+                var success = this.buffer.TryGet(consumerIndex, out T value);
+                Debug.Assert(success, "Did not successfully get the value in a drain");
+                act(value);
+                success = this.buffer.Clear(consumerIndex);
+                Debug.Assert(success, "Unable to clear the value on a drain");
+            }
+            return limit;
+        }
+        
     }
 }

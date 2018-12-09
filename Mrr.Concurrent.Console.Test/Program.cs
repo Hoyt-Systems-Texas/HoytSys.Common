@@ -9,7 +9,7 @@ namespace Mrr.Concurrent.Console.Test
         static void Main(string[] args)
         {
             var buffer = new MpmcRingBuffer<MyTestClass>(0x10000);
-            var goThrough = 10000000;
+            var goThrough = 10_000_000;
             var threadCount = 5;
             var writeThreads = new Thread[threadCount];
             var readThreads = new Thread[threadCount];

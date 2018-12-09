@@ -5,6 +5,7 @@ namespace Mrh.Concurrent
     public struct PaddedLong
     {
         private long Value;
+#pragma warning disable 169
         private long v1;
         private long v2;
         private long v3;
@@ -20,6 +21,7 @@ namespace Mrh.Concurrent
         private long v13;
         private long v14;
         private long v15;
+#pragma warning restore 169
 
         public long VolatileRead()
         {

@@ -39,7 +39,7 @@ namespace Mrh.Concurrent.Test
         public void ZBrutalTest()
         {
             var buffer = new MpmcRingBuffer<ClassTest>(0x100);
-            var goThrough = 1000;
+            var goThrough = 10000;
             var threadCount = 5;
             var writeThreads = new Thread[threadCount];
             var readThreads = new Thread[threadCount];
@@ -58,6 +58,50 @@ namespace Mrh.Concurrent.Test
                     for (var j = 0; j < goThrough; j++)
                     {
                         buffer.TryPoll(out ClassTest ignore);
+                    }
+                });
+            }
+
+            for (var i = 0; i < threadCount; i++)
+            {
+                writeThreads[i].Start();
+                readThreads[i].Start();
+            }
+
+            for (var i = 0; i < threadCount; i++)
+            {
+                writeThreads[i].Join();
+                readThreads[i].Join();
+            }
+        }
+
+        [Test]
+        public void DrainTest()
+        {
+            var buffer = new MpmcRingBuffer<ClassTest>(0x100);
+            
+            var goThrough = 10000;
+            var threadCount = 5;
+            var writeThreads = new Thread[threadCount];
+            var readThreads = new Thread[threadCount];
+            var value = new ClassTest();
+            for (var i = 0; i < threadCount; i++)
+            {
+                writeThreads[i] = new Thread((obj) =>
+                {
+                    for (var j = 0; j < goThrough; j++)
+                    {
+                        buffer.Offer(value);
+                    }
+                });
+                readThreads[i] = new Thread((obj) =>
+                {
+                    for (var j = 0; j < goThrough; j++)
+                    {
+                        buffer.Drain((me) =>
+                        {
+                            
+                        }, 100);
                     }
                 });
             }
