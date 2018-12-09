@@ -10,11 +10,13 @@ namespace Mrh.Concurrent
         /// <summary>
         ///  Here to prevent false sharing.
         /// </summary>
+#pragma warning disable 169
         private readonly PaddedLong ____additionalPadding;
+#pragma warning restore 169
 
         private PaddedLong producerIndex = new PaddedLong();
 
-        private PaddedLong consumuerIndex = new PaddedLong();
+        private PaddedLong consumerIndex = new PaddedLong();
         
         public MpmcRingBuffer(uint size)
         {
@@ -29,7 +31,7 @@ namespace Mrh.Concurrent
             do
             {
                 pIndex = this.producerIndex.VolatileRead();
-                consumerIndex = this.consumuerIndex.VolatileRead();
+                consumerIndex = this.consumerIndex.VolatileRead();
                 if (pIndex - capacity >= consumerIndex)
                 {
                     return false;
@@ -49,13 +51,13 @@ namespace Mrh.Concurrent
             do
             {
                 pIndex = this.producerIndex.VolatileRead();
-                consumerIndex = this.consumuerIndex.VolatileRead();
+                consumerIndex = this.consumerIndex.VolatileRead();
                 if (consumerIndex >= pIndex)
                 {
                     value = default(T);
                     return false;
                 }
-            } while (!this.buffer.HasValue(consumerIndex) || !this.consumuerIndex.CompareExchange(consumerIndex + 1, consumerIndex));
+            } while (!this.buffer.HasValue(consumerIndex) || !this.consumerIndex.CompareExchange(consumerIndex + 1, consumerIndex));
 
             var get = this.buffer.TryGet(consumerIndex, out value);
             this.buffer.Clear(consumerIndex);
@@ -70,7 +72,7 @@ namespace Mrh.Concurrent
         /// <returns>true if a value is at that position.</returns>
         public bool TryPeek(out T value)
         {
-            return this.buffer.TryGet(this.consumuerIndex.VolatileRead(), out value);
+            return this.buffer.TryGet(this.consumerIndex.VolatileRead(), out value);
         }
 
         public int Drain(Action<T> act, int limit)
@@ -82,13 +84,13 @@ namespace Mrh.Concurrent
                 do
                 {
                     pIndex = this.producerIndex.VolatileRead();
-                    consumerIndex = this.consumuerIndex.VolatileRead();
+                    consumerIndex = this.consumerIndex.VolatileRead();
                     if (consumerIndex >= pIndex)
                     {
                         return i;
                     }
                 } while (!buffer.HasValue(consumerIndex)
-                         || !this.consumuerIndex.CompareExchange(
+                         || !this.consumerIndex.CompareExchange(
                              consumerIndex + 1,
                              consumerIndex));
 
