@@ -1,8 +1,13 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace Mrh.Concurrent
 {
+    /// <summary>
+    ///     A non-blocking buffer similar to the JCTools buffer.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class MpmcRingBuffer<T> where T:class
     {
         private readonly ConcurrentRingBuffer<T> buffer;
