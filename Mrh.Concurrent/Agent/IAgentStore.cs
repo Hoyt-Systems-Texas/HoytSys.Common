@@ -1,9 +1,11 @@
+using System.Threading.Tasks;
+
 namespace Mrh.Concurrent.Agent
 {
     public interface IAgentStore<TContext> where TContext: IAgentContext
     {
-        AgentMonad<TContext, T> To<T>(long id);
+        Task<IAgentMonad<TContext, T>> To<T>(long id, T value);
 
-        AgentMonad<TContext, int> To(long id);
+        Task<IAgentMonad<TContext, int>> To(long id);
     }
 }

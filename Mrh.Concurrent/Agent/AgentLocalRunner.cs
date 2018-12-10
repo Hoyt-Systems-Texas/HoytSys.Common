@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,28 +15,28 @@ namespace Mrh.Concurrent.Agent
         private readonly long id;
 
         private int currentState = STOPPED;
+        
+        private readonly StopWatchThreadSafe lastRan = new StopWatchThreadSafe();
 
         private readonly MpmcRingBuffer<IAgentAsyncNode> queue;
 
         private TContext context;
 
         public AgentLocalRunner(
+            long id,
             uint queueSize,
             TContext context)
         {
+            this.id = id;
             this.queue = new MpmcRingBuffer<IAgentAsyncNode>(queueSize);
             this.context = context;
-        }
-        
-        public AgentLocalRunner(long id)
-        {
-            this.id = id;
         }
 
         public Task<IAgentMonad<TContext, TR>> Run<T, TR>(
             IAgentMonad<TContext, T> monad,
             Func<TContext, T, Task<IAgentMonad<TContext, TR>>> func)
         {
+            var stopWatch = new Stopwatch();
             if (monad is AgentMonad<TContext, T> agentMonad)
             {
                 var node = new AgentAsyncNode<T, TR>(func, agentMonad);
@@ -107,6 +108,7 @@ namespace Mrh.Concurrent.Agent
                     break;
                 
                 case RUNNING:
+                    this.lastRan.Reset();
                     this.SetState(RUNNING);
                     this.queue.Drain(val => { val.Run(this.context); }, 10);
                     this.ChangeState(STOPPED);
