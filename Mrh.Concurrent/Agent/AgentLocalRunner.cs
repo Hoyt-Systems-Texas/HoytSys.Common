@@ -204,7 +204,7 @@ namespace Mrh.Concurrent.Agent
 
             public void MarkRemoved()
             {
-                this.Task.SetException(new AgentRemovedAfterTimeoutException());
+                this.Task.SetResult(new AgentRemoved<TContext, TR>());
             }
         }
     }

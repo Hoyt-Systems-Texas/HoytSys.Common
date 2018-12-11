@@ -27,7 +27,25 @@ namespace Mrh.Concurrent.Agent
     /// </summary>
     /// <typeparam name="TContext">The context</typeparam>
     /// <typeparam name="T">The type.</typeparam>
-    public class AgentBusy<TContext, T> : IAgentMonad<TContext, T> where TContext : IAgentContext
+    public class AgentBusy<TContext, T> : IAgentFailure<TContext, T> where TContext : IAgentContext
+    {
+        public Task<IAgentMonad<TContext, TR>> Bind<TR>(Func<TContext, T, Task<IAgentMonad<TContext, TR>>> func)
+        {
+            return this.To<TR>();
+        }
+
+        public Task<IAgentMonad<TContext, TR>> Select<TR>(Func<TContext, T, Task<TR>> func)
+        {
+            return this.To<TR>();
+        }
+
+        public Task<IAgentMonad<TContext, TR>> To<TR>()
+        {
+            return Task.FromResult<IAgentMonad<TContext, TR>>(new AgentBusy<TContext, TR>());
+        }
+    }
+
+    public class AgentRemoved<TContext, T> : IAgentFailure<TContext, T> where TContext : IAgentContext
     {
         public Task<IAgentMonad<TContext, TR>> Bind<TR>(Func<TContext, T, Task<IAgentMonad<TContext, TR>>> func)
         {
