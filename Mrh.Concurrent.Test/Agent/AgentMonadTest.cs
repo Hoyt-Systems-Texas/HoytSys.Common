@@ -54,7 +54,7 @@ namespace Mrh.Concurrent.Test.Agent
         [Test]
         public void MultiThreadTest()
         {
-            var threadCount = 5;
+            var threadCount = 6;
             var spinCount = 1_000_000;
             var total = 0;
             var runner = new AgentLocalRunner<ContextTest>(

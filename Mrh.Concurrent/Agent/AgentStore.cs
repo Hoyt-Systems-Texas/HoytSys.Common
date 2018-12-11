@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Mrh.Core;
+using NLog;
 
 namespace Mrh.Concurrent.Agent
 {
     public class AgentStore<TContext> : IAgentStore<TContext>, IStartable, IStoppable where TContext: IAgentContext
     {
+
+        private static readonly ILogger log = LogManager.GetCurrentClassLogger();
 
         private readonly ConcurrentDictionary<long, AgentLocalRunner<TContext>> runners;
 
@@ -20,8 +24,11 @@ namespace Mrh.Concurrent.Agent
         
         private Timer cleaner;
 
+        private readonly long timeOutAfterFreq;
+
         public AgentStore(
             uint queueSize,
+            TimeSpan timeout,
             TimeSpan cleanInterval,
             IAgentContextStore<TContext> agentContextStore)
         {
@@ -31,6 +38,7 @@ namespace Mrh.Concurrent.Agent
                 5,
                 1000);
             this.agentContextStore = agentContextStore;
+            this.timeOutAfterFreq = StopWatchThreadSafe.MillsToFrequency((long) timeout.TotalMilliseconds);
         }
         
         public async Task<IAgentMonad<TContext, T>> To<T>(long id, T value)
@@ -69,6 +77,34 @@ namespace Mrh.Concurrent.Agent
         public void Stop()
         {
             throw new System.NotImplementedException();
+        }
+
+        private void Clear()
+        {
+            try
+            {
+                var remove = new List<AgentLocalRunner<TContext>>(100);
+                foreach (var run in this.runners.Values)
+                {
+                    if (run.IsExpired(this.timeOutAfterFreq))
+                    {
+                        remove.Add(run);
+                    }
+                }
+
+                foreach (var runner in remove)
+                {
+                    if (runner.Remove())
+                    {
+                        this.runners.TryRemove(runner.Id, out AgentLocalRunner<TContext> _);
+                        runner.Removed();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex, ex.Message);
+            }
         }
     }
 }

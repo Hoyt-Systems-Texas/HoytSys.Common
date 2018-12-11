@@ -11,8 +11,10 @@ namespace Mrh.Concurrent.Agent
         private const int STOPPED = 1;
         private const int PENDING_RUNNING = 2;
         private const int RUNNING = 3;
+        private const int REMOVING = 4;
+        private const int REMOVED = 5;
         
-        private readonly long id;
+        public readonly long Id;
 
         private int currentState = STOPPED;
         
@@ -27,7 +29,7 @@ namespace Mrh.Concurrent.Agent
             uint queueSize,
             TContext context)
         {
-            this.id = id;
+            this.Id = id;
             this.queue = new MpmcRingBuffer<IAgentAsyncNode>(queueSize);
             this.context = context;
         }
@@ -86,40 +88,87 @@ namespace Mrh.Concurrent.Agent
 
         protected void ChangeState(int newState)
         {
+            var currentState = CurrentState;
             switch (newState)
             {
                 case STOPPED:
-                    if (this.queue.TryPeek(out IAgentAsyncNode ignore))
-                    {
-                        this.SetState(PENDING_RUNNING);
-                        this.ChangeState(RUNNING);
+                    // Have to use a case here just in case we are caught while trying to remove the node.
+                    if (this.CasChangeState(STOPPED, currentState)) {
+                        if (this.queue.TryPeek(out IAgentAsyncNode ignore))
+                        {
+                            this.SetState(PENDING_RUNNING);
+                            this.ChangeState(RUNNING);
+                        }
+                        else
+                        {
+                            this.SetState(STOPPED);
+                        }
                     }
-                    else
-                    {
-                        this.SetState(STOPPED);
-                    }
-                    break;
+                    return;
 
                 case PENDING_RUNNING:
                     if (this.CasChangeState(PENDING_RUNNING, STOPPED))
                     {
                         this.ChangeState(RUNNING);
                     }
-                    break;
+
+                    return;
                 
                 case RUNNING:
+                    // The guard here is PENDING_RUNNING we can safely set the state using setState.
                     this.lastRan.Reset();
                     this.SetState(RUNNING);
                     this.queue.Drain(val => { val.Run(this.context); }, 10);
                     this.ChangeState(STOPPED);
-                    break;
+                    return;
                 
+                case REMOVED:
+                    if (this.CasChangeState(REMOVED, REMOVING))
+                    {
+                        // Mark all pending requests as removed.
+                        while (this.queue.TryPoll(out IAgentAsyncNode value))
+                        {
+                            value.MarkRemoved();
+                        }
+                    }
+                    return;
             }
+            if (currentState == REMOVED)
+            {
+                while (this.queue.TryPoll(out IAgentAsyncNode value))
+                {
+                    value.MarkRemoved();
+                }
+            }
+        }
+
+        public bool IsExpired(long time)
+        {
+            return this.lastRan.Elapsed() > time;
+        }
+
+        /// <summary>
+        ///     Mark the node for removal.
+        /// </summary>
+        /// <returns>true if the node was successfully marked for removal.</returns>
+        public bool Remove()
+        {
+            return this.CasChangeState(REMOVING, STOPPED);
+        }
+
+        /// <summary>
+        ///     Handles removing the remaining values from the node.
+        /// </summary>
+        public void Removed()
+        {
+            this.ChangeState(REMOVED);
         }
 
         private interface IAgentAsyncNode
         {
             void Run(TContext context);
+
+            void MarkRemoved();
         }
         
         private sealed class AgentAsyncNode<T, TR> : IAgentAsyncNode
@@ -151,6 +200,11 @@ namespace Mrh.Concurrent.Agent
                 {
                     this.Task.SetException(ex);
                 }
+            }
+
+            public void MarkRemoved()
+            {
+                this.Task.SetException(new AgentRemovedAfterTimeoutException());
             }
         }
     }
