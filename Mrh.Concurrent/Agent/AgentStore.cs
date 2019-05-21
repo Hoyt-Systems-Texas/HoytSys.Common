@@ -9,7 +9,7 @@ using NLog;
 
 namespace Mrh.Concurrent.Agent
 {
-    public class AgentStore<TContext> : IAgentStore<TContext>, IStartable, IStoppable where TContext: IAgentContext
+    public class AgentStore<TContext> : IAgentStore<TContext>, IStartable, IStoppable where TContext : IAgentContext
     {
 
         private static readonly ILogger log = LogManager.GetCurrentClassLogger();
@@ -21,10 +21,16 @@ namespace Mrh.Concurrent.Agent
         private readonly uint queueSize;
 
         private readonly TimeSpan cleanInterval;
-        
+
         private Timer cleaner;
 
         private readonly long timeOutAfterFreq;
+
+        private readonly StopWatchThreadSafe cleanStopWatch = new StopWatchThreadSafe();
+
+        private readonly long cleanInFrequency;
+
+        private int cleanState = (int) AgentCleanState.Inactive;
 
         public AgentStore(
             uint queueSize,
@@ -39,13 +45,19 @@ namespace Mrh.Concurrent.Agent
                 1000);
             this.agentContextStore = agentContextStore;
             this.timeOutAfterFreq = StopWatchThreadSafe.MillsToFrequency((long) timeout.TotalMilliseconds);
+            this.cleanInFrequency = StopWatchThreadSafe.MillsToFrequency((int) cleanInterval.TotalMilliseconds);
         }
-        
+
         public async Task<IAgentMonad<TContext, T>> To<T>(long id, T value)
         {
             if (this.runners.TryGetValue(id, out AgentLocalRunner<TContext> runner))
             {
                 return runner.To(value);
+            }
+            
+            if (this.CheckClean())
+            {
+                this.ChangeState(AgentCleanState.Running);
             }
 
             while (true)
@@ -62,6 +74,12 @@ namespace Mrh.Concurrent.Agent
                     return runner.To(value);
                 }
             }
+
+        }
+
+        private bool CheckClean()
+        {
+            return (this.cleanStopWatch.Elapsed() > this.cleanInFrequency);
         }
 
         public Task<IAgentMonad<TContext, int>> To(long id)
@@ -100,11 +118,59 @@ namespace Mrh.Concurrent.Agent
                         runner.Removed();
                     }
                 }
+                this.ChangeState(AgentCleanState.Stopping);
             }
             catch (Exception ex)
             {
                 log.Error(ex, ex.Message);
+                this.ChangeState(AgentCleanState.Error);
             }
+        }
+
+        private void ChangeState(AgentCleanState newState)
+        {
+            switch (newState)
+            {
+                case AgentCleanState.Inactive:
+                    if (this.SetState(AgentCleanState.Stopping, AgentCleanState.Inactive))
+                    {
+                        this.cleanStopWatch.Reset();
+                    }
+                    break;
+                
+                case AgentCleanState.Running:
+                    if (this.SetState(AgentCleanState.Inactive, AgentCleanState.Running))
+                    {
+                        this.Clear();
+                    }
+                    break;
+                
+                case AgentCleanState.Stopping:
+                    this.SetState(AgentCleanState.Running, AgentCleanState.Stopping);
+                    this.ChangeState(AgentCleanState.Inactive);
+                    break;
+                
+                case AgentCleanState.Error:
+                    this.SetState((AgentCleanState) this.cleanState, AgentCleanState.Stopping);
+                    this.ChangeState(AgentCleanState.Inactive);
+                    break;
+            }
+        }
+
+        private bool SetState(AgentCleanState currentState, AgentCleanState newState)
+        {
+            return Interlocked.CompareExchange(
+                       ref this.cleanState,
+                       (int) newState,
+                       (int) currentState) == (int) currentState;
+        }
+
+        private enum AgentCleanState
+        {
+            Inactive = 1,
+            Running = 2,
+            Stopping = 3,
+            Error = 4
         }
     }
 }
