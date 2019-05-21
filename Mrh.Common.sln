@@ -12,6 +12,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mrr.Concurrent.Console.Test
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{9A58C240-41FE-4DC1-82B9-62A0054BB364}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mrh.DataStructures", "Mrh.DataStructures\Mrh.DataStructures.csproj", "{361FCC93-3264-43D2-9022-51666F110D07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mrh.DataStructure.Test", "Mrh.DataStructure.Test\Mrh.DataStructure.Test.csproj", "{24801666-3F6E-48AE-A46B-372630F40F53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,9 +42,18 @@ Global
 		{9AE11A7B-E0F6-426F-AA9C-6885B55761D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AE11A7B-E0F6-426F-AA9C-6885B55761D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AE11A7B-E0F6-426F-AA9C-6885B55761D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{361FCC93-3264-43D2-9022-51666F110D07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{361FCC93-3264-43D2-9022-51666F110D07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{361FCC93-3264-43D2-9022-51666F110D07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{361FCC93-3264-43D2-9022-51666F110D07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24801666-3F6E-48AE-A46B-372630F40F53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24801666-3F6E-48AE-A46B-372630F40F53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24801666-3F6E-48AE-A46B-372630F40F53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24801666-3F6E-48AE-A46B-372630F40F53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C622F815-E437-4AE4-9475-DB56A16727CE} = {9A58C240-41FE-4DC1-82B9-62A0054BB364}
 		{9AE11A7B-E0F6-426F-AA9C-6885B55761D1} = {9A58C240-41FE-4DC1-82B9-62A0054BB364}
+		{24801666-3F6E-48AE-A46B-372630F40F53} = {9A58C240-41FE-4DC1-82B9-62A0054BB364}
 	EndGlobalSection
 EndGlobal
