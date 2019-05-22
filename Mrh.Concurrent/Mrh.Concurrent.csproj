@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Mrh.Core\Mrh.Core.csproj" />
+      <ProjectReference Include="..\Mrh.DataStructures\Mrh.DataStructures.csproj" />
       <ProjectReference Include="..\Mrh.Monad\Mrh.Monad.csproj" />
     </ItemGroup>
 

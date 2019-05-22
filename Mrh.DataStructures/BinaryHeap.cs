@@ -79,6 +79,18 @@ namespace Mrh.DataStructures
             return false;
         }
 
+        public bool Peek(out T value)
+        {
+            if (this.currentSize > 0)
+            {
+                value = this.values[0];
+                return true;
+            }
+
+            value = default(T);
+            return false;
+        }
+
         public bool VerifyHeap(int i)
         {
             if (2 * i + 2 >= this.currentSize)
