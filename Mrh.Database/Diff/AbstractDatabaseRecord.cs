@@ -1,6 +1,6 @@
 using System.Threading;
 
-namespace Mrh.Database
+namespace Mrh.Database.Diff
 {
     /// <summary>
     ///     All diff record must inherit this class inorder to do the updates.
@@ -14,7 +14,13 @@ namespace Mrh.Database
         private const int SAVING = 1;
         private const int SAVED = 2;
 
+        public const int SAME = 10;
+        public const int NEW = 11;
+        public const int UPDATE = 12;
+        public const int DELETE = 13;
+
         private int currentState = PENDING;
+        private int updateType = SAME;
 
         /// <summary>
         ///     They think it should save.
@@ -27,6 +33,32 @@ namespace Mrh.Database
                        SAVING,
                        PENDING) == PENDING;
         }
+
+        public bool NewRecord()
+        {
+            return Interlocked.CompareExchange(
+                       ref this.currentState,
+                       NEW,
+                       SAME) == SAME;
+        }
+
+        public bool UpdateRecord()
+        {
+            return Interlocked.CompareExchange(
+                       ref this.updateType,
+                       UPDATE,
+                       SAME) == SAME;
+        }
+
+        public bool DeleteRecord()
+        {
+            return Interlocked.CompareExchange(
+                       ref this.updateType,
+                       DELETE,
+                       SAME) == SAME;
+        }
+
+        public int UpdateType => updateType;
 
         /// <summary>
         ///     Called when the record is saved.
