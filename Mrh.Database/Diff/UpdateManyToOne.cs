@@ -72,6 +72,7 @@ namespace Mrh.Database.Diff
             {
                 // Order is important.
             }
+
             return UpdateRecordType.ManyToOne;
         }
     }
