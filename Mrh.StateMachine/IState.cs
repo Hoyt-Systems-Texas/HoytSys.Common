@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Mrh.StateMachine
@@ -10,7 +12,7 @@ namespace Mrh.StateMachine
         /// </summary>
         TState State { get; }
 
-        TransitionInfo<TState, TEvent> SupportedTransitions { get; }
+        IEnumerable<ValidTransition<TState, TEvent>> SupportedTransitions { get; }
         
         /// <summary>
         ///     Called when we enter a state.

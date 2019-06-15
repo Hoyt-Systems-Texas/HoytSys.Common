@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Mrh.StateMachine
 {
@@ -10,28 +11,42 @@ namespace Mrh.StateMachine
     /// <typeparam name="TEvent"></typeparam>
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TMessage"></typeparam>
-    public class StateMachine<TState, TEvent, TContext, TMessage> where TState:struct where TEvent:struct where TContext:IEventContext
+    public class StateMachine<TState, TEvent, TContext, TMessage> where TState : struct
+        where TEvent : struct
+        where TContext : IEventContext
     {
         private readonly IRetryHandle<TState> retryHandler;
 
         private readonly string name;
 
-        private readonly Dictionary<TState, IState<TState, TEvent, TContext, TMessage>> stateLookup = new Dictionary<TState, IState<TState, TEvent, TContext, TMessage>>(50);
+        private readonly Dictionary<TState, IState<TState, TEvent, TContext, TMessage>> stateLookup =
+            new Dictionary<TState, IState<TState, TEvent, TContext, TMessage>>(50);
+
+        private readonly Dictionary<TEvent, EventNode> eventLookup = new Dictionary<TEvent, EventNode>(100);
+
+        private readonly ITransitionStore<TState, TEvent, TContext, TMessage> transitionStore;
 
         public StateMachine(
             string name,
-            IRetryHandle<TState> retryHandler)
+            IRetryHandle<TState> retryHandler,
+            ITransitionStore<TState, TEvent, TContext, TMessage> transitionStore)
         {
             this.name = name;
             this.retryHandler = retryHandler;
+            this.transitionStore = transitionStore;
         }
 
-        public void Transition(
+        /// <summary>
+        ///     Transition to a new state.
+        /// </summary>
+        /// <param name="myEvent">The event that has been triggered.</param>
+        /// <param name="context">The message context.</param>
+        /// <param name="message">Any information to go along with the message.</param>
+        public async Task Transition(
             TEvent myEvent,
             TContext context,
             TMessage message)
         {
-            
         }
 
         /// <summary>
@@ -48,6 +63,18 @@ namespace Mrh.StateMachine
             }
 
             this.stateLookup[state.State] = state;
+            foreach (var transitionInfo in state.SupportedTransitions)
+            {
+                EventNode node;
+                if (!this.eventLookup.TryGetValue(transitionInfo.Event, out node))
+                {
+                    node = new EventNode(transitionInfo.Event);
+                    this.eventLookup[transitionInfo.Event] = node;
+                }
+                node.AddState(state.State, transitionInfo.ToState);
+            }
+
+            return this;
         }
 
         private struct EventNode
