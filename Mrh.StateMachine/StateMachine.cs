@@ -31,16 +31,20 @@ namespace Mrh.StateMachine
 
         private readonly ITransitionStore<TState, TEvent, TContext, TMessage> transitionStore;
 
+        private readonly IBackgroundTransition<TState, TEvent, TContext, TMessage> backgroundTransition;
+
         private static readonly ILogger log = LogManager.GetCurrentClassLogger();
 
         public StateMachine(
             string name,
             IRetryHandle<TState, TEvent, TContext, TMessage> retryHandler,
-            ITransitionStore<TState, TEvent, TContext, TMessage> transitionStore)
+            ITransitionStore<TState, TEvent, TContext, TMessage> transitionStore,
+            IBackgroundTransition<TState, TEvent, TContext, TMessage> background)
         {
             this.name = name;
             this.retryHandler = retryHandler;
             this.transitionStore = transitionStore;
+            this.backgroundTransition = background;
         }
 
         /// <summary>
@@ -82,6 +86,10 @@ namespace Mrh.StateMachine
                         
                         // TODO Figure out how to background this.
                         case TransitionResultType.TransitionBackground:
+                            this.backgroundTransition.Transition(
+                                result.Event,
+                                context,
+                                message);
                             break;
                         
                         case TransitionResultType.Retry:
