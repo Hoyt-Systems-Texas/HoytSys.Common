@@ -33,18 +33,20 @@ namespace Mrh.StateMachine
 
         private readonly IBackgroundTransition<TState, TEvent, TContext, TMessage> backgroundTransition;
 
-        private static readonly ILogger log = LogManager.GetCurrentClassLogger();
+        private readonly Action<Exception, TEvent, TContext, TMessage> errorHandler;
 
         public StateMachine(
             string name,
             IRetryHandle<TState, TEvent, TContext, TMessage> retryHandler,
             ITransitionStore<TState, TEvent, TContext, TMessage> transitionStore,
-            IBackgroundTransition<TState, TEvent, TContext, TMessage> background)
+            IBackgroundTransition<TState, TEvent, TContext, TMessage> background,
+            Action<Exception, TEvent, TContext, TMessage> errorHandler)
         {
             this.name = name;
             this.retryHandler = retryHandler;
             this.transitionStore = transitionStore;
             this.backgroundTransition = background;
+            this.errorHandler = errorHandler;
         }
 
         /// <summary>
@@ -59,7 +61,8 @@ namespace Mrh.StateMachine
             TMessage message)
         {
             await this.transitionStore.Save(message);
-            while (true)
+            var stop = false;
+            while (!stop)
             {
                 var currentEvent = myEvent;
                 var currentState = this.GetStateNode(context.CurrentState);
@@ -84,12 +87,12 @@ namespace Mrh.StateMachine
                             currentEvent = result.Event;
                             break;
                         
-                        // TODO Figure out how to background this.
                         case TransitionResultType.TransitionBackground:
                             this.backgroundTransition.Transition(
                                 result.Event,
                                 context,
                                 message);
+                            stop = true;
                             break;
                         
                         case TransitionResultType.Retry:
@@ -103,6 +106,7 @@ namespace Mrh.StateMachine
                                 myEvent,
                                 context,
                                 message);
+                            stop = true;
                             break;
                         
                         case TransitionResultType.Stop:
@@ -112,13 +116,18 @@ namespace Mrh.StateMachine
                                 null,
                                 context,
                                 message);
+                            stop = true;
                             break;
                     }
                 }
                 catch (Exception ex)
                 {
-                    log.Error(ex, ex.Message);
-                    // TODO set an error state.
+                    this.errorHandler(
+                        ex,
+                        currentEvent,
+                        context,
+                        message);
+                    return;
                 }
             }
         }
