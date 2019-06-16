@@ -1,6 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
+using NLog;
+using NLog.Targets;
 
 namespace Mrh.StateMachine
 {
@@ -13,9 +18,9 @@ namespace Mrh.StateMachine
     /// <typeparam name="TMessage"></typeparam>
     public class StateMachine<TState, TEvent, TContext, TMessage> where TState : struct
         where TEvent : struct
-        where TContext : IEventContext
+        where TContext : IEventContext<TState>
     {
-        private readonly IRetryHandle<TState> retryHandler;
+        private readonly IRetryHandle<TState, TEvent, TContext, TMessage> retryHandler;
 
         private readonly string name;
 
@@ -26,9 +31,11 @@ namespace Mrh.StateMachine
 
         private readonly ITransitionStore<TState, TEvent, TContext, TMessage> transitionStore;
 
+        private static readonly ILogger log = LogManager.GetCurrentClassLogger();
+
         public StateMachine(
             string name,
-            IRetryHandle<TState> retryHandler,
+            IRetryHandle<TState, TEvent, TContext, TMessage> retryHandler,
             ITransitionStore<TState, TEvent, TContext, TMessage> transitionStore)
         {
             this.name = name;
@@ -47,8 +54,67 @@ namespace Mrh.StateMachine
             TContext context,
             TMessage message)
         {
+            await this.transitionStore.Save(message);
+            while (true)
+            {
+                var currentEvent = myEvent;
+                var currentState = this.GetStateNode(context.CurrentState);
+                var eventNode = this.GetEventNode(currentEvent);
+                await this.transitionStore.Save(
+                    TransitionResultType.Transition,
+                    context.CurrentState,
+                    myEvent,
+                    context,
+                    message);
+                try
+                {
+                    var transition = eventNode.Get(context.CurrentState);
+                    var result = await transition.Run(
+                        this.stateLookup,
+                        currentState,
+                        context,
+                        message);
+                    switch (result.ResultType)
+                    {
+                        case TransitionResultType.Transition:
+                            currentEvent = result.Event;
+                            break;
+                        
+                        // TODO Figure out how to background this.
+                        case TransitionResultType.TransitionBackground:
+                            break;
+                        
+                        case TransitionResultType.Retry:
+                            await this.transitionStore.Save(
+                                TransitionResultType.Retry,
+                                currentState.State,
+                                myEvent,
+                                context,
+                                message);
+                            this.retryHandler.Retry(
+                                myEvent,
+                                context,
+                                message);
+                            break;
+                        
+                        case TransitionResultType.Stop:
+                            await this.transitionStore.Save(
+                                TransitionResultType.Stop,
+                                context.CurrentState,
+                                null,
+                                context,
+                                message);
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex, ex.Message);
+                    // TODO set an error state.
+                }
+            }
         }
-
+        
         /// <summary>
         ///     Used to add a state to the state machine.
         /// </summary>
@@ -71,34 +137,163 @@ namespace Mrh.StateMachine
                     node = new EventNode(transitionInfo.Event);
                     this.eventLookup[transitionInfo.Event] = node;
                 }
-                node.AddState(state.State, transitionInfo.ToState);
+                node.AddState(state.State, this.From(transitionInfo));
             }
 
             return this;
+        }
+
+        private EventNode GetEventNode(TEvent myEvent)
+        {
+            EventNode node;
+            if (this.eventLookup.TryGetValue(myEvent, out node))
+            {
+                return node;
+            }
+            else
+            {
+                throw new UnableToFindEventException<TEvent>(myEvent);
+            }
+        }
+
+        /// <summary>
+        ///     Used to get a state node.
+        /// </summary>
+        /// <param name="state">The state node.</param>
+        /// <returns></returns>
+        /// <exception cref="UnableToFindStateException<TState>"></exception>
+        private IState<TState, TEvent, TContext, TMessage> GetStateNode(TState state)
+        {
+            IState<TState, TEvent, TContext, TMessage> stateObject;
+            if (this.stateLookup.TryGetValue(
+                state,
+                out stateObject))
+            {
+                return stateObject;
+            }
+            throw new UnableToFindStateException<TState>(state);
         }
 
         private struct EventNode
         {
             public readonly TEvent Event;
 
-            public readonly Dictionary<TState, TState> FromToState;
+            public readonly Dictionary<TState, ITransitionNode> FromToState;
 
             public EventNode(
                 TEvent eventType)
             {
                 this.Event = eventType;
-                this.FromToState = new Dictionary<TState, TState>(5);
+                this.FromToState = new Dictionary<TState, ITransitionNode>(5);
             }
 
-            public void AddState(TState fromState, TState toState)
+            public void AddState(TState fromState, ITransitionNode toState)
             {
                 if (this.FromToState.ContainsKey(fromState))
                 {
                     throw new DuplicateFromToRegisteredException<TState>(
-                        fromState, toState);
+                        fromState);
                 }
 
                 this.FromToState[fromState] = toState;
+            }
+
+            public ITransitionNode Get(TState currentState)
+            {
+                ITransitionNode node;
+                if (this.FromToState.TryGetValue(currentState, out node))
+                {
+                    return node;
+                }
+                throw new UnableToFindStateException<TState>(currentState);
+            }
+        }
+
+        private interface ITransitionNode
+        {
+            Task<TransitionResult<TEvent>> Run(
+                Dictionary<TState, IState<TState, TEvent, TContext, TMessage>> stateLookup,
+                IState<TState, TEvent, TContext, TMessage> currentState,
+                TContext context,
+                TMessage message);
+        }
+
+        /// <summary>
+        ///     A transition node.
+        /// </summary>
+        private class TransitionNode : ITransitionNode
+        {
+
+            private readonly TState state;
+            private readonly TEvent myEvent;
+            private IState<TState, TEvent, TContext, TMessage> stateObject;
+
+            public TransitionNode(
+                TEvent myEvent,
+                TState state)
+            {
+                this.myEvent = myEvent;
+                this.state = state;
+            }
+
+            public async Task<TransitionResult<TEvent>> Run(
+                Dictionary<TState, IState<TState, TEvent, TContext, TMessage>> stateLookup,
+                IState<TState, TEvent, TContext, TMessage> currentState,
+                TContext context,
+                TMessage message)
+            {
+                if (Volatile.Read(ref this.stateObject) == null)
+                {
+                    if (stateLookup.ContainsKey(this.state))
+                    {
+                        Interlocked.CompareExchange(ref this.stateObject, stateLookup[this.state], null);
+                    }
+                    else
+                    {
+                        throw new UnableToFindStateException<TState>(this.state);
+                    }
+                }
+
+                await currentState.Exit(
+                    this.myEvent,
+                    context,
+                    message);
+                return await Volatile.Read(ref this.stateObject).Entry(
+                    this.myEvent,
+                    context,
+                    message);
+            }
+        }
+
+        /// <summary>
+        ///     An explicit ignore node.
+        /// </summary>
+        private class TransitionIgnoreNode : ITransitionNode
+        {
+            public Task<TransitionResult<TEvent>> Run(
+                Dictionary<TState, IState<TState, TEvent, TContext, TMessage>> stateLookup,
+                IState<TState, TEvent, TContext, TMessage> currentState,
+                TContext context,
+                TMessage message)
+            {
+                return Task.FromResult(TransitionResult<TEvent>.Stop());
+            }
+        }
+
+        private ITransitionNode From(ValidTransition<TState, TEvent> transInfo)
+        {
+            switch (transInfo.ValidTransitionType)
+            {
+                case ValidTransitionType.Transition:
+                    return new TransitionNode(
+                        transInfo.Event,
+                        transInfo.ToState);
+                
+                case ValidTransitionType.Ignore:
+                    return new TransitionIgnoreNode();
+                
+                default:
+                    throw new Exception($"Unknown valid transition past of {transInfo.ValidTransitionType}.");
             }
         }
     }

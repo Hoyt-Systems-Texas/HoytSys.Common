@@ -7,14 +7,10 @@ namespace Mrh.StateMachine
 
         public readonly TState FromState;
 
-        public readonly TState ToState;
-        
         public DuplicateFromToRegisteredException(
-            TState from,
-            TState to) : base($"The transition has already been register from {from} to {to}")
+            TState from) : base($"The transition has already been register from {from}")
         {
             this.FromState = from;
-            this.ToState = to;
         }
     }
 }

@@ -1,11 +1,13 @@
 namespace Mrh.StateMachine
 {
-    public interface IRetryHandle<TState> where TState: struct
+    public interface IRetryHandle<TState, TEvent, TContext, TMessage> where TState: struct
     {
         /// <summary>
         ///     Called when we want to retry a state transition.
         /// </summary>
-        /// <param name="ctx">The context to retry.</param>
-        void Retry(IStateMachineCtx<TState> ctx);
+        void Retry(
+            TEvent @event,
+            TContext context,
+            TMessage message);
     }
 }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Mrh.StateMachine
 {
-    public interface IState<TState, TEvent, TEventContext, TMessage> where TState: struct where TEvent: struct where TEventContext:IEventContext
+    public interface IState<TState, TEvent, TEventContext, TMessage> where TState: struct where TEvent: struct where TEventContext:IEventContext<TState>
     {
         
         /// <summary>
@@ -17,7 +17,7 @@ namespace Mrh.StateMachine
         /// <summary>
         ///     Called when we enter a state.
         /// </summary>
-        Task Entry(TEvent changeEvent, TEventContext eventContext, TMessage message);
+        Task<TransitionResult<TEvent>> Entry(TEvent changeEvent, TEventContext eventContext, TMessage message);
 
         /// <summary>
         ///     Called when we exit a state.

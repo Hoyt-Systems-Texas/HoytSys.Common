@@ -1,6 +1,6 @@
 namespace Mrh.StateMachine
 {
-    public struct TransitionEvent<TState, TEvent, TContext, TMessage> where TState: struct where TEvent: struct where TContext:IEventContext
+    public struct TransitionEvent<TState, TEvent, TContext, TMessage> where TState: struct where TEvent: struct where TContext:IEventContext<TState>
     {
 
         public readonly TState State;

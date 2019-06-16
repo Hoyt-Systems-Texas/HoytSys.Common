@@ -12,7 +12,7 @@ namespace Mrh.StateMachine
     public interface ITransitionStore<TState, TEvent, TContext, TMessage> 
         where TState:struct 
         where TEvent:struct
-        where TContext:IEventContext
+        where TContext:IEventContext<TState>
     {
         /// <summary>
         ///     Used to save a transition
@@ -28,6 +28,9 @@ namespace Mrh.StateMachine
             TState state,
             TEvent? myEvent,
             TContext context,
+            TMessage message);
+
+        Task Save(
             TMessage message);
 
     }
