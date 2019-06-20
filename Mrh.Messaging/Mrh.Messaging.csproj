@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Mrh.Concurrent\Mrh.Concurrent.csproj" />
+      <ProjectReference Include="..\Mrh.Core\Mrh.Core.csproj" />
+      <ProjectReference Include="..\Mrh.DataStructures\Mrh.DataStructures.csproj" />
+    </ItemGroup>
+
+</Project>

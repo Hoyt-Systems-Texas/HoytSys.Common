@@ -32,6 +32,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{79827CA1-E39
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{6551BA3E-C073-48FB-A44F-E81085E7BF55}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mrh.Messaging", "Mrh.Messaging\Mrh.Messaging.csproj", "{285053BE-D172-4D04-9B68-6BD9354CE797}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -94,6 +96,10 @@ Global
 		{6551BA3E-C073-48FB-A44F-E81085E7BF55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6551BA3E-C073-48FB-A44F-E81085E7BF55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6551BA3E-C073-48FB-A44F-E81085E7BF55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{285053BE-D172-4D04-9B68-6BD9354CE797}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{285053BE-D172-4D04-9B68-6BD9354CE797}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{285053BE-D172-4D04-9B68-6BD9354CE797}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{285053BE-D172-4D04-9B68-6BD9354CE797}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C622F815-E437-4AE4-9475-DB56A16727CE} = {9A58C240-41FE-4DC1-82B9-62A0054BB364}
