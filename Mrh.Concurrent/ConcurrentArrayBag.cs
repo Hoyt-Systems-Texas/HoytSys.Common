@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Mrh.Concurrent
@@ -92,7 +93,9 @@ namespace Mrh.Concurrent
             int count = 0;
             foreach (var node in currentNodes)
             {
-                if (compareFunc(node.Value))
+                T value;
+                if (node.TryGet(out value)
+                    && compareFunc(value))
                 {
                     if (node.MarkForRemoval())
                     {
@@ -116,10 +119,16 @@ namespace Mrh.Concurrent
                     EXPANDING,
                     IDLE) == IDLE)
             {
-                var currentSize = Math.Max(Math.Min(
-                    Volatile.Read(ref this.nodes).Length, Volatile.Read(ref this.currentIndex)),
+                var currentNodes = Volatile.Read(ref this.nodes);
+                var arrayLength = currentNodes.Length;
+                var currentSize = Math.Max(
+                    Math.Min(
+                        arrayLength,
+                        Volatile.Read(ref this.currentIndex)),
                     this.defaultSize);
+                currentSize = Math.Max(arrayLength, currentSize);
                 var newSize = currentSize * DOUBLE_UP_TO;
+                Debug.Assert(newSize >= currentNodes.Length);
                 if (newSize > DOUBLE_UP_TO)
                 {
                     newSize = (int) Math.Floor(currentSize * GROWTH_FACTOR);
@@ -128,10 +137,10 @@ namespace Mrh.Concurrent
                 var newArray = new ArrayNode[newSize];
                 for (var i = 0; i < newSize; i++)
                 {
-                    if (i < currentSize
-                        && !this.nodes[i].IsRemoved())
+                    if (i < arrayLength
+                        && !currentNodes[i].IsRemoved())
                     {
-                        newArray[i] = this.nodes[i];
+                        newArray[i] = currentNodes[i];
                     }
                     else
                     {
