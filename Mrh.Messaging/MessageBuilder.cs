@@ -68,7 +68,7 @@ namespace Mrh.Messaging
         ///     Used to append a body to a frame.
         /// </summary>
         /// <param name="position">The position to add to the body.</param>
-        /// <param name="body"></param>
+        /// <param name="body">The body to append to the message.</param>
         public void Append(int position, TBodyType body)
         {
             this.BodyReconstructor.Append(position, body);
