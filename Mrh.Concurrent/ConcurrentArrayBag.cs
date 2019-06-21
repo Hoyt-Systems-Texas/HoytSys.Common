@@ -6,7 +6,7 @@ using System.Threading;
 namespace Mrh.Concurrent
 {
     /// <summary>
-    ///     A current array list to insert/remove a new value.  Designed for very small list and has O(n) performance.  Would require a different implementation for speed.
+    ///     A current array list to insert/remove a new value.  Insert best case is O(1) unless it needs to grow then it's O(n).
     /// </summary>
     public class ConcurrentArrayBag<T> : IEnumerable<T> where T : class
     {
@@ -32,7 +32,12 @@ namespace Mrh.Concurrent
         private const int VALID = 10;
         private const int MARKED_FOR_REMOVAL = 11;
 
+        private int count = 0;
+        private int currentIndex = -1;
+
         private ArrayNode[] nodes;
+
+        private readonly int defaultSize;
 
         /// <summary>
         ///     Used to create a new array bag.
@@ -40,6 +45,7 @@ namespace Mrh.Concurrent
         /// <param name="size">The size of the bag to create.</param>
         public ConcurrentArrayBag(int size)
         {
+            this.defaultSize = size;
             this.nodes = new ArrayNode[size];
             for (int i = 0; i < size; i++)
             {
@@ -47,32 +53,56 @@ namespace Mrh.Concurrent
             }
         }
 
-        
+
         /// <summary>
         ///     Used to add a value to the bag.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">The value to add.</param>
         public void Add(T value)
         {
+            var nextPosition = Interlocked.Increment(ref this.currentIndex);
             while (true)
             {
                 var currentNodes = Volatile.Read(ref this.nodes);
-                // Need to make sure it rereads the value each time.
-                foreach (var node in currentNodes)
+                if (nextPosition < currentNodes.Length)
                 {
-                    if (node.TrySet(value))
+                    if (currentNodes[nextPosition].TrySet(value))
                     {
+                        Interlocked.Increment(ref this.count);
                         return;
                     }
                 }
-                Thread.SpinWait(100);
-                this.Grow();
+
+                // Need to make sure it rereads the value each time.
+                if (!this.Grow())
+                {
+                    Thread.Yield();
+                }
             }
         }
 
-        public bool Remove(Func<T, T, bool> compareFunc)
+        /// <summary>
+        ///     Removes a value form the bag.
+        /// </summary>
+        /// <param name="compareFunc">The function to use to see if we should delete the node.</param>
+        /// <returns>The number of items removed.</returns>
+        public int Remove(Func<T, bool> compareFunc)
         {
-            return false;
+            var currentNodes = Volatile.Read(ref this.nodes);
+            int count = 0;
+            foreach (var node in currentNodes)
+            {
+                if (compareFunc(node.Value))
+                {
+                    if (node.MarkForRemoval())
+                    {
+                        count++;
+                        Interlocked.Decrement(ref this.count);
+                    }
+                }
+            }
+
+            return count;
         }
 
         /// <summary>
@@ -86,7 +116,9 @@ namespace Mrh.Concurrent
                     EXPANDING,
                     IDLE) == IDLE)
             {
-                var currentSize = Volatile.Read(ref this.nodes).Length;
+                var currentSize = Math.Max(Math.Min(
+                    Volatile.Read(ref this.nodes).Length, Volatile.Read(ref this.currentIndex)),
+                    this.defaultSize);
                 var newSize = currentSize * DOUBLE_UP_TO;
                 if (newSize > DOUBLE_UP_TO)
                 {
@@ -96,7 +128,8 @@ namespace Mrh.Concurrent
                 var newArray = new ArrayNode[newSize];
                 for (var i = 0; i < newSize; i++)
                 {
-                    if (i < currentSize)
+                    if (i < currentSize
+                        && !this.nodes[i].IsRemoved())
                     {
                         newArray[i] = this.nodes[i];
                     }
@@ -105,7 +138,7 @@ namespace Mrh.Concurrent
                         newArray[i] = new ArrayNode();
                     }
                 }
-                
+
                 // We need the write barriers for this to work.
                 Volatile.Write(ref this.nodes, newArray);
                 // Set the state back to idle.
@@ -186,26 +219,6 @@ namespace Mrh.Concurrent
             }
 
             /// <summary>
-            ///     Clears a value at the position.
-            /// </summary>
-            /// <returns>true if the value was cleared.</returns>
-            public bool Clear()
-            {
-                if (Interlocked.CompareExchange(
-                        ref this.State,
-                        CLEARING,
-                        AVAILABLE) == CLEARING)
-                {
-                    Interlocked.Increment(ref this.Version);
-                    Volatile.Write(ref this.Value, default);
-                    Volatile.Write(ref this.State, AVAILABLE);
-                    return true;
-                }
-
-                return false;
-            }
-
-            /// <summary>
             ///     Mark the node for removal.
             /// </summary>
             /// <returns>Marks the node for removal when doing a cleaning operations.</returns>
@@ -214,7 +227,16 @@ namespace Mrh.Concurrent
                 return Interlocked.CompareExchange(
                            ref this.State,
                            MARKED_FOR_REMOVAL,
-                           AVAILABLE) == AVAILABLE;
+                           VALID) == VALID;
+            }
+
+            /// <summary>
+            ///     The node has been marked for removal.
+            /// </summary>
+            /// <returns>Marks the node for removal.</returns>
+            public bool IsRemoved()
+            {
+                return Volatile.Read(ref this.State) == MARKED_FOR_REMOVAL;
             }
         }
 

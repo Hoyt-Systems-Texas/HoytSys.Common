@@ -29,9 +29,9 @@ namespace Mrh.Concurrent.Test
         [Test]
         public void ConcurrentTest()
         {
-            var bag = new ConcurrentArrayBag<TestClass>(1000);
-            var threadCount = 4;
-            var iterations = 10000;
+            var bag = new ConcurrentArrayBag<TestClass>(10000);
+            var threadCount = 20;
+            var iterations = 100000;
             var threads = new Thread[threadCount];
             for (var i = 0; i < threadCount; i++)
             {
