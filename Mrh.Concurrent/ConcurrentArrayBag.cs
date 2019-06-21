@@ -7,7 +7,8 @@ using System.Threading;
 namespace Mrh.Concurrent
 {
     /// <summary>
-    ///     A current array list to insert/remove a new value.  Insert best case is O(1) unless it needs to grow then it's O(n).
+    ///     A current array list to insert/remove a new value.  Insert best case is O(1) unless it needs to grow then it's O(n).  Removes
+    /// are O(n) worst case.
     /// </summary>
     public class ConcurrentArrayBag<T> : IEnumerable<T> where T : class
     {
