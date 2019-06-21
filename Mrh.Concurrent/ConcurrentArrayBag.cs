@@ -158,13 +158,6 @@ namespace Mrh.Concurrent
             return false;
         }
 
-        /// <summary>
-        ///     Called to shrink the data structure.
-        /// </summary>
-        private void Shrink()
-        {
-        }
-
         private class ArrayNode
         {
             /// <summary>
