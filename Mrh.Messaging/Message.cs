@@ -8,12 +8,26 @@ namespace Mrh.Messaging
     public class Message<TPayloadType, TBody> where TPayloadType: struct
     {
         
+        /// <summary>
+        ///     The application generated request id.
+        /// </summary>
         public long RequestId { get; set; }
         
+        /// <summary>
+        ///     The message identifier which also includes the person sending the message.
+        /// </summary>
         public MessageIdentifier MessageIdentifier { get; set; }
+        
+        /// <summary>
+        ///     Used for an even on who to send the message to.
+        /// </summary>
+        public string ToConnectionId { get; set; }
         
         public MessageType MessageType { get; set; }
         
+        /// <summary>
+        ///     The result of processing the message.
+        /// </summary>
         public MessageResult MessageResult { get; set; }
         
         public TBody Body { get; set; }

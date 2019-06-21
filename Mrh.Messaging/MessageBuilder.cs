@@ -40,6 +40,9 @@ namespace Mrh.Messaging
         /// </summary>
         public readonly IBodyReconstructor<TBodyType> BodyReconstructor;
 
+        /// <summary>
+        ///     Called when a message has been completed.
+        /// </summary>
         private readonly Action<Message<TPayloadType, TBodyType>> messageCompleteHandler;
 
         public MessageBuilder(
