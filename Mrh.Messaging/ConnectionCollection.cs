@@ -1,24 +1,29 @@
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
+using System.Threading;
 using Mrh.Concurrent;
 
 namespace Mrh.Messaging
 {
-    
     /// <summary>
     ///     Used to collect the connection mapping.
     /// </summary>
     /// <typeparam name="TExternalConnection">The type for the external connection.</typeparam>
-    public class ConnectionCollection<TExternalConnection> where TExternalConnection:IEquatable<TExternalConnection>
+    public class ConnectionCollection<TExternalConnection> where TExternalConnection : IEquatable<TExternalConnection>
     {
-        private readonly ConcurrentDictionary<string, ConnectionNode> connectionIdToExternal = new ConcurrentDictionary<string, ConnectionNode>(10, 1000);
-        
-        private readonly ConcurrentDictionary<TExternalConnection, ConnectionNode> externalToConnectionId = new ConcurrentDictionary<TExternalConnection, ConnectionNode>(10, 1000);
+        private const int IDLE = 0;
+        private const int CLEANING = 1;
+
+        private readonly ConcurrentDictionary<string, ConnectionNode> connectionIdToExternal =
+            new ConcurrentDictionary<string, ConnectionNode>(10, 1000);
+
+        private readonly ConcurrentDictionary<TExternalConnection, ConnectionNode> externalToConnectionId =
+            new ConcurrentDictionary<TExternalConnection, ConnectionNode>(10, 1000);
 
         private readonly long expiresAfterMs;
-
         private readonly StopWatchThreadSafe lastCleaned = new StopWatchThreadSafe();
+        private int state = IDLE;
+        private readonly long cleanAfterMs = 60000;
 
         public ConnectionCollection(
             TimeSpan expiresAfter)
@@ -33,6 +38,11 @@ namespace Mrh.Messaging
         /// <param name="externalConnection">The external connection identifier.</param>
         public void AddOrUpdate(string connectionId, TExternalConnection externalConnection)
         {
+            if (this.lastCleaned.Elapsed() > this.cleanAfterMs)
+            {
+                this.Clean();
+                this.lastCleaned.Reset();
+            }
             ConnectionNode node;
             if (this.connectionIdToExternal.TryGetValue(connectionId, out node))
             {
@@ -66,6 +76,41 @@ namespace Mrh.Messaging
         public bool GetConnection(string connectionId, out ConnectionNode node)
         {
             return this.connectionIdToExternal.TryGetValue(connectionId, out node);
+        }
+
+        private void Clean()
+        {
+            if (Interlocked.CompareExchange(
+                    ref this.state,
+                    CLEANING,
+                    IDLE) == IDLE)
+            {
+                ThreadPool.QueueUserWorkItem((obj) =>
+                {
+                    try
+                    {
+                        foreach (var node in this.connectionIdToExternal.Values)
+                        {
+                            if (node.LastSeen.Elapsed() > this.expiresAfterMs)
+                            {
+                                this.connectionIdToExternal.TryRemove(
+                                    node.ConnectionId,
+                                    out ConnectionNode ignore);
+                                this.externalToConnectionId.TryRemove(
+                                    node.ExternalConnection,
+                                    out ConnectionNode ignore1);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                    finally
+                    {
+                        Interlocked.Exchange(ref this.state, IDLE);
+                    }
+                });
+            }
         }
 
         public struct ConnectionNode
