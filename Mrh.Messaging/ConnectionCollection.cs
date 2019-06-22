@@ -18,6 +18,8 @@ namespace Mrh.Messaging
 
         private readonly long expiresAfterMs;
 
+        private readonly StopWatchThreadSafe lastCleaned = new StopWatchThreadSafe();
+
         public ConnectionCollection(
             TimeSpan expiresAfter)
         {

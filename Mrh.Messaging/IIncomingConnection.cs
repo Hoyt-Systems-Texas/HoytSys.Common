@@ -7,11 +7,12 @@ namespace Mrh.Messaging
     /// </summary>
     /// <typeparam name="TPayloadType">The message type.</typeparam>
     /// <typeparam name="TBody">The body type.</typeparam>
-    public interface IIncomingConnection<TPayloadType, TBody> : IDisposable
+    public interface IIncomingConnection<TPayloadType, TBody> : IConnectable where TPayloadType:struct
     {
         /// <summary>
-        ///     Used to connect to the service.
+        ///     The handler for the incoming messages.
         /// </summary>
-        void Connect();
+        /// <param name="handler"></param>
+        void AddMessageHandler(Action<Message<TPayloadType, TBody>> handler);
     }
 }
