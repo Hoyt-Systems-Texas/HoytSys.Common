@@ -3,6 +3,9 @@ using System.Security.Cryptography;
 
 namespace Mrh.Messaging
 {
+    /// <summary>
+    ///     Used to generate unique connections id that are safe to be passed around.
+    /// </summary>
     public class ConnectionIdGenerator : IConnectionIdGenerator
     {
         

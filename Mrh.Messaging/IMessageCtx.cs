@@ -38,5 +38,18 @@ namespace Mrh.Messaging
         ///     The body of the message.
         /// </summary>
         TBody Body { get; set; }
+        
+        /// <summary>
+        ///     The current state of the message. DO NOT set this value and this implementation needs to be thread safe.
+        /// </summary>
+        MessageState CurrentState { get; }
+
+        /// <summary>
+        ///     Used to change the state and it must be done atomically using the Interlock.CompareAndExchange.
+        /// </summary>
+        /// <param name="newState">The new state to set.</param>
+        /// <param name="oldState">The old state to compare the value.</param>
+        /// <returns>true if we where able to set the state.</returns>
+        bool TrySetState(MessageState newState, MessageState oldState);
     }
 }

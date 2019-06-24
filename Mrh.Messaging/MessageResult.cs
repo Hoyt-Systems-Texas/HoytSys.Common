@@ -15,7 +15,7 @@ namespace Mrh.Messaging
         /// </summary>
         Busy = 11,
         /// <summary>
-        ///     Access was denied to the user making the request.
+        ///     Access was denied to the user making the request
         /// </summary>
         AccessDenied = 12
     }

@@ -3,7 +3,7 @@ using Mrh.Concurrent;
 
 namespace Mrh.Messaging
 {
-    public struct MessageBuilder<TPayloadType, TBodyType> where TPayloadType:struct
+    public class MessageBuilder<TPayloadType, TBodyType> where TPayloadType:struct
     {
         /// <summary>
         ///     The last time this message was touched.
@@ -40,10 +40,7 @@ namespace Mrh.Messaging
         /// </summary>
         public readonly IBodyReconstructor<TBodyType> BodyReconstructor;
 
-        /// <summary>
-        ///     Called when a message has been completed.
-        /// </summary>
-        private readonly Action<Message<TPayloadType, TBodyType>> messageCompleteHandler;
+        public bool Completed;
 
         public MessageBuilder(
             short total,
@@ -51,8 +48,7 @@ namespace Mrh.Messaging
             MessageType messageType,
             TPayloadType payloadType,
             Guid userId,
-            IBodyReconstructor<TBodyType> bodyReconstructor,
-            Action<Message<TPayloadType, TBodyType>> messageCompleteHandler)
+            IBodyReconstructor<TBodyType> bodyReconstructor)
         {
             this.LastTouched = new StopWatchThreadSafe();
             this.Total = total;
@@ -61,7 +57,7 @@ namespace Mrh.Messaging
             this.PayloadType = payloadType;
             this.UserId = userId;
             this.MessageType = messageType;
-            this.messageCompleteHandler = messageCompleteHandler;
+            this.Completed = false;
         }
 
         /// <summary>
@@ -74,13 +70,7 @@ namespace Mrh.Messaging
             this.BodyReconstructor.Append(position, body);
             if (this.BodyReconstructor.Completed())
             {
-                this.messageCompleteHandler(new Message<TPayloadType, TBodyType>()
-                {
-                    Body = BodyReconstructor.Body,
-                    MessageIdentifier = this.MessageIdentifier,
-                    MessageType = this.MessageType,
-                    PayloadType = this.PayloadType,
-                });
+                this.Completed = true;
             }
         }
     }
