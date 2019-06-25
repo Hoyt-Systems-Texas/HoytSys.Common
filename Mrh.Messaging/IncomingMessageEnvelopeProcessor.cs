@@ -5,9 +5,8 @@ using Mrh.Core;
 
 namespace Mrh.Messaging
 {
-    public class IncomingMessageProcessor<TPayloadType, TBody> : IStartable, IStoppable where TPayloadType : struct
+    public class IncomingMessageEnvelopeProcessor<TPayloadType, TBody> : IStartable, IStoppable where TPayloadType : struct
     {
-
         private const int STOPPED = 0;
         private const int STARTING = 1;
         private const int RUNNING = 2;
@@ -15,18 +14,16 @@ namespace Mrh.Messaging
 
         private readonly MpmcRingBuffer<MessageEnvelope<TPayloadType, TBody>> buffer =
             new MpmcRingBuffer<MessageEnvelope<TPayloadType, TBody>>(0x1000);
-        private readonly IMessageStore<TPayloadType, TBody> messageStore;
-        private readonly IMessageRouter<TPayloadType, TBody> messageRouter;
+
+        private readonly IIncomingMessageBuilder<TPayloadType, TBody> incomingMessageBuilder;
         private Thread processingThread;
 
         private int processorCurrentState;
 
-        public IncomingMessageProcessor(
-            IMessageStore<TPayloadType, TBody> messageStore,
-            IMessageRouter<TPayloadType, TBody> messageRouter)
+        public IncomingMessageEnvelopeProcessor(
+            IIncomingMessageBuilder<TPayloadType, TBody> incomingMessageBuilder)
         {
-            this.messageStore = messageStore;
-            this.messageRouter = messageRouter;
+            this.incomingMessageBuilder = incomingMessageBuilder;
         }
 
         public void Start()
@@ -46,8 +43,9 @@ namespace Mrh.Messaging
                     {
                         this.SetupThread();
                     }
+
                     break;
-                
+
                 case STOPPING:
                     if (this.SetState(
                         newState,
@@ -55,6 +53,7 @@ namespace Mrh.Messaging
                     {
                         // Do nothing will stop on next spin.
                     }
+
                     break;
             }
         }
@@ -89,15 +88,24 @@ namespace Mrh.Messaging
         private void Main()
         {
             this.SetState(RUNNING);
+            var spin = new SpinWait();
             while (Volatile.Read(ref this.processorCurrentState) == RUNNING)
             {
                 try
                 {
-                    
+                    if (this.buffer.TryPoll(out MessageEnvelope<TPayloadType, TBody> envelope))
+                    {
+                        Message<TPayloadType, TBody> message;
+                        if (this.incomingMessageBuilder.Add(
+                            envelope,
+                            out message))
+                        {
+                            
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
-                    
                 }
             }
         }
