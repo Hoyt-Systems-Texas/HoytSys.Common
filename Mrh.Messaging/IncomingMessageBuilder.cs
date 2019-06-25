@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Mrh.Messaging
 {
@@ -7,13 +8,12 @@ namespace Mrh.Messaging
     {
         private readonly ConcurrentDictionary<MessageIdentifier, MessageBuilder<TPayloadType, TBody>> pendingMessages =
             new ConcurrentDictionary<MessageIdentifier, MessageBuilder<TPayloadType, TBody>>(10, 1000);
-
-        private readonly IOutgoingConnection<TPayloadType, TBody> outgoingConnection;
+        private readonly IBodyReconstructorFactory<TBody> bodyReconstructorFactory;
 
         public IncomingMessageBuilder(
-            IOutgoingConnection<TPayloadType, TBody> outgoingConnection)
+            IBodyReconstructorFactory<TBody> bodyReconstructorFactory)
         {
-            this.outgoingConnection = outgoingConnection;
+            this.bodyReconstructorFactory = bodyReconstructorFactory;
         }
 
         public bool Add(
@@ -43,9 +43,33 @@ namespace Mrh.Messaging
                 messageBuilder.Append(envelope.Number, envelope.Body);
                 if (messageBuilder.Completed)
                 {
+                    message = new Message<TPayloadType, TBody>
+                    {
+                        Body = messageBuilder.BodyReconstructor.Body,
+                        MessageIdentifier = messageBuilder.MessageIdentifier,
+                        MessageType = messageBuilder.MessageType,
+                        PayloadType = messageBuilder.PayloadType,
+                    };
+                    this.pendingMessages.TryRemove(identifier, out messageBuilder);
+                    return true;
                 }
+                message = null;
+                return false;
             }
-            throw new System.NotImplementedException();
+            else
+            {
+                messageBuilder = new MessageBuilder<TPayloadType, TBody>(
+                    envelope.Total,
+                    identifier,
+                    envelope.MessageType,
+                    envelope.PayloadType,
+                    envelope.UserId,
+                    this.bodyReconstructorFactory.Create());
+                messageBuilder.Append(envelope.Number, envelope.Body);
+                this.pendingMessages[identifier] = messageBuilder;
+                message = null;
+                return false;
+            }
         }
     }
 }

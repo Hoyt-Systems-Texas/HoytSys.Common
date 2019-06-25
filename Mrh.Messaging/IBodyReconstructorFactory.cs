@@ -1,6 +1,6 @@
 namespace Mrh.Messaging
 {
-    public interface IBodyConstructorFactory<TBody>
+    public interface IBodyReconstructorFactory<TBody>
     {
         /// <summary>
         ///     Used to create a body reconstructor.

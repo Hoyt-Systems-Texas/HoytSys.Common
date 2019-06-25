@@ -40,6 +40,9 @@ namespace Mrh.Messaging
         /// </summary>
         public readonly IBodyReconstructor<TBodyType> BodyReconstructor;
 
+        /// <summary>
+        ///     true if all of the parts of a message have been completed.
+        /// </summary>
         public bool Completed;
 
         public MessageBuilder(
@@ -67,6 +70,7 @@ namespace Mrh.Messaging
         /// <param name="body">The body to append to the message.</param>
         public void Append(int position, TBodyType body)
         {
+            this.LastTouched.Reset();
             this.BodyReconstructor.Append(position, body);
             if (this.BodyReconstructor.Completed())
             {
