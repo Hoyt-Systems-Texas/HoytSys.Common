@@ -65,7 +65,7 @@ namespace Mrh.Messaging
                     envelope.MessageType,
                     envelope.PayloadType,
                     envelope.UserId,
-                    this.bodyReconstructorFactory.Create());
+                    this.bodyReconstructorFactory.Create(envelope.Total));
                 messageBuilder.Append(envelope.Number, envelope.Body);
                 this.pendingMessages[identifier] = messageBuilder;
                 message = null;

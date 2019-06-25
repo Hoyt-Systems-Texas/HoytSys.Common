@@ -7,6 +7,10 @@ namespace Mrh.Messaging
         /// </summary>
         Success = 0,
         /// <summary>
+        ///     The state of the message was requested.
+        /// </summary>
+        State = 1,
+        /// <summary>
         ///     An unexpected error has occurred.
         /// </summary>
         Error = 10,
