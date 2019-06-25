@@ -22,7 +22,7 @@ namespace Mrh.Messaging
         /// <summary>
         ///     Is only valid on a reply message or an event message.
         /// </summary>
-        MessageResult MessageResult { get; set; }
+        MessageResultType MessageResultType { get; set; }
         
         /// <summary>
         ///     The type of the message.

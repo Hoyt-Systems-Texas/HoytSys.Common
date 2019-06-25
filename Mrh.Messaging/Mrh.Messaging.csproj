@@ -10,4 +10,8 @@
       <ProjectReference Include="..\Mrh.DataStructures\Mrh.DataStructures.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="NLog" Version="4.6.5" />
+    </ItemGroup>
+
 </Project>

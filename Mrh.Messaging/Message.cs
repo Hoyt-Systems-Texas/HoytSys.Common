@@ -1,3 +1,5 @@
+using System;
+
 namespace Mrh.Messaging
 {
     /// <summary>
@@ -28,10 +30,12 @@ namespace Mrh.Messaging
         /// <summary>
         ///     The result of processing the message.
         /// </summary>
-        public MessageResult MessageResult { get; set; }
+        public MessageResultType MessageResultType { get; set; }
         
         public TBody Body { get; set; }
         
         public TPayloadType PayloadType { get; set; }
+        
+        public Guid UserId { get; set; }
     }
 }

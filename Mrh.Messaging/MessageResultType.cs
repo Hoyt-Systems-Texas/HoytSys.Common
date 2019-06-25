@@ -1,6 +1,6 @@
 namespace Mrh.Messaging
 {
-    public enum MessageResult
+    public enum MessageResultType
     {
         /// <summary>
         ///     Message was processed successfully.

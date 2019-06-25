@@ -14,7 +14,7 @@ namespace Mrh.Messaging
         
         public MessageIdentifier MessageIdentifier { get; set; }
         
-        public MessageResult MessageResult { get; set; }
+        public MessageResultType MessageResultType { get; set; }
         
         public MessageType MessageType { get; set; }
         

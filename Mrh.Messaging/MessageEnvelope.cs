@@ -27,7 +27,7 @@ namespace Mrh.Messaging
         /// <summary>
         ///     The result of the message.
         /// </summary>
-        public MessageResult MessageResult { get; set; }
+        public MessageResultType MessageResultType { get; set; }
         /// <summary>
         ///     The id of the connection of who sent the message.
         /// </summary>

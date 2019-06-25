@@ -49,6 +49,7 @@ namespace Mrh.Messaging
                         MessageIdentifier = messageBuilder.MessageIdentifier,
                         MessageType = messageBuilder.MessageType,
                         PayloadType = messageBuilder.PayloadType,
+                        UserId = messageBuilder.UserId
                     };
                     this.pendingMessages.TryRemove(identifier, out messageBuilder);
                     return true;
