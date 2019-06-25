@@ -18,12 +18,7 @@ namespace Mrh.Messaging
         ///     The unique identifier of the user.
         /// </summary>
         MessageIdentifier MessageIdentifier { get; set; }
-        
-        /// <summary>
-        ///     Is only valid on a reply message or an event message.
-        /// </summary>
-        MessageResultType MessageResultType { get; set; }
-        
+       
         /// <summary>
         ///     The type of the message.
         /// </summary>

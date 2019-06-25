@@ -9,6 +9,6 @@ namespace Mrh.Messaging
         ///     Used to route a message to a handler.
         /// </summary>
         /// <param name="msgCtx">The message to route.</param>
-        Task Route(IMessageCtx<TPayloadType, TBody> msgCtx);
+        Task<MessageResult<TBody>> Route(IMessageCtx<TPayloadType, TBody> msgCtx);
     }
 }

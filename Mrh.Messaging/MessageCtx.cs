@@ -14,8 +14,6 @@ namespace Mrh.Messaging
         
         public MessageIdentifier MessageIdentifier { get; set; }
         
-        public MessageResultType MessageResultType { get; set; }
-        
         public MessageType MessageType { get; set; }
         
         public TPayloadType PayloadType { get; set; }
