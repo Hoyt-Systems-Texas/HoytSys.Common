@@ -7,15 +7,15 @@ namespace Mrh.Messaging
         /// <summary>
         ///     The number of the envelopment.
         /// </summary>
-        public short Number { get; set; }
+        public int Number { get; set; }
         /// <summary>
         ///     The total number of pieces.
         /// </summary>
-        public short Total { get; set; }
+        public int Total { get; set; }
         /// <summary>
         ///     The total length of the body.
         /// </summary>
-        public short TotalBodyLength { get; set; }
+        public int TotalBodyLength { get; set; }
         /// <summary>
         ///     The message type.
         /// </summary>

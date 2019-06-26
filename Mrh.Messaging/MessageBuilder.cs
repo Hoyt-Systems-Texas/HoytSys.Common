@@ -13,7 +13,7 @@ namespace Mrh.Messaging
         /// <summary>
         ///     The total number of messages.
         /// </summary>
-        public readonly short Total;
+        public readonly int Total;
 
         /// <summary>
         ///     The type of the message.
@@ -46,7 +46,7 @@ namespace Mrh.Messaging
         public bool Completed;
 
         public MessageBuilder(
-            short total,
+            int total,
             MessageIdentifier messageIdentifier,
             MessageType messageType,
             TPayloadType payloadType,

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Mrh.Messaging;
 using TestApp.Hubs;
 
 namespace TestApp
@@ -34,6 +35,7 @@ namespace TestApp
 
             services.AddSignalR();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddSingleton<IConnectionIdGenerator>(new ConnectionIdGenerator(16));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

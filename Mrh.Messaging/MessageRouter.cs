@@ -10,18 +10,34 @@ namespace Mrh.Messaging
 
         private readonly Dictionary<TPayloadType, Node> handlers = new Dictionary<TPayloadType, Node>(1000);
         private readonly IMessageResultFactory<TBody> messageResultFactory;
+        private readonly List<Func<TCtx, Task>> preprocessors = new List<Func<TCtx, Task>>(10);
 
         public MessageRouter(IMessageResultFactory<TBody> messageResultFactory)
         {
             this.messageResultFactory = messageResultFactory;
         }
-        
+
+        public IMessageRouter<TPayloadType, TBody, TCtx> AddPreprocessor(Func<TCtx, Task> preprocessor)
+        {
+            this.preprocessors.Add(preprocessor);
+            return this;
+        }
+
+        private async Task RunPreprocessors(TCtx msgCtx)
+        {
+            foreach (var preprocessor in this.preprocessors)
+            {
+                await preprocessor(msgCtx);
+            }
+        }
+
         public async Task<MessageResult<TBody>> Route(TCtx msgCtx) 
         {
             if (this.handlers.TryGetValue(msgCtx.PayloadType, out Node node))
             {
                 if (await node.Access(msgCtx))
                 {
+                    await this.RunPreprocessors(msgCtx);
                     return await node.Handler(msgCtx);
                 }
                 else

@@ -7,6 +7,13 @@ namespace Mrh.Messaging
     {
 
         /// <summary>
+        ///     Added a preprocessor for the messages.
+        /// </summary>
+        /// <param name="preprocessor">The function to call to add additional information.</param>
+        /// <returns>The message router.</returns>
+        IMessageRouter<TPayloadType, TBody, TCtx> AddPreprocessor(Func<TCtx, Task> preprocessor);
+
+        /// <summary>
         ///     Used to route a message to a handler.
         /// </summary>
         /// <param name="msgCtx">The message to route.</param>
