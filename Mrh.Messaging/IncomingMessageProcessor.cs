@@ -28,7 +28,7 @@ namespace Mrh.Messaging
 
         private readonly MpmcRingBuffer<Message<TPayloadType, TBody>> buffer;
         private readonly IMessageStore<TPayloadType, TBody> messageStore;
-        private readonly IMessageRouter<TPayloadType, TBody> messageRouter;
+        private readonly IMessageRouter<TPayloadType, TBody, TMsgCtx> messageRouter;
         private readonly IOutgoingConnection<TPayloadType, TBody> outgoingConnection;
         private readonly IMessageResultFactory<TBody> messageResultFactory;
         private readonly FastSemaphore semaphore;
@@ -36,7 +36,7 @@ namespace Mrh.Messaging
 
         public IncomingMessageProcessor(
             IMessageStore<TPayloadType, TBody> messageStore,
-            IMessageRouter<TPayloadType, TBody> messageRouter,
+            IMessageRouter<TPayloadType, TBody, TMsgCtx> messageRouter,
             IOutgoingConnection<TPayloadType, TBody> outgoingConnection,
             IMessageResultFactory<TBody> messageResultFactory)
         {
