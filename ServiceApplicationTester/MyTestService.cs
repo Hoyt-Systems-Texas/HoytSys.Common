@@ -18,7 +18,7 @@ namespace ServiceApplicationTester
         private readonly UnityContainer container;
         private IOutgoingConnection<PayloadType, string> outgoingConnection;
         private IncomingConnection<PayloadType, string, MessageCtx<PayloadType, string>> incomingConnection;
-        private IncomingMessageProcessor<PayloadType, string, MessageCtx<PayloadType, string>> incomingMessageProcessor;
+        private IIncomingMessageProcessor<PayloadType, string> incomingMessageProcessor;
         
 
         public MyTestService()
@@ -66,6 +66,7 @@ namespace ServiceApplicationTester
                         IMessageStore<PayloadType, string, MessageCtx<PayloadType, string>>,
                         InMemoryMessageStore<PayloadType, string, MessageCtx<PayloadType, string>>>()
                     .RegisterSingleton<
+                        IIncomingMessageProcessor<PayloadType, string>,
                         IncomingMessageProcessor<PayloadType, string, MessageCtx<PayloadType, string>>>()
                     .RegisterSingleton<IncomingConnection<PayloadType, string, MessageCtx<PayloadType, string>>>()
                     .RegisterSingleton<
@@ -86,7 +87,7 @@ namespace ServiceApplicationTester
                 this.incomingConnection = this.container
                     .Resolve<IncomingConnection<PayloadType, string, MessageCtx<PayloadType, string>>>();
                 this.incomingMessageProcessor = this.container
-                    .Resolve<IncomingMessageProcessor<PayloadType, string, MessageCtx<PayloadType, string>>>();
+                    .Resolve<IIncomingMessageProcessor<PayloadType, string>>();
             }
             catch (Exception ex)
             {

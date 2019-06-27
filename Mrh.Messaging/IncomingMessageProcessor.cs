@@ -13,8 +13,7 @@ namespace Mrh.Messaging
     /// </summary>
     /// <typeparam name="TPayloadType">The payload type.</typeparam>
     /// <typeparam name="TBody">The body type.</typeparam>
-    public class IncomingMessageProcessor<TPayloadType, TBody, TMsgCtx> : IStartable, IStoppable
-        where TPayloadType : struct
+    public class IncomingMessageProcessor<TPayloadType, TBody, TMsgCtx> : IIncomingMessageProcessor<TPayloadType, TBody> where TPayloadType : struct
         where TMsgCtx : MessageCtx<TPayloadType, TBody>, new()
     {
         private static ILogger log = LogManager.GetCurrentClassLogger();

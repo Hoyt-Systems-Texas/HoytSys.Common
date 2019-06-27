@@ -11,11 +11,10 @@ namespace Mrh.Messaging.NetMq
     /// <summary>
     ///     Used to process incoming connections.  Uses a NeqMQ push socket to handle the messages.
     /// </summary>
-    public class IncomingConnection<TPayloadType, TBody, TMsgCtx> : IStartable, IStoppable 
-        where TPayloadType:struct 
+    public class IncomingConnection<TPayloadType, TBody, TMsgCtx> : IStartable, IStoppable
+        where TPayloadType : struct
         where TMsgCtx : MessageCtx<TPayloadType, TBody>, new()
     {
-
         private int currentState = 0;
         private static readonly ILogger log = LogManager.GetCurrentClassLogger();
         private readonly IIncomingMessageBuilder<TPayloadType, TBody> incomingMessageBuilder;
@@ -42,7 +41,7 @@ namespace Mrh.Messaging.NetMq
             this.encoder = encoder;
             this.incomingMessageProcessor = incomingMessageProcessor;
         }
-        
+
         public void Start()
         {
             if (Interlocked.CompareExchange(
@@ -65,9 +64,9 @@ namespace Mrh.Messaging.NetMq
         private void Main()
         {
             Volatile.Write(ref this.currentState, RUNNING);
-            Msg msg = new Msg();
             using (this.pullSocket = new PullSocket(this.connectionString))
             {
+                Msg msg = new Msg();
                 while (Volatile.Read(ref this.currentState) == RUNNING)
                 {
                     try
@@ -94,6 +93,7 @@ namespace Mrh.Messaging.NetMq
                     }
                 }
             }
+
             Volatile.Write(ref this.currentState, STOPPED);
         }
     }
