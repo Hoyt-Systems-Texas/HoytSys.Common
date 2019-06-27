@@ -21,6 +21,10 @@ namespace Mrh.Messaging
         /// <summary>
         ///     Access was denied to the user making the request
         /// </summary>
-        AccessDenied = 12
+        AccessDenied = 12,
+        
+        /** State start. */
+        Accepted = 100,
+        Running = 101
     }
 }
