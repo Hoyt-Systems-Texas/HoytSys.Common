@@ -32,12 +32,12 @@ namespace Mrh.Messaging.NetMq
         private readonly IncomingMessageProcessor<TPayloadType, TBody, TMsgCtx> incomingMessageProcessor;
 
         public IncomingConnection(
-            string connectionString,
+            INetMqConfig netMqConfig,
             IIncomingMessageBuilder<TPayloadType, TBody> incomingMessageBuilder,
             IncomingMessageProcessor<TPayloadType, TBody, TMsgCtx> incomingMessageProcessor,
             IEncoder<TPayloadType, TBody> encoder)
         {
-            this.connectionString = connectionString;
+            this.connectionString = netMqConfig.IncomingConnection;
             this.incomingMessageBuilder = incomingMessageBuilder;
             this.encoder = encoder;
             this.incomingMessageProcessor = incomingMessageProcessor;
@@ -66,29 +66,32 @@ namespace Mrh.Messaging.NetMq
         {
             Volatile.Write(ref this.currentState, RUNNING);
             Msg msg = new Msg();
-            while (Volatile.Read(ref this.currentState) == RUNNING)
+            using (this.pullSocket = new PullSocket(this.connectionString))
             {
-                try
+                while (Volatile.Read(ref this.currentState) == RUNNING)
                 {
-                    if (pullSocket.TryReceive(ref msg, new TimeSpan(0, 0, 5)))
+                    try
                     {
-                        if (msg.Data.Length >= MessageSettings.HEADER_SIZE
-                            && this.encoder.Decode(msg.Data, out MessageEnvelope<TPayloadType, TBody> envelope))
+                        if (pullSocket.TryReceive(ref msg, new TimeSpan(0, 0, 5)))
                         {
-                            if (this.incomingMessageBuilder.Add(envelope, out Message<TPayloadType, TBody> message))
+                            if (msg.Data.Length >= MessageSettings.HEADER_SIZE
+                                && this.encoder.Decode(msg.Data, out MessageEnvelope<TPayloadType, TBody> envelope))
                             {
-                                this.incomingMessageProcessor.Handle(message);
+                                if (this.incomingMessageBuilder.Add(envelope, out Message<TPayloadType, TBody> message))
+                                {
+                                    this.incomingMessageProcessor.Handle(message);
+                                }
+                            }
+                            else
+                            {
+                                log.Warn($"Invalid message received");
                             }
                         }
-                        else
-                        {
-                            log.Warn($"Invalid message received");
-                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    log.Error(ex, ex.Message);
+                    catch (Exception ex)
+                    {
+                        log.Error(ex, ex.Message);
+                    }
                 }
             }
             Volatile.Write(ref this.currentState, STOPPED);

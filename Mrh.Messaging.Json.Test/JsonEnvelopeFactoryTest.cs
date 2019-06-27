@@ -12,7 +12,10 @@ namespace Mrh.Messaging.Json.Test
         public void OneSplit()
         {
             var envelope = new JsonEnvelopeFactory<PayloadType>(
-                100);
+                new JsonSettingsTest
+                {
+                    MaxFrameSize = 100
+                });
             var msg = new Message<PayloadType, string>
             {
                 Body = "Hello World!",
@@ -37,7 +40,10 @@ namespace Mrh.Messaging.Json.Test
         public void ThreeSplit()
         {
             var envelope = new JsonEnvelopeFactory<PayloadType>(
-                4);
+                new JsonSettingsTest
+                {
+                    MaxFrameSize = 4
+                });
             var msg = new Message<PayloadType, string>
             {
                 Body = "Hello World!",
@@ -62,7 +68,10 @@ namespace Mrh.Messaging.Json.Test
         public void ThreeSplitNotEven()
         {
             var envelope = new JsonEnvelopeFactory<PayloadType>(
-                4);
+                new JsonSettingsTest
+                {
+                    MaxFrameSize = 4
+                });
             var msg = new Message<PayloadType, string>
             {
                 Body = "Hello World",

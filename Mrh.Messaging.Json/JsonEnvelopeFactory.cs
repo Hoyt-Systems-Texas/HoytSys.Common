@@ -11,9 +11,9 @@ namespace Mrh.Messaging.Json
         private readonly int maxFrameSize;
 
         public JsonEnvelopeFactory(
-            int maxFrameSize)
+            IJsonSetting jsonSetting)
         {
-            this.maxFrameSize = maxFrameSize;
+            this.maxFrameSize = jsonSetting.MaxFrameSize;
         }
 
         public int CreateEnvelops(Message<TPayloadType, string> message,
