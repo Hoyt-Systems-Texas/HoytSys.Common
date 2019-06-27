@@ -1,3 +1,5 @@
+using System;
+
 namespace Mrh.Messaging
 {
     public interface IConnectionIdGenerator
@@ -7,6 +9,6 @@ namespace Mrh.Messaging
         /// generating ids.
         /// </summary>
         /// <returns>The string of the id.</returns>
-        string Generate();
+        Guid Generate();
     }
 }

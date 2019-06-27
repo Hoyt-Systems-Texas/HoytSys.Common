@@ -11,23 +11,11 @@ namespace Mrh.Messaging
         
         private static readonly RNGCryptoServiceProvider random = new RNGCryptoServiceProvider();
 
-        private readonly int length;
-
-        /// <summary>
-        ///     Used to create a new id generator.
-        /// </summary>
-        /// <param name="length">The length of the generator key in bytes.</param>
-        public ConnectionIdGenerator(
-            int length)
+        public Guid Generate()
         {
-            this.length = length;
-        }
-        
-        public string Generate()
-        {
-            var id = new byte[this.length];
+            var id = new byte[16];
             random.GetBytes(id);
-            return Convert.ToBase64String(id);
+            return new Guid(id);
         }
     }
 }

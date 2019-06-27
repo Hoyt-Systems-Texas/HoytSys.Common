@@ -1,3 +1,5 @@
+using System;
+
 namespace Mrh.Messaging
 {
     /// <summary>
@@ -5,12 +7,12 @@ namespace Mrh.Messaging
     /// </summary>
     public struct MessageIdentifier
     {
-        public readonly string ConnectionId;
+        public readonly Guid ConnectionId;
 
         public readonly int CorrelationId;
 
         public MessageIdentifier(
-            string connectionId,
+            Guid connectionId,
             int correlationId)
         {
             this.ConnectionId = connectionId;

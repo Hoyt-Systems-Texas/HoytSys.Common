@@ -4,6 +4,8 @@ namespace Mrh.Messaging
 {
     public class MessageEnvelope<TPayloadType, TBodyType> where TPayloadType:struct
     {
+        public long RequestId { get; set; }
+        
         /// <summary>
         ///     The number of the envelopment.
         /// </summary>
@@ -31,7 +33,8 @@ namespace Mrh.Messaging
         /// <summary>
         ///     The id of the connection of who sent the message.
         /// </summary>
-        public string ConnectionId { get; set; }
+        public Guid ConnectionId { get; set; }
+        
         /// <summary>
         ///     The correlation id of the message.
         /// </summary>

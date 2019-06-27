@@ -2,6 +2,10 @@ using System;
 
 namespace Mrh.Messaging.Json
 {
+    /// <summary>
+    ///     Used to create envelops for sending messages.
+    /// </summary>
+    /// <typeparam name="TPayloadType">The type for the payload.</typeparam>
     public class JsonEnvelopeFactory<TPayloadType> : IEnvelopFactory<TPayloadType, string> where TPayloadType : struct
     {
         private readonly int maxFrameSize;

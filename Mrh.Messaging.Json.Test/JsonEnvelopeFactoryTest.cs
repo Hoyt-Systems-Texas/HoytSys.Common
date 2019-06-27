@@ -16,13 +16,13 @@ namespace Mrh.Messaging.Json.Test
             var msg = new Message<PayloadType, string>
             {
                 Body = "Hello World!",
-                MessageIdentifier = new MessageIdentifier("1", 1),
+                MessageIdentifier = new MessageIdentifier(Guid.NewGuid(), 1),
                 MessageType = MessageType.Reply,
                 PayloadType = PayloadType.Test,
                 RequestId = 0,
                 UserId = Guid.NewGuid(),
                 MessageResultType = MessageResultType.Success,
-                ToConnectionId = "me"
+                ToConnectionId = Guid.NewGuid()
             };
 
             var list = new List<MessageEnvelope<PayloadType, string>>(1);
@@ -41,13 +41,13 @@ namespace Mrh.Messaging.Json.Test
             var msg = new Message<PayloadType, string>
             {
                 Body = "Hello World!",
-                MessageIdentifier = new MessageIdentifier("1", 1),
+                MessageIdentifier = new MessageIdentifier(Guid.NewGuid(), 1),
                 MessageType = MessageType.Reply,
                 PayloadType = PayloadType.Test,
                 RequestId = 0,
                 UserId = Guid.NewGuid(),
                 MessageResultType = MessageResultType.Success,
-                ToConnectionId = "me"
+                ToConnectionId = Guid.NewGuid()
             };
             var list = new List<MessageEnvelope<PayloadType, string>>(1);
             envelope.CreateEnvelops(
@@ -66,13 +66,13 @@ namespace Mrh.Messaging.Json.Test
             var msg = new Message<PayloadType, string>
             {
                 Body = "Hello World",
-                MessageIdentifier = new MessageIdentifier("1", 1),
+                MessageIdentifier = new MessageIdentifier(Guid.NewGuid(), 1),
                 MessageType = MessageType.Reply,
                 PayloadType = PayloadType.Test,
                 RequestId = 0,
                 UserId = Guid.NewGuid(),
                 MessageResultType = MessageResultType.Success,
-                ToConnectionId = "me"
+                ToConnectionId = Guid.NewGuid()
             };
             var list = new List<MessageEnvelope<PayloadType, string>>(1);
             envelope.CreateEnvelops(
