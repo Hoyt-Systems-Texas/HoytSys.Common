@@ -18,7 +18,7 @@ namespace ServiceApplicationTester
         private readonly UnityContainer container;
         private IOutgoingConnection<PayloadType, string> outgoingConnection;
         private IncomingConnection<PayloadType, string, MessageCtx<PayloadType, string>> incomingConnection;
-        private IIncomingMessageProcessor<PayloadType, string> incomingMessageProcessor;
+        private IIncomingMessageHandler<PayloadType, string> incomingMessageHandler;
         
 
         public MyTestService()
@@ -66,7 +66,7 @@ namespace ServiceApplicationTester
                         IMessageStore<PayloadType, string, MessageCtx<PayloadType, string>>,
                         InMemoryMessageStore<PayloadType, string, MessageCtx<PayloadType, string>>>()
                     .RegisterSingleton<
-                        IIncomingMessageProcessor<PayloadType, string>,
+                        IIncomingMessageHandler<PayloadType, string>,
                         IncomingMessageProcessor<PayloadType, string, MessageCtx<PayloadType, string>>>()
                     .RegisterSingleton<IncomingConnection<PayloadType, string, MessageCtx<PayloadType, string>>>()
                     .RegisterSingleton<
@@ -86,8 +86,8 @@ namespace ServiceApplicationTester
                 this.outgoingConnection = this.container.Resolve<IOutgoingConnection<PayloadType, string>>();
                 this.incomingConnection = this.container
                     .Resolve<IncomingConnection<PayloadType, string, MessageCtx<PayloadType, string>>>();
-                this.incomingMessageProcessor = this.container
-                    .Resolve<IIncomingMessageProcessor<PayloadType, string>>();
+                this.incomingMessageHandler = this.container
+                    .Resolve<IIncomingMessageHandler<PayloadType, string>>();
             }
             catch (Exception ex)
             {
@@ -104,7 +104,7 @@ namespace ServiceApplicationTester
             {
                 this.outgoingConnection.Connect();
                 this.incomingConnection.Start();
-                this.incomingMessageProcessor.Start();
+                this.incomingMessageHandler.Start();
                 log.Info("Started");
             }
             catch (Exception ex)
@@ -120,7 +120,7 @@ namespace ServiceApplicationTester
             {
                 this.outgoingConnection.Dispose();
                 this.incomingConnection.Stop();
-                this.incomingMessageProcessor.Stop();
+                this.incomingMessageHandler.Stop();
                 log.Info("Stopped");
             }
             catch (Exception ex)
