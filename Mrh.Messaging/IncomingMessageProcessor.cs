@@ -27,7 +27,7 @@ namespace Mrh.Messaging
         private int currentState = STOPPED;
 
         private readonly MpmcRingBuffer<Message<TPayloadType, TBody>> buffer;
-        private readonly IMessageStore<TPayloadType, TBody> messageStore;
+        private readonly IMessageStore<TPayloadType, TBody, TMsgCtx> messageStore;
         private readonly IMessageRouter<TPayloadType, TBody, TMsgCtx> messageRouter;
         private readonly IOutgoingConnection<TPayloadType, TBody> outgoingConnection;
         private readonly IMessageResultFactory<TBody> messageResultFactory;
@@ -35,7 +35,7 @@ namespace Mrh.Messaging
         private Thread processingThread;
 
         public IncomingMessageProcessor(
-            IMessageStore<TPayloadType, TBody> messageStore,
+            IMessageStore<TPayloadType, TBody, TMsgCtx> messageStore,
             IMessageRouter<TPayloadType, TBody, TMsgCtx> messageRouter,
             IOutgoingConnection<TPayloadType, TBody> outgoingConnection,
             IMessageResultFactory<TBody> messageResultFactory)

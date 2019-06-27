@@ -2,7 +2,8 @@ using System.Threading.Tasks;
 
 namespace Mrh.Messaging
 {
-    public interface IMessageStore<TPayloadType, TBody> where TPayloadType:struct
+    public interface IMessageStore<TPayloadType, TBody, TCtx> where TPayloadType:struct 
+        where TCtx:IMessageCtx<TPayloadType, TBody>
     {
 
         /// <summary>
@@ -10,13 +11,13 @@ namespace Mrh.Messaging
         /// </summary>
         /// <param name="msgCtx">The message ctx to store.</param>
         /// <returns>The task that saves it.  If the message has already been processed then it return it instead.</returns>
-        Task<IMessageCtx<TPayloadType, TBody>> Save(IMessageCtx<TPayloadType, TBody> msgCtx);
+        Task<TCtx> Save(TCtx msgCtx);
 
         /// <summary>
         ///     Used to try and get a msg by an id.
         /// </summary>
         /// <returns>A tuple where it's try if a value that was changed.</returns>
-        Task<(bool, IMessageCtx<TPayloadType, TBody>)> TryGet(MessageIdentifier identifier);
+        Task<(bool, TCtx)> TryGet(MessageIdentifier identifier);
 
         /// <summary>
         ///     Used to store the result.

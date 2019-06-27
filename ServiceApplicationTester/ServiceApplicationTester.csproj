@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NLog.Extensions.Logging" Version="1.5.1" />
+      <PackageReference Include="Topshelf" Version="4.2.0" />
+      <PackageReference Include="Topshelf.NLog" Version="4.2.0" />
+      <PackageReference Include="Unity" Version="5.11.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Mrh.Concurrent\Mrh.Concurrent.csproj" />
+      <ProjectReference Include="..\Mrh.Core\Mrh.Core.csproj" />
+      <ProjectReference Include="..\Mrh.DataStructures\Mrh.DataStructures.csproj" />
+      <ProjectReference Include="..\Mrh.Messaging.Json\Mrh.Messaging.Json.csproj" />
+      <ProjectReference Include="..\Mrh.Messaging.NetMq\Mrh.Messaging.NetMq.csproj" />
+      <ProjectReference Include="..\Mrh.Messaging\Mrh.Messaging.csproj" />
+      <ProjectReference Include="..\Mrh.Monad\Mrh.Monad.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="nlog.config">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+</Project>
