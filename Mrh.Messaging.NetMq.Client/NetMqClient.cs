@@ -96,6 +96,7 @@ namespace Mrh.Messaging.NetMq.Client
                         node.Handle(
                             message,
                             this.encoder);
+                        return true;
                     }
                     break;
 
@@ -113,6 +114,7 @@ namespace Mrh.Messaging.NetMq.Client
                             message,
                             this.encoder,
                             this.messageResultMonad);
+                        return true;
                     }
                     break;
 
