@@ -56,6 +56,7 @@ namespace TestApp
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseWebSockets();
+            app.UseCors();
 
             app.UseMvc(routes =>
             {
