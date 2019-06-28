@@ -1,3 +1,5 @@
+using Mrh.Messaging.Common;
+
 namespace Mrh.Messaging
 {
     public class MessageResult<TBody>

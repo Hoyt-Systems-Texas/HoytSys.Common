@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using Mrh.Messaging.Common;
 
 namespace Mrh.Messaging
 {

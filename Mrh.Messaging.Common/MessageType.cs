@@ -1,4 +1,4 @@
-namespace Mrh.Messaging
+namespace Mrh.Messaging.Common
 {
     public enum MessageType
     {

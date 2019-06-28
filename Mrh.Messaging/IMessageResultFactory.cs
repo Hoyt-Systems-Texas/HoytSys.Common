@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mrh.Messaging.Common;
 using NLog.MessageTemplates;
 
 namespace Mrh.Messaging

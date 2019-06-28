@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Mrh.Concurrent;
 using Mrh.Core;
+using Mrh.Messaging.Common;
 using NLog;
 
 namespace Mrh.Messaging

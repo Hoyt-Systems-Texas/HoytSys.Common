@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mrh.Messaging.Common;
 using NUnit.Framework;
 
 namespace Mrh.Messaging.Json.Test

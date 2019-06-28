@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using Mrh.Messaging.Common;
 
 namespace Mrh.Messaging.NetMq
 {

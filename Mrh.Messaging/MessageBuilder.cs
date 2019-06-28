@@ -1,5 +1,6 @@
 using System;
 using Mrh.Concurrent;
+using Mrh.Messaging.Common;
 
 namespace Mrh.Messaging
 {

@@ -1,4 +1,5 @@
 using System;
+using Mrh.Messaging.Common;
 using NUnit.Framework;
 
 namespace Mrh.Messaging.NetMq.Test
