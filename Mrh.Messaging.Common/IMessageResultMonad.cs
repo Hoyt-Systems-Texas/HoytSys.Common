@@ -11,6 +11,6 @@ namespace Mrh.Messaging.Common
         /// </summary>
         /// <param name="message">The resulting message.</param>
         /// <returns>The result monad with the value.</returns>
-        Task<IResultMonad<T>> To<T>(Message<TPayloadType, TBody> message);
+        IResultMonad<T> To<T>(Message<TPayloadType, TBody> message);
     }
 }

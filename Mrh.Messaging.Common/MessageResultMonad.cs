@@ -23,30 +23,28 @@ namespace Mrh.Messaging.Common
         /// <param name="message">The message to convert.</param>
         /// <typeparam name="T">The type of the body.</typeparam>
         /// <returns>The result monad.</returns>
-        public Task<IResultMonad<T>> To<T>(Message<TPayloadType, TBody> message)
+        public IResultMonad<T> To<T>(Message<TPayloadType, TBody> message)
         {
             switch (message.MessageResultType)
             {
                 case MessageResultType.Busy:
-                    return Task.FromResult((IResultMonad<T>) new ResultMonadBusy<T>());
+                    return new ResultMonadBusy<T>();
                 
                 case MessageResultType.Error:
-                    return Task.FromResult((IResultMonad<T>) new ResultError<T>(this.bodyEncoder.Decode<List<string>>(message.Body)));
+                    return new ResultError<T>(this.bodyEncoder.Decode<List<string>>(message.Body));
                     
                 case MessageResultType.Success:
-                    return Task.FromResult(
-                        (IResultMonad<T>) new ResultSuccess<T>(this.bodyEncoder.Decode<T>(message.Body)));
+                    return new ResultSuccess<T>(this.bodyEncoder.Decode<T>(message.Body));
                 
                 case MessageResultType.AccessDenied:
-                    return Task.FromResult(
-                        (IResultMonad<T>) new ResultAccessDenied<T>(
-                            this.bodyEncoder.Decode<List<string>>(message.Body)));
+                    return new ResultAccessDenied<T>(
+                            this.bodyEncoder.Decode<List<string>>(message.Body));
                 
                 default:
-                    return Task.FromResult((IResultMonad<T>) new ResultError<T>(new List<string>
+                    return new ResultError<T>(new List<string>
                     {
                         $"Unknown result type of {message.MessageResultType}"
-                    }));
+                    });
             }
         }
     }
