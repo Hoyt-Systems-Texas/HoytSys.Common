@@ -110,5 +110,6 @@ namespace Mrh.Monad
             }
             throw new UnknownTypeException(monad.GetType(), $"Unable to determine how to bind the monad {monad.GetType()}.");
         }
+        
     }
 }
