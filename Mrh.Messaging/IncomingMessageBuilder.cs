@@ -7,6 +7,7 @@ namespace Mrh.Messaging
     {
         private readonly ConcurrentDictionary<MessageIdentifier, MessageBuilder<TPayloadType, TBody>> pendingMessages =
             new ConcurrentDictionary<MessageIdentifier, MessageBuilder<TPayloadType, TBody>>(10, 1000);
+
         private readonly IBodyReconstructorFactory<TBody> bodyReconstructorFactory;
 
         public IncomingMessageBuilder(
@@ -30,6 +31,10 @@ namespace Mrh.Messaging
                     MessageIdentifier = identifier,
                     MessageType = envelope.MessageType,
                     PayloadType = envelope.PayloadType,
+                    UserId = envelope.UserId,
+                    MessageResultType = envelope.MessageResultType,
+                    ToConnectionId = envelope.ToConnectionId,
+                    RequestId = envelope.RequestId
                 };
                 return true;
             }
@@ -48,11 +53,15 @@ namespace Mrh.Messaging
                         MessageIdentifier = messageBuilder.MessageIdentifier,
                         MessageType = messageBuilder.MessageType,
                         PayloadType = messageBuilder.PayloadType,
-                        UserId = messageBuilder.UserId
+                        UserId = messageBuilder.UserId,
+                        MessageResultType = envelope.MessageResultType,
+                        ToConnectionId = envelope.ToConnectionId,
+                        RequestId = envelope.RequestId
                     };
                     this.pendingMessages.TryRemove(identifier, out messageBuilder);
                     return true;
                 }
+
                 message = null;
                 return false;
             }

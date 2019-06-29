@@ -27,6 +27,8 @@ namespace NetMqClientTest
                     PayloadType.SendTest,
                     "Hi",
                     Guid.NewGuid());
+                result.Wait();
+                Console.WriteLine($"The result was {result.Result.MessageResultType}");
             }
             catch (Exception ex)
             {
