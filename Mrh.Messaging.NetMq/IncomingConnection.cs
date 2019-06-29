@@ -28,14 +28,18 @@ namespace Mrh.Messaging.NetMq
         private readonly string connectionString;
         private PullSocket pullSocket;
         private readonly IEncoder<TPayloadType, TBody> encoder;
-        private readonly IncomingMessageProcessor<TPayloadType, TBody, TMsgCtx> incomingMessageProcessor;
+        private readonly IIncomingMessageHandler<TPayloadType, TBody> incomingMessageProcessor;
+        private Thread thread;
+        private readonly int maxFrameSize;
 
         public IncomingConnection(
             INetMqConfig netMqConfig,
+            IMessageSetting messageSetting,
             IIncomingMessageBuilder<TPayloadType, TBody> incomingMessageBuilder,
-            IncomingMessageProcessor<TPayloadType, TBody, TMsgCtx> incomingMessageProcessor,
+            IIncomingMessageHandler<TPayloadType, TBody> incomingMessageProcessor,
             IEncoder<TPayloadType, TBody> encoder)
         {
+            this.maxFrameSize = messageSetting.MaxFrameSize;
             this.connectionString = netMqConfig.IncomingConnection;
             this.incomingMessageBuilder = incomingMessageBuilder;
             this.encoder = encoder;
@@ -47,9 +51,12 @@ namespace Mrh.Messaging.NetMq
             if (Interlocked.CompareExchange(
                     ref this.currentState,
                     STARTING,
-                    STOPPED) == STARTING)
+                    STOPPED) == STOPPED)
             {
-                this.Main();
+                this.thread = new Thread(this.Main);
+                this.thread.IsBackground = true;
+                this.thread.Name = "Incoming connection processor.";
+                this.thread.Start();
             }
         }
 
@@ -64,9 +71,11 @@ namespace Mrh.Messaging.NetMq
         private void Main()
         {
             Volatile.Write(ref this.currentState, RUNNING);
+            log.Info("Incoming Connection Started...");
             using (this.pullSocket = new PullSocket(this.connectionString))
             {
                 Msg msg = new Msg();
+                msg.InitPool(this.maxFrameSize);
                 while (Volatile.Read(ref this.currentState) == RUNNING)
                 {
                     try
@@ -93,7 +102,7 @@ namespace Mrh.Messaging.NetMq
                     }
                 }
             }
-
+            log.Info("Incoming connection stopped.");
             Volatile.Write(ref this.currentState, STOPPED);
         }
     }

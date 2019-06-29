@@ -49,5 +49,7 @@ namespace Mrh.Messaging
         /// </summary>
         public TBodyType Body { get; set; }
         
+        public Guid ToConnectionId { get; set; }
+        
     }
 }

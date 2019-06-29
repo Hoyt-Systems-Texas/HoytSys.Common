@@ -9,11 +9,18 @@ namespace Mrh.Messaging.Json.Test
     public class JsonEnvelopeFactoryTest
     {
 
+        public class MessagingSetting : IMessageSetting
+        {
+            public short ServerId { get; set; }
+            public int ShiftNumber { get; set;  }
+            public int MaxFrameSize { get; set;  }
+        }
+
         [Test]
         public void OneSplit()
         {
             var envelope = new JsonEnvelopeFactory<PayloadType>(
-                new JsonSettingsTest
+                new MessagingSetting
                 {
                     MaxFrameSize = 100
                 });
@@ -41,7 +48,7 @@ namespace Mrh.Messaging.Json.Test
         public void ThreeSplit()
         {
             var envelope = new JsonEnvelopeFactory<PayloadType>(
-                new JsonSettingsTest
+                new MessagingSetting
                 {
                     MaxFrameSize = 4
                 });
@@ -69,7 +76,7 @@ namespace Mrh.Messaging.Json.Test
         public void ThreeSplitNotEven()
         {
             var envelope = new JsonEnvelopeFactory<PayloadType>(
-                new JsonSettingsTest
+                new MessagingSetting
                 {
                     MaxFrameSize = 4
                 });

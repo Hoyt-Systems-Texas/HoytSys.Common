@@ -30,14 +30,17 @@ namespace Mrh.Messaging.NetMq
         private readonly IEnvelopFactory<TPayloadType, TBody> envelopFactory;
         private readonly MpmcRingBuffer<IMessageSend> buffer = new MpmcRingBuffer<IMessageSend>(0x1000);
         private readonly IEncoder<TPayloadType, TBody> encoder;
+        private readonly int maxFrameSize;
 
         public OutgoingConnection(
             INetMqConfig netMqConfig,
             IEnvelopFactory<TPayloadType, TBody> envelopFactory,
+            IMessageSetting messageSetting,
             IEncoder<TPayloadType, TBody> encoder)
         {
             this.connectionString = netMqConfig.OutgoingConnection;
             this.envelopFactory = envelopFactory;
+            this.maxFrameSize = messageSetting.MaxFrameSize;
             this.encoder = encoder;
         }
 
@@ -75,6 +78,7 @@ namespace Mrh.Messaging.NetMq
                 Volatile.Write(ref this.currentState, RUNNING);
                 var spin = new SpinWait();
                 var msg = new Msg();
+                msg.InitPool(this.maxFrameSize);
                 while (Volatile.Read(ref this.currentState) == RUNNING)
                 {
                     try
@@ -135,6 +139,8 @@ namespace Mrh.Messaging.NetMq
                     this.message,
                     (envelope) =>
                     {
+                        var array = msg.Data;
+                        encoder.Encode(envelope, ref array);
                         if (!pushSocket.TrySend(ref msg, timeOut, false))
                         {
                             log.Error($"Failed to send a message.");

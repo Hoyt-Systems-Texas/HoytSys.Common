@@ -61,6 +61,7 @@ namespace Mrh.Messaging.NetMq.Client
             };
             var pendingNode = new PendingRequestNode();
             this.pendingRequestNodes[identifier] = pendingNode;
+            this.outgoingConnection.Send(msg);
             return pendingNode.task.Task;
         }
 

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NLog" Version="4.6.5" />
+      <PackageReference Include="Unity" Version="5.11.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Mrh.Messaging.Client\Mrh.Messaging.Client.csproj" />
+      <ProjectReference Include="..\Mrh.Messaging.Common\Mrh.Messaging.Common.csproj" />
+      <ProjectReference Include="..\Mrh.Messaging.Json\Mrh.Messaging.Json.csproj" />
+      <ProjectReference Include="..\Mrh.Messaging.NetMq.Client\Mrh.Messaging.NetMq.Client.csproj" />
+      <ProjectReference Include="..\Mrh.Messaging\Mrh.Messaging.csproj" />
+      <ProjectReference Include="..\NetMqTestCommon\NetMqTestCommon.csproj" />
+    </ItemGroup>
+
+</Project>

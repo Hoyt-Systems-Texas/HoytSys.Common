@@ -22,7 +22,7 @@ namespace Mrh.Messaging
             var identifier = new MessageIdentifier(
                 envelope.ConnectionId,
                 envelope.CorrelationId);
-            if (envelope.Total <= 0)
+            if (envelope.Total <= 1)
             {
                 message = new Message<TPayloadType, TBody>()
                 {

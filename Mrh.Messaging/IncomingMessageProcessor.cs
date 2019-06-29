@@ -14,7 +14,8 @@ namespace Mrh.Messaging
     /// </summary>
     /// <typeparam name="TPayloadType">The payload type.</typeparam>
     /// <typeparam name="TBody">The body type.</typeparam>
-    public class IncomingMessageProcessor<TPayloadType, TBody, TMsgCtx> : IIncomingMessageHandler<TPayloadType, TBody> where TPayloadType : struct
+    public class IncomingMessageProcessor<TPayloadType, TBody, TMsgCtx> : IIncomingMessageHandler<TPayloadType, TBody>
+        where TPayloadType : struct
         where TMsgCtx : MessageCtx<TPayloadType, TBody>, new()
     {
         private static ILogger log = LogManager.GetCurrentClassLogger();
@@ -61,8 +62,11 @@ namespace Mrh.Messaging
         {
             if (Interlocked.CompareExchange(ref this.currentState, STARTING, STOPPED) == STOPPED)
             {
-                this.processingThread = new Thread(this.Main);
-                this.processingThread.Name = "IncomingMessageProcessor";
+                this.processingThread = new Thread(this.Main)
+                {
+                    Name = "IncomingMessageProcessor",
+                    IsBackground = true
+                };
                 this.processingThread.Start();
             }
         }
@@ -95,11 +99,12 @@ namespace Mrh.Messaging
         private void Main()
         {
             Volatile.Write(ref this.currentState, RUNNING);
-            while (Volatile.Read(ref this.currentState) == STOPPED)
+            var spin = new SpinWait();
+            while (Volatile.Read(ref this.currentState) == RUNNING)
             {
                 try
                 {
-                    if (this.buffer.TryPoll(out Message<TPayloadType, TBody> msg))
+                    if (this.buffer.TryPeek(out Message<TPayloadType, TBody> msg))
                     {
                         if (this.semaphore.AcquireFailFast())
                         {
@@ -177,7 +182,8 @@ namespace Mrh.Messaging
                                             // TODO send back a status or see if there is an result.
                                             if (ctx.CurrentState == MessageState.Completed)
                                             {
-                                                var result = await this.messageStore.TryGetResult(ctx.MessageIdentifier);
+                                                var result =
+                                                    await this.messageStore.TryGetResult(ctx.MessageIdentifier);
                                                 if (result.Item1)
                                                 {
                                                     var responseMsg = this.CreateReplyMsg(
@@ -214,6 +220,10 @@ namespace Mrh.Messaging
                                 this.semaphore.Release();
                             }
                         }
+                    }
+                    else
+                    {
+                        spin.SpinOnce();
                     }
                 }
                 catch (Exception ex)

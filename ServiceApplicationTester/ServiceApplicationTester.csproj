@@ -20,6 +20,7 @@
       <ProjectReference Include="..\Mrh.Messaging.NetMq\Mrh.Messaging.NetMq.csproj" />
       <ProjectReference Include="..\Mrh.Messaging\Mrh.Messaging.csproj" />
       <ProjectReference Include="..\Mrh.Monad\Mrh.Monad.csproj" />
+      <ProjectReference Include="..\NetMqTestCommon\NetMqTestCommon.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -18,7 +18,8 @@ namespace Mrh.Messaging.NetMq
         private const int LENGTH = 60;
         private const int PAYLOAD_TYPE = 64;
         private const int REQUEST_ID = 68;
-        private const int BODY = 80;
+        private const int TO_CONNECTION = 76;
+        private const int BODY = 96;
         private const int GUID_LENGTH = 16;
         private const int INT_LENGTH = 4;
         private const int LONG_LENGTH = 8;
@@ -48,6 +49,7 @@ namespace Mrh.Messaging.NetMq
                 var length = BitConverter.ToInt32(frame, LENGTH);
                 var payloadType = this.payloadTypeEncoder.Decode(this.CreateInt(ref frame, PAYLOAD_TYPE));
                 var requestId = BitConverter.ToInt64(frame, REQUEST_ID);
+                var toConnectionId = new Guid(new ReadOnlySpan<byte>(frame, TO_CONNECTION, GUID_LENGTH));
                 string body = null;
                 if (length > 0
                     && frame.Length >= length + MessageSettings.HEADER_SIZE)
@@ -71,7 +73,8 @@ namespace Mrh.Messaging.NetMq
                     UserId = userId,
                     TotalBodyLength = bodyLength,
                     MessageResultType = messageResult,
-                    RequestId = requestId
+                    RequestId = requestId,
+                    ToConnectionId = toConnectionId
                 };
                 return true;
             }

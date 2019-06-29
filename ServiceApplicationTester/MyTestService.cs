@@ -5,6 +5,7 @@ using Mrh.Core;
 using Mrh.Messaging;
 using Mrh.Messaging.Json;
 using Mrh.Messaging.NetMq;
+using NetMqTestCommon;
 using NLog;
 using Topshelf;
 using Unity;

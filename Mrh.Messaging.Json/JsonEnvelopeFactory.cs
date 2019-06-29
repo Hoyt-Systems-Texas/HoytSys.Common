@@ -11,9 +11,9 @@ namespace Mrh.Messaging.Json
         private readonly int maxFrameSize;
 
         public JsonEnvelopeFactory(
-            IJsonSetting jsonSetting)
+            IMessageSetting messageSetting)
         {
-            this.maxFrameSize = jsonSetting.MaxFrameSize;
+            this.maxFrameSize = messageSetting.MaxFrameSize;
         }
 
         public int CreateEnvelops(Message<TPayloadType, string> message,
@@ -26,13 +26,14 @@ namespace Mrh.Messaging.Json
                     Body = message.Body,
                     Number = 0,
                     Total = 1,
-                    ConnectionId = message.ToConnectionId,
+                    ConnectionId = message.MessageIdentifier.ConnectionId,
                     CorrelationId = message.MessageIdentifier.CorrelationId,
                     MessageType = message.MessageType,
                     PayloadType = message.PayloadType,
                     UserId = message.UserId,
                     MessageResultType = message.MessageResultType,
-                    TotalBodyLength = message.Body.Length
+                    TotalBodyLength = message.Body.Length,
+                    ToConnectionId = message.ToConnectionId
                 });
                 return 1;
             }

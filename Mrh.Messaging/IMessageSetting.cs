@@ -5,5 +5,7 @@ namespace Mrh.Messaging
         short ServerId { get; }
         
         int ShiftNumber { get; }
+        
+        int MaxFrameSize { get; }
     }
 }
