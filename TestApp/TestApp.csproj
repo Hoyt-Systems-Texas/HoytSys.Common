@@ -19,8 +19,12 @@
     <ItemGroup>
       <ProjectReference Include="..\Mrh.Concurrent\Mrh.Concurrent.csproj" />
       <ProjectReference Include="..\Mrh.Core\Mrh.Core.csproj" />
+      <ProjectReference Include="..\Mrh.Messaging.Client\Mrh.Messaging.Client.csproj" />
       <ProjectReference Include="..\Mrh.Messaging.Json\Mrh.Messaging.Json.csproj" />
+      <ProjectReference Include="..\Mrh.Messaging.NetMq.Client\Mrh.Messaging.NetMq.Client.csproj" />
+      <ProjectReference Include="..\Mrh.Messaging.NetMq\Mrh.Messaging.NetMq.csproj" />
       <ProjectReference Include="..\Mrh.Messaging\Mrh.Messaging.csproj" />
+      <ProjectReference Include="..\NetMqTestCommon\NetMqTestCommon.csproj" />
     </ItemGroup>
 
 </Project>

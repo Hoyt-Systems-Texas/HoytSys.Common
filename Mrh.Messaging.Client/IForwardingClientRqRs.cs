@@ -8,7 +8,7 @@ namespace Mrh.Messaging.Client
     /// </summary>
     /// <typeparam name="TPayloadType">The type for the payload.</typeparam>
     /// <typeparam name="TBody">The type for the body.</typeparam>
-    public interface IForwardingClient<TPayloadType, TBody> where TPayloadType: struct
+    public interface IForwardingClientRqRs<TPayloadType, TBody> where TPayloadType: struct
     {
         void Connect();
 

@@ -35,10 +35,19 @@ namespace Mrh.Messaging
         /// </summary>
         public MessageResultType MessageResultType { get; set; }
 
+        /// <summary>
+        ///     The body of the message.
+        /// </summary>
         public TBody Body { get; set; }
 
+        /// <summary>
+        ///     The type of the payload.
+        /// </summary>
         public TPayloadType PayloadType { get; set; }
 
+        /// <summary>
+        ///     The id of the user sending the message.  DO NOT store on an untrusted connection.
+        /// </summary>
         public Guid UserId { get; set; }
     }
 

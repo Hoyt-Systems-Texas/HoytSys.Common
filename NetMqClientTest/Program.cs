@@ -16,14 +16,14 @@ namespace NetMqClientTest
     {
         private static readonly ILogger log = LogManager.GetCurrentClassLogger();
         private static UnityContainer unityContainer = new UnityContainer();
-        private static NetMqForwardingClient<PayloadType, string> forwardingClient;
+        private static NetMqForwardingClientRqRs<PayloadType, string> forwardingClientRqRs;
 
         static void Main(string[] args)
         {
             try
             {
                 SetupUnity();
-                var result = forwardingClient.Send(
+                var result = forwardingClientRqRs.Send(
                     PayloadType.SendTest,
                     "Hi",
                     Guid.NewGuid());
@@ -63,7 +63,7 @@ namespace NetMqClientTest
                     IIncomingMessageBuilder<PayloadType, string>,
                     IncomingMessageBuilder<PayloadType, string>>()
                 .RegisterSingleton<
-                    NetMqForwardingClient<PayloadType, string>>()
+                    NetMqForwardingClientRqRs<PayloadType, string>>()
                 .RegisterSingleton<
                     IncomingConnection<PayloadType, string, MessageCtx<PayloadType, string>>>()
                 .RegisterSingleton<
@@ -82,10 +82,10 @@ namespace NetMqClientTest
                     IPayloadTypeEncoder<PayloadType, string>,
                     PayloadTypeEncoder>()
                 ;
-            forwardingClient = unityContainer.Resolve<NetMqForwardingClient<PayloadType, string>>();
+            forwardingClientRqRs = unityContainer.Resolve<NetMqForwardingClientRqRs<PayloadType, string>>();
             unityContainer.RegisterInstance<
-                    IIncomingMessageHandler<PayloadType, string>>(forwardingClient)
-                .RegisterInstance<IForwardingClient<PayloadType, string>>(forwardingClient);
+                    IIncomingMessageHandler<PayloadType, string>>(forwardingClientRqRs)
+                .RegisterInstance<IForwardingClientRqRs<PayloadType, string>>(forwardingClientRqRs);
 
 
             var outgoingConnection = unityContainer.Resolve<IOutgoingConnection<PayloadType, string>>();

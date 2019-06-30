@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mrh.Messaging;
+using Mrh.Messaging.Json;
+using Mrh.Messaging.NetMq;
+using ServiceApplicationTester;
 using TestApp.Hubs;
 
 namespace TestApp
@@ -35,7 +38,15 @@ namespace TestApp
 
             services.AddSignalR();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddSingleton<IConnectionIdGenerator>(new ConnectionIdGenerator());
+            services.AddSingleton<IConnectionIdGenerator>(new ConnectionIdGenerator())
+                .AddSingleton<IBodyReconstructorFactory<string>,
+                    JsonBodyReconstructorFactory>()
+                .AddSingleton<
+                    IEnvelopFactory<PayloadType, string>,
+                    JsonEnvelopeFactory<PayloadType>>()
+                .AddSingleton<
+                    IEncoder<PayloadType, string>,
+                    StringBodyEncoder<PayloadType>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

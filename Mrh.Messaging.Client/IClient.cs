@@ -4,6 +4,11 @@ using Mrh.Monad;
 
 namespace Mrh.Messaging.Client
 {
+    /// <summary>
+    ///     A client to use for C#.
+    /// </summary>
+    /// <typeparam name="TPayloadType">The type for the payload.</typeparam>
+    /// <typeparam name="TBody">The body of the request.</typeparam>
     public interface IClient<TPayloadType, TBody> where TPayloadType: struct
     {
         void Connect();

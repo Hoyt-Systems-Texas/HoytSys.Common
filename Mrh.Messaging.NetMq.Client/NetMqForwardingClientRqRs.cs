@@ -16,7 +16,7 @@ namespace Mrh.Messaging.NetMq.Client
     /// </summary>
     /// <typeparam name="TPayloadType"></typeparam>
     /// <typeparam name="TBody"></typeparam>
-    public class NetMqForwardingClient<TPayloadType, TBody> : IForwardingClient<TPayloadType, TBody>,
+    public class NetMqForwardingClientRqRs<TPayloadType, TBody> : IForwardingClientRqRs<TPayloadType, TBody>,
         IIncomingMessageHandler<TPayloadType, TBody> where TPayloadType : struct
     {
         private static readonly ILogger log = LogManager.GetCurrentClassLogger();
@@ -28,7 +28,7 @@ namespace Mrh.Messaging.NetMq.Client
         private readonly ConcurrentDictionary<MessageIdentifier, PendingRequestNode> pendingRequestNodes =
             new ConcurrentDictionary<MessageIdentifier, PendingRequestNode>(4, 1000);
 
-        public NetMqForwardingClient(
+        public NetMqForwardingClientRqRs(
             IBodyEncoder<TBody> encoder,
             IOutgoingConnection<TPayloadType, TBody> outgoingConnection,
             IConnectionIdGenerator connectionIdGenerator)
