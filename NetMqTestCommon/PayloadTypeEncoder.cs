@@ -1,5 +1,6 @@
 using System;
 using Mrh.Messaging;
+using Mrh.Messaging.Common;
 using Mrh.Messaging.NetMq;
 
 namespace ServiceApplicationTester

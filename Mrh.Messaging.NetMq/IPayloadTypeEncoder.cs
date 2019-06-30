@@ -1,4 +1,5 @@
 using System;
+using Mrh.Messaging.Common;
 
 namespace Mrh.Messaging.NetMq
 {

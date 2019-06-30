@@ -1,7 +1,6 @@
 using System;
-using Mrh.Messaging.Common;
 
-namespace Mrh.Messaging
+namespace Mrh.Messaging.Common
 {
     public class MessageEnvelope<TPayloadType, TBodyType> where TPayloadType:struct
     {

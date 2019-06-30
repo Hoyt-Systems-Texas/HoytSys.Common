@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.Threading;
 using Mrh.Core;
+using Mrh.Messaging.Common;
 using NetMQ;
 using NetMQ.Sockets;
 using NLog;

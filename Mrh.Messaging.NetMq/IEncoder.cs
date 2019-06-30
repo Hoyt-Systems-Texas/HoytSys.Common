@@ -1,3 +1,5 @@
+using Mrh.Messaging.Common;
+
 namespace Mrh.Messaging.NetMq
 {
     public interface IEncoder<TPayloadType, TBody> where TPayloadType:struct
