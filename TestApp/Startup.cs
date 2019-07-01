@@ -10,8 +10,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mrh.Messaging;
+using Mrh.Messaging.Client;
+using Mrh.Messaging.Common;
 using Mrh.Messaging.Json;
 using Mrh.Messaging.NetMq;
+using Mrh.Messaging.NetMq.Client;
+using NetMqTestCommon;
 using ServiceApplicationTester;
 using TestApp.Hubs;
 
@@ -38,7 +42,9 @@ namespace TestApp
 
             services.AddSignalR();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddSingleton<IConnectionIdGenerator>(new ConnectionIdGenerator())
+            services.AddSingleton<
+                    IConnectionIdGenerator>(
+                    new ConnectionIdGenerator())
                 .AddSingleton<IBodyReconstructorFactory<string>,
                     JsonBodyReconstructorFactory>()
                 .AddSingleton<
@@ -46,7 +52,29 @@ namespace TestApp
                     JsonEnvelopeFactory<PayloadType>>()
                 .AddSingleton<
                     IEncoder<PayloadType, string>,
-                    StringBodyEncoder<PayloadType>>();
+                    StringBodyEncoder<PayloadType>>()
+                .AddSingleton<
+                    IJsonSetting,
+                    JsonSettings>()
+                .AddSingleton<
+                    IForwardingClient<PayloadType, string>,
+                    NetMqForwardingClient<PayloadType, string>>()
+                .AddSingleton<
+                    IEncoder<PayloadType, string>,
+                    StringBodyEncoder<PayloadType>>()
+                .AddSingleton<
+                    INetMqConfig,
+                    NetMqConfig>()
+                .AddSingleton<
+                    IBodyEncoder<string>,
+                    JsonBodyEncoder>()
+                .AddSingleton<
+                    IMessageSetting,
+                    MessagingSetting>()
+                .AddSingleton<
+                    IPayloadTypeEncoder<PayloadType, string>,
+                    PayloadTypeEncoder>()
+                ;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

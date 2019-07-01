@@ -34,8 +34,8 @@ namespace Mrh.Messaging
         private readonly ConcurrentDictionary<Guid, UserConnectionNode> userConnections =
             new ConcurrentDictionary<Guid, UserConnectionNode>(10, 1000);
 
-        private readonly ConcurrentDictionary<string, ConnectionInfoNode> activeConnections =
-            new ConcurrentDictionary<string, ConnectionInfoNode>(10, 1000);
+        private readonly ConcurrentDictionary<Guid, ConnectionInfoNode> activeConnections =
+            new ConcurrentDictionary<Guid, ConnectionInfoNode>(10, 1000);
 
         private struct ConnectionNode
         {
@@ -60,7 +60,7 @@ namespace Mrh.Messaging
         /// </summary>
         /// <param name="connectionId">The id of the connection to add.</param>
         /// <param name="userId">The id of the user.</param>
-        public void AddOrUpdateConnection(string connectionId, Guid userId)
+        public void AddOrUpdateConnection(Guid connectionId, Guid userId)
         {
             ConnectionInfoNode node;
             if (this.activeConnections.TryGetValue(connectionId, out node))
@@ -89,14 +89,14 @@ namespace Mrh.Messaging
         /// </summary>
         /// <param name="userId">The id of the user to get the connections for.</param>
         /// <returns>The id of the user.</returns>
-        public IEnumerable<string> GetUsersConnections(Guid userId)
+        public IEnumerable<Guid> GetUsersConnections(Guid userId)
         {
             UserConnectionNode userNode;
             if (this.userConnections.TryGetValue(userId, out userNode))
             {
                 return userNode.ConnectionIds.Select(v => v.ConnectionId);
             }
-            return new string[0];
+            return new Guid[0];
         }
 
         /// <summary>
@@ -125,12 +125,12 @@ namespace Mrh.Messaging
         private class ConnectionInfoNode
         {
             public readonly Guid UserId;
-            public readonly string ConnectionId;
+            public readonly Guid ConnectionId;
             public readonly StopWatchThreadSafe LastSeen;
 
             public ConnectionInfoNode(
                 Guid userId,
-                string connectionId)
+                Guid connectionId)
             {
                 this.UserId = userId;
                 this.ConnectionId = connectionId;

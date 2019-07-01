@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using Mrh.Concurrent;
 
-namespace Mrh.Messaging
+namespace Mrh.Messaging.Common
 {
     /// <summary>
     ///     Used to collect the connection mapping.
@@ -14,8 +14,8 @@ namespace Mrh.Messaging
         private const int IDLE = 0;
         private const int CLEANING = 1;
 
-        private readonly ConcurrentDictionary<string, ConnectionNode> connectionIdToExternal =
-            new ConcurrentDictionary<string, ConnectionNode>(10, 1000);
+        private readonly ConcurrentDictionary<Guid, ConnectionNode> connectionIdToExternal =
+            new ConcurrentDictionary<Guid, ConnectionNode>(10, 1000);
 
         private readonly ConcurrentDictionary<TExternalConnection, ConnectionNode> externalToConnectionId =
             new ConcurrentDictionary<TExternalConnection, ConnectionNode>(10, 1000);
@@ -36,7 +36,7 @@ namespace Mrh.Messaging
         /// </summary>
         /// <param name="connectionId">The internal connection identifier.</param>
         /// <param name="externalConnection">The external connection identifier.</param>
-        public void AddOrUpdate(string connectionId, TExternalConnection externalConnection)
+        public void AddOrUpdate(Guid connectionId, TExternalConnection externalConnection)
         {
             if (this.lastCleaned.Elapsed() > this.cleanAfterMs)
             {
@@ -73,7 +73,7 @@ namespace Mrh.Messaging
         /// <param name="connectionId">The id of the connection to get the information for.</param>
         /// <param name="node">The node with the connection information.</param>
         /// <returns>true if we where able to find the connection.</returns>
-        public bool GetConnection(string connectionId, out ConnectionNode node)
+        public bool GetConnection(Guid connectionId, out ConnectionNode node)
         {
             return this.connectionIdToExternal.TryGetValue(connectionId, out node);
         }
@@ -115,12 +115,12 @@ namespace Mrh.Messaging
 
         public struct ConnectionNode
         {
-            public readonly string ConnectionId;
+            public readonly Guid ConnectionId;
             public readonly TExternalConnection ExternalConnection;
             public readonly StopWatchThreadSafe LastSeen;
 
             public ConnectionNode(
-                string connectionId,
+                Guid connectionId,
                 TExternalConnection externalConnection)
             {
                 this.ConnectionId = connectionId;

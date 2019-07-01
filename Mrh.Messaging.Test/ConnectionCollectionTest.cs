@@ -1,4 +1,5 @@
 using System;
+using Mrh.Messaging.Common;
 using NUnit.Framework;
 
 namespace Mrh.Messaging.Test
@@ -12,17 +13,19 @@ namespace Mrh.Messaging.Test
             var connectionCollection = new ConnectionCollection<Guid>(
                 new TimeSpan(0, 10, 0));
             var conn1 = Guid.NewGuid();
+            var int1 = Guid.NewGuid();
             var conn2 = Guid.NewGuid();
+            var int2 = Guid.NewGuid();
             connectionCollection.AddOrUpdate(
-                "test1",
+                int1,
                 conn1);
             connectionCollection.AddOrUpdate(
-                "test2",
+                int2,
                 conn2);
 
             ConnectionCollection<Guid>.ConnectionNode node;
             Assert.IsTrue(connectionCollection.GetConnection(
-                "test1", out node));
+                int1, out node));
             Assert.AreEqual(conn1, node.ExternalConnection);
         }
     }
