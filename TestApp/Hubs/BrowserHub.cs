@@ -1,4 +1,6 @@
 using System;
+using System.Threading.Tasks;
+using A19.Security.User;
 using Microsoft.AspNetCore.SignalR;
 using Mrh.Messaging;
 using Mrh.Messaging.Client;
@@ -9,19 +11,24 @@ namespace TestApp.Hubs
 {
     public class BrowserHub : Hub<BrowserHub.IBrowserClient>
     {
-
         private readonly IForwardingClient<PayloadType, string> forwardingClient;
         private readonly IConnectionIdGenerator connectionIdGenerator;
-        private readonly ConnectionCollection<string> connections = new ConnectionCollection<string>(new TimeSpan(0, 1, 0));
-        
+
+        private readonly ConnectionCollection<string> connections =
+            new ConnectionCollection<string>(new TimeSpan(0, 1, 0));
+
+        private readonly IUserService userService;
+
         public BrowserHub(
             IForwardingClient<PayloadType, string> forwardingClient,
-            IConnectionIdGenerator connectionIdGenerator)
+            IConnectionIdGenerator connectionIdGenerator,
+            IUserService userService)
         {
             this.forwardingClient = forwardingClient;
             this.connectionIdGenerator = connectionIdGenerator;
             this.forwardingClient.Start();
-            
+            this.userService = userService;
+
             this.SetupForwarding();
         }
 
@@ -77,8 +84,8 @@ namespace TestApp.Hubs
             this.forwardingClient.Send(
                 new MessageEnvelope<PayloadType, string>
                 {
-                    RequestId =  requestId,
-                    ConnectionId =  connectionId,
+                    RequestId = requestId,
+                    ConnectionId = connectionId,
                     CorrelationId = correlationId,
                     Number = number,
                     Total = total,
@@ -91,15 +98,35 @@ namespace TestApp.Hubs
                 });
         }
 
-        public void Auth(
+        /// <summary>
+        ///     Used to authenticate a user.
+        /// </summary>
+        /// <param name="username">The username of the user.</param>
+        /// <param name="password">The password of the user.</param>
+        /// <returns>The task that performs the lookup.</returns>
+        public async Task Auth(
             string username,
             string password)
         {
-            var connectionId = this.connectionIdGenerator.Generate();
-            this.connections.AddOrUpdate(
-                connectionId,
-                Context.ConnectionId);
-            Clients.Caller.AuthResponse(connectionId);
+            var user = await this.userService.Login(
+                new UserLoginRq
+                {
+                    Username = username,
+                    Password = password
+                });
+
+            if (user.Success)
+            {
+                var connectionId = this.connectionIdGenerator.Generate();
+                this.connections.AddOrUpdate(
+                    connectionId,
+                    Context.ConnectionId);
+                Clients.Caller.AuthResponse(true, connectionId);
+            }
+            else
+            {
+                Clients.Caller.AuthResponse(false, Guid.Empty);
+            }
         }
 
         /// <summary>
@@ -142,6 +169,7 @@ namespace TestApp.Hubs
                 string body);
 
             void AuthResponse(
+                bool success,
                 Guid connectionId);
 
             void Pong();

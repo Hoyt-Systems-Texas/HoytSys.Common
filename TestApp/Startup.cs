@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using A19.Database.Repository.A19Test;
+using A19.Database.Repository.A19Test.User;
+using A19.Security.User;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,6 +21,7 @@ using Mrh.Messaging.NetMq.Client;
 using NetMqTestCommon;
 using ServiceApplicationTester;
 using TestApp.Hubs;
+using TestApp.User;
 
 namespace TestApp
 {
@@ -74,6 +78,14 @@ namespace TestApp
                 .AddSingleton<
                     IPayloadTypeEncoder<PayloadType, string>,
                     PayloadTypeEncoder>()
+                .AddSingleton<
+                    A19DatabaseConnection>()
+                .AddSingleton<
+                    IUserRepository,
+                    UserRepository>()
+                .AddSingleton<
+                    IUserService,
+                    UserService>()
                 ;
         }
 

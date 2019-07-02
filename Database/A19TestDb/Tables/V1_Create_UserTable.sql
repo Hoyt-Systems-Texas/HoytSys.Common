@@ -8,12 +8,13 @@ BEGIN
     )
     
     CREATE INDEX IX_UserApp_UserGuid ON dbo.UserApp (UserGuid) WITH(FILLFACTOR=90);
+    ALTER TABLE dbo.UserAppVersion ADD CONSTRAINT FK_UserAppVersion_UserApp FOREIGN KEY (UserAppId) REFERENCES dbo.UserApp
 END
 
 IF OBJECT_ID('UserAppVersion') IS NULL
 BEGIN 
     CREATE TABLE dbo.UserAppVersion (
-        UserAppVersion BIGINT NOT NULL CONSTRAINT PK_UserAppVersion PRIMARY KEY IDENTITY(1, 1),
+        UserAppVersionId BIGINT NOT NULL CONSTRAINT PK_UserAppVersion PRIMARY KEY IDENTITY(1, 1),
         UserAppId BIGINT NOT NULL,
         Username VARCHAR(50) NOT NULL,
         Password VARCHAR(100) NOT NULL,

@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Threading;
+using Microsoft.Extensions.Configuration;
 using Mrh.Concurrent;
 using Mrh.Core;
 using Mrh.Messaging;
@@ -32,7 +34,13 @@ namespace ServiceApplicationTester
         {
             try
             {
+            var configurationBuilder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appSettings.json");
+
                 this.container
+                    .RegisterInstance<
+                        IConfigurationRoot>(configurationBuilder.Build())
                     .RegisterSingleton<
                         IBodyReconstructorFactory<string>,
                         JsonBodyReconstructorFactory>()
