@@ -1,7 +1,7 @@
 import {MessageType} from './MessageType';
 import {MessageResultType} from './MessageResultType';
 
-export class Message<TPayloadType> {
+export class Message<TPayloadType, TBody> {
 
   constructor(
     public requestId: number,
@@ -9,7 +9,7 @@ export class Message<TPayloadType> {
     public correlationId: number,
     public messageType: MessageType,
     public messageResultType: MessageResultType,
-    public body: Body,
+    public body: TBody,
     public payloadType: TPayloadType,
     public userId: string) {
 

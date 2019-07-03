@@ -1,7 +1,12 @@
 import * as signalR from '@aspnet/signalr';
-import { Injectable } from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HubConnection} from '@aspnet/signalr';
+import {Subject} from 'rxjs';
+import {MessageType} from '../Api/Messaging/MessageType';
+import {PayloadType} from '../Api/Messaging/PayloadType';
+import {MessageResultType} from '../Api/Messaging/MessageResultType';
+import {IMessageEnvelope} from '../Api/Messaging/IMessageEnvelope';
 
 const HEARTBEAT_INTERVAL_MS = 5000;
 
@@ -23,6 +28,16 @@ export enum ConnectionEvent {
   MessageReceived = 6
 }
 
+class UserLoginRs {
+
+  constructor(
+    public success: boolean,
+    public connectionId: string
+  ) {
+
+  }
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,21 +50,40 @@ export class SignalrConnectionService {
   private heartbeatSent: Date;
   private heartbeatTotal = 0;
   private heartbeatTotalSent = 0;
+  private authResponseSubject = new Subject<UserLoginRs>();
+  private messageReceivedSubject = new Subject<IMessageEnvelope>();
+  private pongSubject = new Subject();
 
-  constructor() { }
+  constructor(
+    ngZone: NgZone
+  ) { }
 
   setupConnection() {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(environment.signalRConnection)
       .configureLogging(signalR.LogLevel.Information)
       .build();
+
+    this.hubConnection.start().catch(err => {
+      console.error(err);
+    });
+
+    this.hubConnection.on('authResponse', (success: boolean, connection: string) => {
+      this.authResponseSubject.next(new UserLoginRs(success, connection));
+    });
+    this.hubConnection.on('received', (envelope) => {
+      this.changeState(ConnectionEvent.MessageReceived, envelope);
+    });
+    this.hubConnection.on('pong', () => {
+      this.changeState(ConnectionEvent.PongReceived);
+    });
   }
 
   /**
    * Used to change the state.
    * @param evt The event.
    */
-  changeState(evt: ConnectionEvent) {
+  changeState(evt: ConnectionEvent, data?: IMessageEnvelope) {
 
     switch (evt) {
       case ConnectionEvent.ConnectEvt:
@@ -79,23 +113,31 @@ export class SignalrConnectionService {
 
       case ConnectionEvent.SendPing:
         if (this.currentState === ConnectionState.Connected) {
-
+          this.sendPing();
         }
         break;
 
       case ConnectionEvent.PongReceived:
         if (this.currentState === ConnectionState.Connected) {
           this.resetHeartbeatPing();
+          this.handlePong();
         }
         break;
 
       case ConnectionEvent.MessageReceived:
         if (this.currentState === ConnectionState.Connected) {
           this.resetHeartbeatPing();
+          if (data) {
+            this.handleReceived(data);
+          }
         }
         break;
 
     }
+  }
+
+  private handleReceived(envelope: IMessageEnvelope) {
+
   }
 
   private handleConnectionFailed() {
@@ -104,7 +146,7 @@ export class SignalrConnectionService {
   }
 
   private sendPing() {
-
+    this.hubConnection.send('ping');
   }
 
   private handlePong() {

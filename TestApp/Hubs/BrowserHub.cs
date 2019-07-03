@@ -39,17 +39,7 @@ namespace TestApp.Hubs
                 if (this.connections.GetConnection(env.ConnectionId, out var node))
                 {
                     Clients.Client(node.ExternalConnection).Received(
-                        env.RequestId,
-                        env.ConnectionId,
-                        env.CorrelationId,
-                        env.Number,
-                        env.Total,
-                        env.TotalBodyLength,
-                        env.MessageType,
-                        env.PayloadType,
-                        env.MessageResultType,
-                        env.ToConnectionId,
-                        env.Body);
+                        env);
                 }
             });
         }
@@ -57,45 +47,11 @@ namespace TestApp.Hubs
         /// <summary>
         ///     Used to forward connections to the backend.
         /// </summary>
-        /// <param name="requestId">The request id.</param>
-        /// <param name="connectionId">The id of the connection.</param>
-        /// <param name="correlationId"></param>
-        /// <param name="number">The fragment number.</param>
-        /// <param name="total">The total number of fragments.</param>
-        /// <param name="totalBodyLength">The total body length.</param>
-        /// <param name="messageType">The type of the message.</param>
-        /// <param name="payloadType">The payload type.</param>
-        /// <param name="messageResultType">The message result type.</param>
-        /// <param name="toConnectionId">Who to send the message to.</param>
-        /// <param name="body">The body of the message.</param>
         public void Send(
-            long requestId,
-            Guid connectionId,
-            int correlationId,
-            int number,
-            int total,
-            int totalBodyLength,
-            MessageType messageType,
-            PayloadType payloadType,
-            MessageResultType messageResultType,
-            Guid toConnectionId,
-            string body)
+            MessageEnvelope<PayloadType, string> envelope)
         {
             this.forwardingClient.Send(
-                new MessageEnvelope<PayloadType, string>
-                {
-                    RequestId = requestId,
-                    ConnectionId = connectionId,
-                    CorrelationId = correlationId,
-                    Number = number,
-                    Total = total,
-                    TotalBodyLength = totalBodyLength,
-                    MessageType = messageType,
-                    PayloadType = payloadType,
-                    MessageResultType = messageResultType,
-                    ToConnectionId = toConnectionId,
-                    Body = body
-                });
+                envelope);
         }
 
         /// <summary>
@@ -144,29 +100,8 @@ namespace TestApp.Hubs
             /// <summary>
             ///     The receive function on the client.
             /// </summary>
-            /// <param name="requestId"></param>
-            /// <param name="connectionId"></param>
-            /// <param name="correlationId"></param>
-            /// <param name="number"></param>
-            /// <param name="total"></param>
-            /// <param name="totalBodyLength"></param>
-            /// <param name="messageType"></param>
-            /// <param name="payloadType"></param>
-            /// <param name="messageResultType"></param>
-            /// <param name="toConnectionId"></param>
-            /// <param name="body"></param>
             void Received(
-                long requestId,
-                Guid connectionId,
-                int correlationId,
-                int number,
-                int total,
-                int totalBodyLength,
-                MessageType messageType,
-                PayloadType payloadType,
-                MessageResultType messageResultType,
-                Guid toConnectionId,
-                string body);
+                MessageEnvelope<PayloadType, string> envelope);
 
             void AuthResponse(
                 bool success,
