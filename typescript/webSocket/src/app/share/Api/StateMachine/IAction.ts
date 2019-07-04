@@ -1,10 +1,6 @@
 interface IAction<TState, TEvent, TCtx, TParam> {
 
   /**
-   * The states that can perform the action.
-   */
-  states(): TState[];
-  /**
    * Used to execute an action.
    *
    * @param evt The event to execute.

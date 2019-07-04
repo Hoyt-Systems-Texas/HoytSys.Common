@@ -3,29 +3,204 @@ import {Injectable, NgZone} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HubConnection} from '@aspnet/signalr';
 import {Subject} from 'rxjs';
-import {MessageType} from '../Api/Messaging/MessageType';
-import {PayloadType} from '../Api/Messaging/PayloadType';
-import {MessageResultType} from '../Api/Messaging/MessageResultType';
-import {IMessageEnvelope} from '../Api/Messaging/IMessageEnvelope';
+import {IMessageEnvelope, MessageEnvelope} from '../Api/Messaging/IMessageEnvelope';
+import {BasicState, doEvt, EventNode, goToState, IState} from '../Api/StateMachine/IState';
+import {BaseContext} from '../Api/StateMachine/BaseContext';
+import Timer = NodeJS.Timer;
+import {StateMachine} from '../Api/StateMachine/StateMachine';
 
 const HEARTBEAT_INTERVAL_MS = 5000;
+
+const RECONNECT_RETRY = 3000;
 
 export enum ConnectionState {
   NotConnected = 0,
   Connecting = 1,
   Connected = 2,
   ConnectionFailed = 3,
-
+  UserAuthenicate = 4
 }
 
 export enum ConnectionEvent {
   ConnectEvt = 0,
-  ConnectSuccessfulEvt = 1,
+  AuthSuccessful = 1,
   ConnectAttemptFailedEvt = 2,
   HeartbeatFailed = 3,
   SendPing = 4,
   PongReceived = 5,
-  MessageReceived = 6
+  MessageReceived = 6,
+  ReconnectTimeout = 7,
+  AuthenticationFailed = 8,
+  AuthenticateRequested = 9,
+  Reauthenticate = 10
+}
+
+type StateParam = MessageEnvelope | UserLoginRs;
+
+class ConnectionCtx extends BaseContext<ConnectionState, ConnectionEvent, StateParam> {
+
+  currentTimer: Timer;
+  lastReceivedDate: Date;
+  connectionRetryCount = 0;
+  hubConnection: HubConnection;
+  connectionId: string;
+
+  /**
+   * The subject for asking a user to authenticate.
+   */
+  userAuthRequest = new Subject();
+
+}
+
+class NotConnectedState extends BasicState<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
+
+  events(): EventNode<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam>[] {
+    return [
+      goToState(ConnectionEvent.ConnectEvt, ConnectionState.Connecting)
+    ];
+  }
+
+  state(): ConnectionState {
+    return ConnectionState.NotConnected;
+  }
+
+}
+
+class Connecting extends BasicState<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
+
+  entry(evt: ConnectionEvent, ctx: ConnectionCtx, param?: MessageEnvelope) {
+    ctx.hubConnection =  new signalR.HubConnectionBuilder()
+      .withUrl(environment.signalRConnection)
+      .configureLogging(signalR.LogLevel.Information)
+      .build();
+    ctx.hubConnection.start().catch(() => {
+      ctx.add(ConnectionEvent.ConnectAttemptFailedEvt, null);
+    }).then(() => {
+      ctx.hubConnection.on('authResponse', (success: boolean, connection: string) => {
+        if (success) {
+          ctx.connectionId = connection;
+          ctx.add(ConnectionEvent.AuthSuccessful, null);
+        } else {
+          ctx.add(ConnectionEvent.ConnectAttemptFailedEvt, param);
+        }
+      });
+      ctx.hubConnection.on('received', (envelope) => {
+        ctx.add(ConnectionEvent.MessageReceived, envelope);
+      });
+      ctx.hubConnection.on('pong', () => {
+        ctx.add(ConnectionEvent.PongReceived, null);
+      });
+    });
+  }
+
+  events(): EventNode<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam>[] {
+    return [
+      goToState(ConnectionEvent.AuthenticateRequested, ConnectionState.UserAuthenicate),
+      goToState(ConnectionEvent.ConnectAttemptFailedEvt, ConnectionState.ConnectionFailed),
+      doEvt(ConnectionEvent.SendPing, new SendPing()),
+      doEvt(ConnectionEvent.PongReceived, new PongReceived()),
+      goToState(ConnectionEvent.HeartbeatFailed, ConnectionState.Connecting)
+    ];
+  }
+
+  state(): ConnectionState {
+    return ConnectionState.Connecting;
+  }
+
+}
+
+class UserAuthenticate extends BasicState<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
+
+  entry(evt: ConnectionEvent, ctx: ConnectionCtx, param?: MessageEnvelope | UserLoginRs) {
+    ctx.userAuthRequest.next();
+  }
+
+  events(): EventNode<ConnectionState, ConnectionEvent, ConnectionCtx, MessageEnvelope | UserLoginRs>[] {
+    return [
+      goToState(ConnectionEvent.AuthSuccessful, ConnectionState.Connected),
+      goToState(ConnectionEvent.AuthenticationFailed, ConnectionState.UserAuthenicate)
+    ];
+  }
+
+  state(): ConnectionState {
+    return ConnectionState.UserAuthenicate;
+  }
+}
+
+class SendPing implements IAction<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
+
+  execute(evt: ConnectionEvent, ctx: ConnectionCtx, param?: StateParam) {
+    ctx.hubConnection.send('ping');
+  }
+}
+
+class UserConnecting implements IAction<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
+  execute(evt: ConnectionEvent, ctx: ConnectionCtx, param?: MessageEnvelope | UserLoginRs) {
+  }
+}
+
+class PongReceived implements IAction<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
+  execute(evt: ConnectionEvent, ctx: ConnectionCtx, param?: StateParam) {
+    ctx.lastReceivedDate = new Date();
+  }
+}
+
+class MessageReceived implements IAction<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
+
+  execute(evt: ConnectionEvent, ctx: ConnectionCtx, param?: MessageEnvelope) {
+  }
+}
+
+class Connected extends BasicState<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
+
+  events(): EventNode<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam>[] {
+    return [
+      goToState(ConnectionEvent.HeartbeatFailed, ConnectionState.ConnectionFailed),
+      goToState(ConnectionEvent.Reauthenticate, ConnectionState.UserAuthenicate),
+      doEvt(ConnectionEvent.SendPing, new SendPing()),
+      doEvt(ConnectionEvent.PongReceived, new PongReceived()),
+      doEvt(ConnectionEvent.MessageReceived, new MessageReceived())
+    ];
+  }
+
+  entry(evt: ConnectionEvent, ctx: ConnectionCtx, param?: MessageEnvelope | UserLoginRs) {
+    ctx.connectionRetryCount = 0;
+  }
+
+  state(): ConnectionState {
+    return ConnectionState.Connected;
+  }
+
+}
+
+class ConnectionFailed extends BasicState<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
+
+  entry(evt: ConnectionEvent, ctx: ConnectionCtx, param?: MessageEnvelope | UserLoginRs) {
+    if (ctx.currentTimer) {
+      clearTimeout(ctx.currentTimer);
+    }
+    ctx.connectionRetryCount++;
+    ctx.currentTimer = setTimeout(() => {
+      ctx.add(ConnectionEvent.ReconnectTimeout, null);
+    }, RECONNECT_RETRY);
+  }
+
+  exit(evt: ConnectionEvent, ctx: ConnectionCtx, param?: MessageEnvelope | UserLoginRs) {
+    if (ctx.currentTimer) {
+      clearTimeout(ctx.currentTimer);
+      ctx.currentTimer = null;
+    }
+  }
+
+  events(): EventNode<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam>[] {
+    return [
+      goToState(ConnectionEvent.ReconnectTimeout, ConnectionState.Connecting)
+    ];
+  }
+
+  state(): ConnectionState {
+    return ConnectionState.ConnectionFailed;
+  }
 }
 
 class UserLoginRs {
@@ -43,117 +218,36 @@ class UserLoginRs {
 })
 export class SignalrConnectionService {
 
-  private hubConnection: HubConnection;
-  private currentState: ConnectionState = ConnectionState.NotConnected;
-  private connectRetryCount = 0;
-  private lastReceivedDate: Date;
-  private heartbeatSent: Date;
-  private heartbeatTotal = 0;
-  private heartbeatTotalSent = 0;
-  private authResponseSubject = new Subject<UserLoginRs>();
-  private messageReceivedSubject = new Subject<IMessageEnvelope>();
-  private pongSubject = new Subject();
+  private readonly connectionStateMachine = new StateMachine();
+  private readonly connectionCtx = new ConnectionCtx();
 
   constructor(
     ngZone: NgZone
-  ) { }
-
-  setupConnection() {
-    this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(environment.signalRConnection)
-      .configureLogging(signalR.LogLevel.Information)
-      .build();
-
-    this.hubConnection.start().catch(err => {
-      console.error(err);
-    });
-
-    this.hubConnection.on('authResponse', (success: boolean, connection: string) => {
-      this.authResponseSubject.next(new UserLoginRs(success, connection));
-    });
-    this.hubConnection.on('received', (envelope) => {
-      this.changeState(ConnectionEvent.MessageReceived, envelope);
-    });
-    this.hubConnection.on('pong', () => {
-      this.changeState(ConnectionEvent.PongReceived);
-    });
+  ) {
+    this.connectionStateMachine
+      .addState(new NotConnectedState())
+      .addState(new Connecting())
+      .addState(new UserAuthenticate())
+      .addState(new Connected())
+      .addState(new ConnectionFailed())
+    ;
+    this.connectionCtx.currentState = ConnectionState.NotConnected;
   }
 
   /**
-   * Used to change the state.
-   * @param evt The event.
+   * Used to start the connection process.
    */
-  changeState(evt: ConnectionEvent, data?: IMessageEnvelope) {
-
-    switch (evt) {
-      case ConnectionEvent.ConnectEvt:
-        if (this.currentState === ConnectionState.NotConnected
-        || this.currentState === ConnectionState.ConnectionFailed) {
-        }
-        break;
-
-      case ConnectionEvent.ConnectSuccessfulEvt:
-        if (this.currentState === ConnectionState.Connecting) {
-          this.currentState = ConnectionState.Connected;
-          this.connectRetryCount = 0;
-        }
-        break;
-
-      case ConnectionEvent.ConnectAttemptFailedEvt:
-        if (this.currentState === ConnectionState.Connecting) {
-          this.handleConnectionFailed();
-        }
-        break;
-
-      case ConnectionEvent.HeartbeatFailed:
-        if (this.currentState === ConnectionState.Connected) {
-          this.handleConnectionFailed();
-        }
-        break;
-
-      case ConnectionEvent.SendPing:
-        if (this.currentState === ConnectionState.Connected) {
-          this.sendPing();
-        }
-        break;
-
-      case ConnectionEvent.PongReceived:
-        if (this.currentState === ConnectionState.Connected) {
-          this.resetHeartbeatPing();
-          this.handlePong();
-        }
-        break;
-
-      case ConnectionEvent.MessageReceived:
-        if (this.currentState === ConnectionState.Connected) {
-          this.resetHeartbeatPing();
-          if (data) {
-            this.handleReceived(data);
-          }
-        }
-        break;
-
-    }
+  start() {
+    this.connectionStateMachine.transition(
+      this.connectionCtx,
+      ConnectionEvent.ConnectEvt,
+      null);
   }
 
-  private handleReceived(envelope: IMessageEnvelope) {
-
-  }
-
-  private handleConnectionFailed() {
-    this.currentState = ConnectionState.ConnectionFailed;
-    // TODO start timer to reconnect
-  }
-
-  private sendPing() {
-    this.hubConnection.send('ping');
-  }
-
-  private handlePong() {
-    this.lastReceivedDate = new Date();
-  }
-
-  private resetHeartbeatPing() {
-
+  /**
+   * Used to get the observable that has to do with authentication.
+   */
+  authRequestedObservable() {
+    return this.connectionCtx.userAuthRequest.asObservable();
   }
 }

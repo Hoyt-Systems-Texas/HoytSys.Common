@@ -1,4 +1,6 @@
-export interface IState<TState, TEvent, TCtx, TParam> {
+import {BaseContext} from './BaseContext';
+
+export interface IState<TState, TEvent, TCtx extends BaseContext<TState, TEvent, TParam>, TParam> {
 
   state(): TState;
 
@@ -8,6 +10,23 @@ export interface IState<TState, TEvent, TCtx, TParam> {
 
   exit(evt: TEvent, ctx: TCtx, param?: TParam);
 }
+
+export abstract class BasicState<TState, TEvent, TCtx
+  extends BaseContext<TState, TEvent, TParam>, TParam>
+  implements IState<TState, TEvent, TCtx, TParam> {
+
+  entry(evt: TEvent, ctx: TCtx, param?: TParam) {
+  }
+
+  abstract events(): EventNode<TState, TEvent, TCtx, TParam>[];
+
+  exit(evt: TEvent, ctx: TCtx, param?: TParam) {
+  }
+
+  abstract state(): TState;
+
+}
+
 
 export enum EventAction {
   Do = 0,

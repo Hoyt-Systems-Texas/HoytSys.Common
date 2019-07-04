@@ -107,7 +107,13 @@ namespace TestApp
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseWebSockets();
-            app.UseCors();
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
 
             app.UseMvc(routes =>
             {
