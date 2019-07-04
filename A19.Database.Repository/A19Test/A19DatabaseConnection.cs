@@ -17,27 +17,30 @@ namespace A19.Database.Repository.A19Test
             this.databaseConnection = configuration.GetConnectionString("TestDb");
         }
         
-        public Task<T> Uncommitted<T>(Func<SqlConnection, SqlTransaction, Task<T>> func)
+        public async Task<T> Uncommitted<T>(Func<SqlConnection, SqlTransaction, Task<T>> func)
         {
             using (var sqlConn = new SqlConnection(this.databaseConnection))
             {
-                return sqlConn.Uncommitted(func);
+                await sqlConn.OpenAsync();
+                return await sqlConn.Uncommitted(func);
             }
         }
 
-        public Task<T> Committed<T>(Func<SqlConnection, SqlTransaction, Task<T>> func)
+        public async Task<T> Committed<T>(Func<SqlConnection, SqlTransaction, Task<T>> func)
         {
             using (var sqlConn = new SqlConnection(this.databaseConnection))
             {
-                return sqlConn.Committed(func);
+                await sqlConn.OpenAsync();
+                return await sqlConn.Committed(func);
             }
         }
 
-        public Task Committed(Func<SqlConnection, SqlTransaction, Task> func)
+        public async Task Committed(Func<SqlConnection, SqlTransaction, Task> func)
         {
             using (var sqlConn = new SqlConnection(this.databaseConnection))
             {
-                return sqlConn.Committed(func);
+                await sqlConn.OpenAsync();
+                await sqlConn.Committed(func);
             }
         }
     }

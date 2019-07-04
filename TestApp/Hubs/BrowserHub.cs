@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.SignalR;
 using Mrh.Messaging;
 using Mrh.Messaging.Client;
 using Mrh.Messaging.Common;
+using NLog;
 using ServiceApplicationTester;
 
 namespace TestApp.Hubs
 {
     public class BrowserHub : Hub<BrowserHub.IBrowserClient>
     {
+        private static readonly ILogger log = LogManager.GetCurrentClassLogger();
         private readonly IForwardingClient<PayloadType, string> forwardingClient;
         private readonly IConnectionIdGenerator connectionIdGenerator;
 
@@ -64,24 +66,31 @@ namespace TestApp.Hubs
             string username,
             string password)
         {
-            var user = await this.userService.Login(
-                new UserLoginRq
-                {
-                    Username = username,
-                    Password = password
-                });
+            try
+            {
+                var user = await this.userService.Login(
+                    new UserLoginRq
+                    {
+                        Username = username,
+                        Password = password
+                    });
 
-            if (user.Success)
-            {
-                var connectionId = this.connectionIdGenerator.Generate();
-                this.connections.AddOrUpdate(
-                    connectionId,
-                    Context.ConnectionId);
-                Clients.Caller.AuthResponse(true, connectionId);
+                if (user.Success)
+                {
+                    var connectionId = this.connectionIdGenerator.Generate();
+                    this.connections.AddOrUpdate(
+                        connectionId,
+                        Context.ConnectionId);
+                    await Clients.Caller.AuthResponse(true, connectionId);
+                }
+                else
+                {
+                    await Clients.Caller.AuthResponse(false, Guid.Empty);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Clients.Caller.AuthResponse(false, Guid.Empty);
+                log.Error(ex, ex.Message);
             }
         }
 
@@ -100,14 +109,14 @@ namespace TestApp.Hubs
             /// <summary>
             ///     The receive function on the client.
             /// </summary>
-            void Received(
+            Task Received(
                 MessageEnvelope<PayloadType, string> envelope);
 
-            void AuthResponse(
+            Task AuthResponse(
                 bool success,
                 Guid connectionId);
 
-            void Pong();
+            Task Pong();
         }
     }
 }

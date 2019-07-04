@@ -4,7 +4,7 @@ import {environment} from '../../../environments/environment';
 import {HubConnection} from '@aspnet/signalr';
 import {Subject} from 'rxjs';
 import {IMessageEnvelope, MessageEnvelope} from '../Api/Messaging/IMessageEnvelope';
-import {BasicState, doEvt, EventNode, goToState, IState} from '../Api/StateMachine/IState';
+import {BasicState, doEvt, EventNode, goToState, ignoreEvt, IState} from '../Api/StateMachine/IState';
 import {BaseContext} from '../Api/StateMachine/BaseContext';
 import Timer = NodeJS.Timer;
 import {StateMachine} from '../Api/StateMachine/StateMachine';
@@ -32,10 +32,11 @@ export enum ConnectionEvent {
   ReconnectTimeout = 7,
   AuthenticationFailed = 8,
   AuthenticateRequested = 9,
-  Reauthenticate = 10
+  Reauthenticate = 10,
+  UserAuthenticate = 11
 }
 
-type StateParam = MessageEnvelope | UserLoginRs;
+type StateParam = MessageEnvelope | UserLoginRs | UserLoginRq;
 
 class ConnectionCtx extends BaseContext<ConnectionState, ConnectionEvent, StateParam> {
 
@@ -90,6 +91,7 @@ class Connecting extends BasicState<ConnectionState, ConnectionEvent, Connection
       ctx.hubConnection.on('pong', () => {
         ctx.add(ConnectionEvent.PongReceived, null);
       });
+      ctx.add(ConnectionEvent.AuthenticateRequested, null);
     });
   }
 
@@ -115,10 +117,12 @@ class UserAuthenticate extends BasicState<ConnectionState, ConnectionEvent, Conn
     ctx.userAuthRequest.next();
   }
 
-  events(): EventNode<ConnectionState, ConnectionEvent, ConnectionCtx, MessageEnvelope | UserLoginRs>[] {
+  events(): EventNode<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam>[] {
     return [
       goToState(ConnectionEvent.AuthSuccessful, ConnectionState.Connected),
-      goToState(ConnectionEvent.AuthenticationFailed, ConnectionState.UserAuthenicate)
+      goToState(ConnectionEvent.AuthenticationFailed, ConnectionState.UserAuthenicate),
+      ignoreEvt(ConnectionEvent.AuthenticateRequested),
+      doEvt(ConnectionEvent.UserAuthenticate, new UserAuthenticateAction())
     ];
   }
 
@@ -130,7 +134,7 @@ class UserAuthenticate extends BasicState<ConnectionState, ConnectionEvent, Conn
 class SendPing implements IAction<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
 
   execute(evt: ConnectionEvent, ctx: ConnectionCtx, param?: StateParam) {
-    ctx.hubConnection.send('ping');
+    ctx.hubConnection.send('ping', ctx.connectionId);
   }
 }
 
@@ -142,6 +146,13 @@ class UserConnecting implements IAction<ConnectionState, ConnectionEvent, Connec
 class PongReceived implements IAction<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
   execute(evt: ConnectionEvent, ctx: ConnectionCtx, param?: StateParam) {
     ctx.lastReceivedDate = new Date();
+    if (ctx.currentTimer) {
+      clearTimeout(ctx.currentTimer);
+      ctx.currentTimer = null;
+    }
+    ctx.currentTimer = setTimeout(() => {
+      ctx.add(ConnectionEvent.SendPing, null);
+    }, HEARTBEAT_INTERVAL_MS);
   }
 }
 
@@ -165,6 +176,9 @@ class Connected extends BasicState<ConnectionState, ConnectionEvent, ConnectionC
 
   entry(evt: ConnectionEvent, ctx: ConnectionCtx, param?: MessageEnvelope | UserLoginRs) {
     ctx.connectionRetryCount = 0;
+    ctx.currentTimer = setTimeout(() => {
+      ctx.add(ConnectionEvent.SendPing, null);
+    }, HEARTBEAT_INTERVAL_MS);
   }
 
   state(): ConnectionState {
@@ -203,11 +217,29 @@ class ConnectionFailed extends BasicState<ConnectionState, ConnectionEvent, Conn
   }
 }
 
+class UserAuthenticateAction implements IAction<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
+  execute(evt: ConnectionEvent, ctx: ConnectionCtx, param?: StateParam) {
+    const userLoginRq = (param as UserLoginRq);
+    if (userLoginRq !== null) {
+      ctx.hubConnection.send('auth', userLoginRq.username, userLoginRq.password);
+    }
+  }
+}
+
 class UserLoginRs {
 
   constructor(
     public success: boolean,
     public connectionId: string
+  ) {
+
+  }
+}
+
+export class UserLoginRq {
+  constructor(
+    public username: string,
+    public password: string
   ) {
 
   }
@@ -232,6 +264,7 @@ export class SignalrConnectionService {
       .addState(new ConnectionFailed())
     ;
     this.connectionCtx.currentState = ConnectionState.NotConnected;
+    this.connectionStateMachine.registerCtx(this.connectionCtx);
   }
 
   /**
@@ -249,5 +282,9 @@ export class SignalrConnectionService {
    */
   authRequestedObservable() {
     return this.connectionCtx.userAuthRequest.asObservable();
+  }
+
+  auth(userLogin: UserLoginRq) {
+    this.connectionCtx.add(ConnectionEvent.UserAuthenticate, userLogin);
   }
 }

@@ -1,3 +1,4 @@
+using System.Data;
 using System.Threading.Tasks;
 using Dapper;
 
@@ -25,7 +26,8 @@ namespace A19.Database.Repository.A19Test.User
                     {
                         username
                     },
-                    trans);
+                    trans,
+                    commandType: CommandType.StoredProcedure);
             });
         }
     }

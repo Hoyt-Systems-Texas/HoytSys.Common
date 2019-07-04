@@ -67,5 +67,5 @@ export function doEvt<TState, TEvent, TCtx, TParam>(
 
 export function ignoreEvt<TState, TEvent, TCtx, TParam>(
   evt: TEvent) {
-  return new EventNode(evt, EventAction.Ignore);
+  return new EventNode(evt, EventAction.Ignore, null, null);
 }

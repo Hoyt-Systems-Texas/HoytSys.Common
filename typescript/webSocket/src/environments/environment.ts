@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  signalRConnection: 'https://localhost:5001/BrowserHub'
+  signalRConnection: 'https://localhost:5001/browser'
 };
 
 /*

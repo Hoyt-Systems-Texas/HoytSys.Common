@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {SignalrConnectionService} from './share/services/signalr-connection.service';
+import {UserService} from './share/services/user.service';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import {SignalrConnectionService} from './share/services/signalr-connection.serv
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  constructor(signalR: SignalrConnectionService) {
+  constructor(signalR: SignalrConnectionService,
+              userService: UserService) {
     signalR.start();
   }
 }

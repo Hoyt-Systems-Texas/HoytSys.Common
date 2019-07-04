@@ -19,7 +19,12 @@ export class StateMachine<TState, TEvent, TCtx extends BaseContext<TState, TEven
     event: TEvent,
     param: TParam) {
     ctx.add(event, param);
-    this.handleEvent(ctx);
+  }
+
+  registerCtx(ctx: TCtx) {
+    ctx.eventAddedObservable().subscribe(() => {
+      this.handleEvent(ctx);
+    });
   }
 
   /**
@@ -86,7 +91,8 @@ export class StateMachine<TState, TEvent, TCtx extends BaseContext<TState, TEven
         }
       } else {
         ctx.accept();
-        console.log(`Unable to find event for ${eventNode.event}`);
+        console.log(`Unable to find event for ${eventNode.event} state ${ctx.currentState}`);
+        this.handleEvent(ctx);
       }
     }
   }

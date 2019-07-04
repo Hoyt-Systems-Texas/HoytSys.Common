@@ -1,9 +1,11 @@
 import {SkipQueueRingBuffer} from '../DataStructures/SkipQueueRingBuffer';
 import {BoundElementProperty} from '@angular/compiler';
+import {Observable, Subject} from 'rxjs';
 
-export class BaseContext<TState, TEvent, TParam> {
+export class BaseContext<TState, TEvent, TParam> implements Destroy {
 
   private eventQueue = new SkipQueueRingBuffer<EventNode<TEvent, TParam>>(64);
+  private eventAdded = new Subject();
 
   currentState: TState;
 
@@ -21,9 +23,18 @@ export class BaseContext<TState, TEvent, TParam> {
   }
 
   add(event: TEvent, param: TParam): boolean {
-    return this.eventQueue.offer(new EventNode<TEvent, TParam>(event, param));
+    const success = this.eventQueue.offer(new EventNode<TEvent, TParam>(event, param));
+    this.eventAdded.next();
+    return success;
   }
 
+  destroy() {
+    this.eventAdded.complete();
+  }
+
+  eventAddedObservable(): Observable<any> {
+    return this.eventAdded.asObservable();
+  }
 }
 
 export class EventNode<TEvent, TParam> {

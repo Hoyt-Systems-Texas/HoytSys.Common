@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using A19.Database.Repository.A19Test;
 using A19.Database.Repository.A19Test.User;
 using A19.Security.User;
+using A19.User.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -44,7 +45,7 @@ namespace TestApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddSignalR();
+            services.AddSignalR(o => { o.EnableDetailedErrors = true; });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddSingleton<
                     IConnectionIdGenerator>(
@@ -86,6 +87,9 @@ namespace TestApp
                 .AddSingleton<
                     IUserService,
                     UserService>()
+                .AddSingleton<
+                    IPasswordHashing,
+                    BCryptPasswordHashing>()
                 ;
         }
 
@@ -109,10 +113,11 @@ namespace TestApp
             app.UseWebSockets();
             app.UseCors(builder =>
             {
-                builder.AllowAnyOrigin()
+                builder
+                    .WithOrigins("http://localhost:4200")
+                    .AllowCredentials()
                     .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
+                    .AllowAnyMethod();
             });
 
             app.UseMvc(routes =>
@@ -121,6 +126,7 @@ namespace TestApp
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            app.UseSignalR(routes => { routes.MapHub<BrowserHub>("/browser"); });
         }
     }
 }
