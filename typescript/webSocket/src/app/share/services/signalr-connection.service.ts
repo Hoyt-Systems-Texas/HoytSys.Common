@@ -148,11 +148,6 @@ class SendPing implements IAction<ConnectionState, ConnectionEvent, ConnectionCt
   }
 }
 
-class UserConnecting implements IAction<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
-  execute(evt: ConnectionEvent, ctx: ConnectionCtx, param?: MessageEnvelope | UserLoginRs) {
-  }
-}
-
 class PongReceived implements IAction<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
   execute(evt: ConnectionEvent, ctx: ConnectionCtx, param?: StateParam) {
     ctx.lastReceivedDate = new Date();
