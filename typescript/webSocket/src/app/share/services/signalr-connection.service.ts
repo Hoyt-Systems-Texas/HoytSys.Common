@@ -10,6 +10,7 @@ import Timer = NodeJS.Timer;
 import {StateMachine} from '../Api/StateMachine/StateMachine';
 
 const HEARTBEAT_INTERVAL_MS = 5000;
+const HEARTBEAT_WAIT_MS = 2000;
 
 const RECONNECT_RETRY = 3000;
 
@@ -33,7 +34,8 @@ export enum ConnectionEvent {
   AuthenticationFailed = 8,
   AuthenticateRequested = 9,
   Reauthenticate = 10,
-  UserAuthenticate = 11
+  UserAuthenticate = 11,
+  HeartbeatMissed = 12,
 }
 
 type StateParam = MessageEnvelope | UserLoginRs | UserLoginRq;
@@ -45,6 +47,7 @@ class ConnectionCtx extends BaseContext<ConnectionState, ConnectionEvent, StateP
   connectionRetryCount = 0;
   hubConnection: HubConnection;
   connectionId: string;
+  missedHeartbeats = 0;
 
   /**
    * The subject for asking a user to authenticate.
@@ -135,6 +138,13 @@ class SendPing implements IAction<ConnectionState, ConnectionEvent, ConnectionCt
 
   execute(evt: ConnectionEvent, ctx: ConnectionCtx, param?: StateParam) {
     ctx.hubConnection.send('ping', ctx.connectionId);
+    if (ctx.currentTimer) {
+      clearTimeout(ctx.currentTimer);
+      ctx.currentTimer = null;
+    }
+    ctx.currentTimer = setTimeout(() => {
+      ctx.add(ConnectionEvent.HeartbeatMissed, null);
+    }, HEARTBEAT_WAIT_MS);
   }
 }
 
@@ -170,7 +180,8 @@ class Connected extends BasicState<ConnectionState, ConnectionEvent, ConnectionC
       goToState(ConnectionEvent.Reauthenticate, ConnectionState.UserAuthenicate),
       doEvt(ConnectionEvent.SendPing, new SendPing()),
       doEvt(ConnectionEvent.PongReceived, new PongReceived()),
-      doEvt(ConnectionEvent.MessageReceived, new MessageReceived())
+      doEvt(ConnectionEvent.MessageReceived, new MessageReceived()),
+      doEvt(ConnectionEvent.HeartbeatMissed, new HeartbeatMissed())
     ];
   }
 
@@ -222,6 +233,25 @@ class UserAuthenticateAction implements IAction<ConnectionState, ConnectionEvent
     const userLoginRq = (param as UserLoginRq);
     if (userLoginRq !== null) {
       ctx.hubConnection.send('auth', userLoginRq.username, userLoginRq.password);
+    }
+  }
+}
+
+class HeartbeatMissed implements IAction<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
+
+  execute(evt: ConnectionEvent, ctx: ConnectionCtx, param?: StateParam) {
+    if (ctx.currentTimer) {
+      clearTimeout(ctx.currentTimer);
+      ctx.currentTimer = null;
+    }
+    ctx.missedHeartbeats++;
+
+    if (ctx.missedHeartbeats <= 3) {
+      ctx.currentTimer = setTimeout(() => {
+        ctx.add(ConnectionEvent.SendPing, null);
+      }, HEARTBEAT_INTERVAL_MS);
+    } else {
+      ctx.add(ConnectionEvent.ConnectAttemptFailedEvt, null);
     }
   }
 }
