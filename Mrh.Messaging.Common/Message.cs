@@ -23,7 +23,7 @@ namespace Mrh.Messaging
         /// <summary>
         ///     Used for an even on who to send the message to.
         /// </summary>
-        public Guid ToConnectionId { get; set; }
+        public Guid? ToConnectionId { get; set; }
 
         /// <summary>
         ///     The type of message.

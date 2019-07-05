@@ -89,7 +89,8 @@ namespace Mrh.Messaging.NetMq
                                 this.pushSocket,
                                 this.envelopFactory,
                                 this.encoder,
-                                msg);
+                                msg,
+                                this.maxFrameSize);
                         }
                         else
                         {
@@ -115,7 +116,8 @@ namespace Mrh.Messaging.NetMq
                 PushSocket pushSocket,
                 IEnvelopFactory<TPayloadType, TBody> envelopFactory,
                 IEncoder<TPayloadType, TBody> encoder,
-                Msg msg);
+                Msg msg,
+                int maxFrameSize);
         }
 
         private class SendFullMessage : IMessageSend
@@ -133,7 +135,8 @@ namespace Mrh.Messaging.NetMq
                 PushSocket pushSocket,
                 IEnvelopFactory<TPayloadType, TBody> envelopFactory,
                 IEncoder<TPayloadType, TBody> encoder,
-                Msg msg)
+                Msg msg,
+                int maxFrameSize)
             {
                 envelopFactory.CreateEnvelops(
                     this.message,
@@ -145,6 +148,7 @@ namespace Mrh.Messaging.NetMq
                         {
                             log.Error($"Failed to send a message.");
                         }
+                        msg.InitPool(maxFrameSize);
                     });
             }
         }

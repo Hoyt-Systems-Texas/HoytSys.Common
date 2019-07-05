@@ -18,4 +18,11 @@
   </li>
 </ul>
 
+<button (click)="sendTestMessage()">Hi Button</button>
+<ul>
+  <li *ngFor="let error of errors">
+    {{ error }}
+  </li>
+</ul>
+
 <router-outlet></router-outlet>

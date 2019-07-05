@@ -10,6 +10,13 @@ namespace TestApp.Controllers
 {
     public class HomeController : Controller
     {
+
+        public HomeController(
+            SetupForwarding setupForwarding)
+        {
+            var hi = "hi";
+        }
+        
         public IActionResult Index()
         {
             return View();

@@ -14,42 +14,23 @@ namespace TestApp.Hubs
     {
         private static readonly ILogger log = LogManager.GetCurrentClassLogger();
         private readonly IForwardingClient<PayloadType, string> forwardingClient;
-        private readonly IConnectionIdGenerator connectionIdGenerator;
-
-        private readonly ConnectionCollection<string> connections =
-            new ConnectionCollection<string>(new TimeSpan(0, 1, 0));
-
         private readonly IUserService userService;
+        private readonly ConnectionManager connectionManager;
 
         public BrowserHub(
             IForwardingClient<PayloadType, string> forwardingClient,
-            IConnectionIdGenerator connectionIdGenerator,
+            ConnectionManager connectionManager,
             IUserService userService)
         {
+            this.connectionManager = connectionManager;
             this.forwardingClient = forwardingClient;
-            this.connectionIdGenerator = connectionIdGenerator;
-            this.forwardingClient.Start();
             this.userService = userService;
-
-            this.SetupForwarding();
-        }
-
-        private void SetupForwarding()
-        {
-            this.forwardingClient.Receive.Subscribe(env =>
-            {
-                if (this.connections.GetConnection(env.ConnectionId, out var node))
-                {
-                    Clients.Client(node.ExternalConnection).Received(
-                        env);
-                }
-            });
         }
 
         /// <summary>
         ///     Used to forward connections to the backend.
         /// </summary>
-        public void Send(
+        public void SendEnv(
             MessageEnvelope<PayloadType, string> envelope)
         {
             this.forwardingClient.Send(
@@ -77,10 +58,7 @@ namespace TestApp.Hubs
 
                 if (user.Success)
                 {
-                    var connectionId = this.connectionIdGenerator.Generate();
-                    this.connections.AddOrUpdate(
-                        connectionId,
-                        Context.ConnectionId);
+                    var connectionId = this.connectionManager.RegisterConnection(Context.ConnectionId);
                     await Clients.Caller.AuthResponse(true, connectionId);
                 }
                 else
@@ -100,7 +78,7 @@ namespace TestApp.Hubs
         /// <param name="connectionId">The id of the connection.</param>
         public void Ping(Guid connectionId)
         {
-            this.connections.AddOrUpdate(connectionId, Context.ConnectionId);
+            this.connectionManager.AddOrUpdate(connectionId, Context.ConnectionId);
             Clients.Caller.Pong();
         }
 

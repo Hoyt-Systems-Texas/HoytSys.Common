@@ -33,8 +33,8 @@ namespace Mrh.Messaging.NetMq.Client
 
         private Thread sendThread;
         private Thread receiveThread;
-        private string incomingConnection;
-        private string outgoingConnection;
+        private readonly string incomingConnection;
+        private readonly string outgoingConnection;
         private readonly IEncoder<TPayloadType, TBody> encoder;
 
         public NetMqForwardingClient(
@@ -50,7 +50,7 @@ namespace Mrh.Messaging.NetMq.Client
 
         public void Send(MessageEnvelope<TPayloadType, TBody> messageEnvelope)
         {
-            throw new NotImplementedException();
+            this.sendingQueue.Offer(messageEnvelope);
         }
 
         public IObservable<MessageEnvelope<TPayloadType, TBody>> Receive
@@ -67,15 +67,17 @@ namespace Mrh.Messaging.NetMq.Client
                     Name = "Receiving Thread",
                     IsBackground = true
                 };
+                this.receiveThread.Start();
             }
 
             if (Interlocked.CompareExchange(ref this.sendingState, STARTING, STOPPED) == STOPPED)
             {
                 this.sendThread = new Thread(this.SendingMain)
                 {
-                    Name =  "Sending Thread",
+                    Name = "Sending Thread",
                     IsBackground = true
                 };
+                this.sendThread.Start();
             }
         }
 
@@ -105,6 +107,7 @@ namespace Mrh.Messaging.NetMq.Client
                                 this.subject.OnNext(envelope);
                             }
                         }
+                        msg.InitPool(this.maxFrameSize);
                     }
                     catch (Exception ex)
                     {
@@ -138,6 +141,9 @@ namespace Mrh.Messaging.NetMq.Client
                             {
                                 log.Error("Unable to send a message.");
                             }
+
+                            // Reset the buffer.
+                            msg.InitPool(this.maxFrameSize);
                         }
                         else
                         {

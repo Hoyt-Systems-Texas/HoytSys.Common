@@ -85,7 +85,7 @@ namespace Mrh.Messaging.Json
                 Body = message.Body.Substring(start, length),
                 Number = frame,
                 Total = total,
-                ConnectionId = message.ToConnectionId,
+                ConnectionId = message.ToConnectionId.Value,
                 CorrelationId = message.MessageIdentifier.CorrelationId,
                 MessageType = message.MessageType,
                 PayloadType = message.PayloadType,

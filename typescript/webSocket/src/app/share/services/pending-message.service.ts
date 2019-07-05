@@ -50,7 +50,8 @@ class PendingMessageCtx extends BaseContext<MessageState, MessageEvent, PendingM
 
   constructor(
     public readonly envelopeSubject: Subject<MessageEnvelope>,
-    public readonly resultSubject: Subject<any>
+    public readonly resultSubject: Subject<any>,
+    public readonly eventSubject: Subject<Message<PayloadType, string>>
   ) {
     super();
   }
@@ -104,7 +105,8 @@ class SentState extends BasicState<MessageState, MessageEvent, PendingMessageCtx
     return [
       goToState(MessageEvent.StatusUpdateTimeout, MessageState.Sent),
       goToState(MessageEvent.StatusUpdate, MessageState.StatusReceived),
-      goToState(MessageEvent.RequestTimeout, MessageState.Timeout)
+      goToState(MessageEvent.RequestTimeout, MessageState.Timeout),
+      goToState(MessageEvent.ReceivingResponse, MessageState.Receiving)
     ];
   }
 
@@ -141,6 +143,7 @@ class Receiving extends BasicState<MessageState, MessageEvent, PendingMessageCtx
     const envelope = param as IMessageEnvelope;
     const result = messageBuilder.add(envelope);
     if (result[0]) {
+      ctx.add(MessageEvent.ResponseCompleted, result[1]);
     }
   }
 
@@ -227,7 +230,7 @@ class ResponseReceived extends BasicState<MessageState, MessageEvent, PendingMes
             break;
         }
       } else if (message.messageType === MessageType.Event) {
-        // TODO Send the event.
+        ctx.eventSubject.next(message);
       }
     }
   }
@@ -249,6 +252,7 @@ export class PendingMessageService {
   private sendEnvelopeSubject = new Subject<IMessageEnvelope>();
   private messageStateMachine: StateMachine<MessageState, MessageEvent, PendingMessageCtx, PendingMessageParam>;
   private pendingMessageMap = new Map<string, PendingMessageCtx>();
+  private eventSubject = new Subject<Message<PayloadType, string>>();
 
   constructor() {
     this.messageStateMachine = new StateMachine();
@@ -269,7 +273,9 @@ export class PendingMessageService {
     resultSubject: Subject<IResultMonad<T>>) {
     const ctx = new PendingMessageCtx(
       this.sendEnvelopeSubject,
-      resultSubject);
+      resultSubject,
+      this.eventSubject);
+    ctx.message = message;
     ctx.currentState = MessageState.New;
     const key = this.createKeyMsg(message);
     if (!this.pendingMessageMap.has(key)) {
@@ -277,6 +283,8 @@ export class PendingMessageService {
       ctx.completedObservable.subscribe(() => {
         this.pendingMessageMap.delete(key);
       });
+      this.messageStateMachine.registerCtx(ctx);
+      ctx.add(MessageEvent.Sending, null);
     }
   }
 
@@ -293,7 +301,8 @@ export class PendingMessageService {
       if (env.messageType === MessageType.Event) {
         const ctx = new PendingMessageCtx(
           this.sendEnvelopeSubject,
-          null
+          null,
+          this.eventSubject
         );
         ctx.currentState = MessageState.EventReceived;
         this.pendingMessageMap.set(key, ctx);
@@ -318,6 +327,10 @@ export class PendingMessageService {
 
   get sendEnvelopeObservable(): Observable<MessageEnvelope> {
     return this.sendEnvelopeSubject.asObservable();
+  }
+
+  get eventObservable(): Observable<Message<PayloadType, string>> {
+    return this.eventSubject.asObservable();
   }
 
 }

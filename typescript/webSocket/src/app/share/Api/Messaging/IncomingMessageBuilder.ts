@@ -30,6 +30,7 @@ export class IncomingMessageBuilder {
       ));
     }
     const builder = this.pendingMessages.get(envelope.requestId);
+    builder.append(envelope.number, envelope.body);
     if (builder.isCompleted) {
       this.pendingMessages.delete(envelope.requestId);
       return [true, builder.message];

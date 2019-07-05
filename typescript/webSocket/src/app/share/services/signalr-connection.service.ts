@@ -1,17 +1,18 @@
 import * as signalR from '@aspnet/signalr';
+import {HubConnection} from '@aspnet/signalr';
 import {Injectable, NgZone} from '@angular/core';
 import {environment} from '../../../environments/environment';
-import {HubConnection} from '@aspnet/signalr';
 import {Observable, Subject} from 'rxjs';
 import {IMessageEnvelope, MessageEnvelope} from '../Api/Messaging/IMessageEnvelope';
-import {BasicState, doEvt, EventNode, goToState, ignoreEvt, IState} from '../Api/StateMachine/IState';
+import {BasicState, doEvt, EventNode, goToState, ignoreEvt} from '../Api/StateMachine/IState';
 import {BaseContext} from '../Api/StateMachine/BaseContext';
-import Timer = NodeJS.Timer;
 import {StateMachine} from '../Api/StateMachine/StateMachine';
 import {Message} from '../Api/Messaging/Message';
 import {PayloadType} from '../Api/Messaging/PayloadType';
 import {PendingMessageService} from './pending-message.service';
 import {IResultMonad} from '../Api/Monad/ResultMonad';
+import {MessageType} from '../Api/Messaging/MessageType';
+import Timer = NodeJS.Timer;
 
 const HEARTBEAT_INTERVAL_MS = 5000;
 const HEARTBEAT_WAIT_MS = 2000;
@@ -292,6 +293,8 @@ export class UserLoginRq {
 class SendMessage implements IAction<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
   execute(evt: ConnectionEvent, ctx: ConnectionCtx, param?: StateParam) {
     const envelope = param as IMessageEnvelope;
+    envelope.connectionId = ctx.connectionId;
+    envelope.userId = '00000000-0000-0000-0000-000000000000';
     if (envelope) {
       ctx.hubConnection.send('sendEnv', envelope);
     }
@@ -305,6 +308,8 @@ export class SignalrConnectionService {
 
   private readonly connectionStateMachine = new StateMachine();
   private readonly connectionCtx = new ConnectionCtx();
+  private readonly eventHandlers = new Map<PayloadType, Subject<Message<PayloadType, string>>>();
+  private correlationId = 0;
 
   constructor(
     private ngZone: NgZone,
@@ -354,11 +359,33 @@ export class SignalrConnectionService {
       envelope);
   }
 
-  send<T>(message: Message<PayloadType, string>): Observable<IResultMonad<T>> {
+  send<T, TM>(payloadType: PayloadType, body: TM): Observable<IResultMonad<T>> {
     const subject = new Subject<IResultMonad<T>>();
     this.pendMessageService.addMessage(
-      message,
+      new Message<PayloadType, string>(
+        0,
+        this.connectionCtx.connectionId,
+        this.correlationId++,
+        MessageType.Request,
+        null,
+        JSON.stringify(body),
+        payloadType,
+        null
+      ),
       subject);
     return subject.asObservable();
+  }
+
+  handleEvent(message: Message<PayloadType, string>) {
+    if (this.eventHandlers.has(message.payloadType)) {
+      this.eventHandlers.get(message.payloadType).next(message);
+    }
+  }
+
+  subscribe(payloadType: PayloadType): Observable<Message<PayloadType, string>> {
+    if (!this.eventHandlers.has(payloadType)) {
+      this.eventHandlers.set(payloadType, new Subject<Message<PayloadType, string>>());
+    }
+    return this.eventHandlers.get(payloadType).asObservable();
   }
 }

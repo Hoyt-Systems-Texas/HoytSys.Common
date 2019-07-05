@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {TestMessageService} from './share/services/test-message.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,18 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'webSocket';
+  errors: string[];
+
+  constructor(
+    private testService: TestMessageService
+  ) {
+  }
+
+  sendTestMessage() {
+    this.testService.sendTest().subscribe(result => {
+      result.error((errors) => {
+        this.errors = errors;
+      });
+    });
+  }
 }
