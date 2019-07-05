@@ -7,9 +7,10 @@ import {Observable, Subject} from 'rxjs';
 import {BasicState, doEvt, EventNode, goToState} from '../Api/StateMachine/IState';
 import {IncomingMessageBuilder} from '../Api/Messaging/IncomingMessageBuilder';
 import {EnvelopeGenerator} from '../Api/Messaging/EnvelopeGenerator';
-import {IResultMonad, ResultError} from '../Api/Monad/ResultMonad';
+import {IResultMonad, ResultAccessDenied, ResultBusy, ResultError, ResultSuccess} from '../Api/Monad/ResultMonad';
 import {StateMachine} from '../Api/StateMachine/StateMachine';
 import {MessageType} from '../Api/Messaging/MessageType';
+import {MessageResultType} from '../Api/Messaging/MessageResultType';
 import Timer = NodeJS.Timer;
 
 const messageBuilder = new IncomingMessageBuilder();
@@ -195,6 +196,40 @@ class ResponseReceived extends BasicState<MessageState, MessageEvent, PendingMes
 
   entry(evt: MessageEvent, ctx: PendingMessageCtx, param?: PendingMessageParam) {
     ctx.destroy();
+    const message = param as Message<PayloadType, string>;
+    if (message) {
+      if (message.messageType === MessageType.Reply) {
+        switch (message.messageResultType) {
+
+          case MessageResultType.Busy:
+            ctx.resultSubject.next(new ResultBusy());
+            ctx.resultSubject.complete();
+            break;
+
+          case MessageResultType.AccessDenied:
+            ctx.resultSubject.next(new ResultAccessDenied(JSON.parse(message.body)));
+            ctx.resultSubject.complete();
+            break;
+
+          case MessageResultType.Error:
+            ctx.resultSubject.next(new ResultError(JSON.parse(message.body)));
+            ctx.resultSubject.complete();
+            break;
+
+          case MessageResultType.Success:
+            ctx.resultSubject.next(new ResultSuccess(JSON.parse(message.body)));
+            ctx.resultSubject.complete();
+            break;
+
+          default:
+            ctx.resultSubject.next(new ResultError([`Invalid result has been returned ${message.messageResultType}`]));
+            ctx.resultSubject.complete();
+            break;
+        }
+      } else if (message.messageType === MessageType.Event) {
+        // TODO Send the event.
+      }
+    }
   }
 
   events(): EventNode<MessageState, MessageEvent, PendingMessageCtx, MessageEnvelope | Message<PayloadType, string>>[] {
