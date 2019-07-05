@@ -2,12 +2,16 @@ import * as signalR from '@aspnet/signalr';
 import {Injectable, NgZone} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HubConnection} from '@aspnet/signalr';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {IMessageEnvelope, MessageEnvelope} from '../Api/Messaging/IMessageEnvelope';
 import {BasicState, doEvt, EventNode, goToState, ignoreEvt, IState} from '../Api/StateMachine/IState';
 import {BaseContext} from '../Api/StateMachine/BaseContext';
 import Timer = NodeJS.Timer;
 import {StateMachine} from '../Api/StateMachine/StateMachine';
+import {Message} from '../Api/Messaging/Message';
+import {PayloadType} from '../Api/Messaging/PayloadType';
+import {PendingMessageService} from './pending-message.service';
+import {IResultMonad} from '../Api/Monad/ResultMonad';
 
 const HEARTBEAT_INTERVAL_MS = 5000;
 const HEARTBEAT_WAIT_MS = 2000;
@@ -36,6 +40,8 @@ export enum ConnectionEvent {
   Reauthenticate = 10,
   UserAuthenticate = 11,
   HeartbeatMissed = 12,
+  MessageEnvelopeReceived = 13,
+  SendMessageEnvelope = 14,
 }
 
 type StateParam = MessageEnvelope | UserLoginRs | UserLoginRq;
@@ -53,7 +59,7 @@ class ConnectionCtx extends BaseContext<ConnectionState, ConnectionEvent, StateP
    * The subject for asking a user to authenticate.
    */
   userAuthRequest = new Subject();
-
+  envelopeSubject = new Subject<MessageEnvelope>();
 }
 
 class NotConnectedState extends BasicState<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
@@ -89,7 +95,7 @@ class Connecting extends BasicState<ConnectionState, ConnectionEvent, Connection
         }
       });
       ctx.hubConnection.on('received', (envelope) => {
-        ctx.add(ConnectionEvent.MessageReceived, envelope);
+        ctx.add(ConnectionEvent.MessageEnvelopeReceived, envelope);
       });
       ctx.hubConnection.on('pong', () => {
         ctx.add(ConnectionEvent.PongReceived, null);
@@ -176,7 +182,9 @@ class Connected extends BasicState<ConnectionState, ConnectionEvent, ConnectionC
       doEvt(ConnectionEvent.SendPing, new SendPing()),
       doEvt(ConnectionEvent.PongReceived, new PongReceived()),
       doEvt(ConnectionEvent.MessageReceived, new MessageReceived()),
-      doEvt(ConnectionEvent.HeartbeatMissed, new HeartbeatMissed())
+      doEvt(ConnectionEvent.HeartbeatMissed, new HeartbeatMissed()),
+      doEvt(ConnectionEvent.MessageEnvelopeReceived, new MessageEnvelopeReceived()),
+      doEvt(ConnectionEvent.SendMessageEnvelope, new SendMessage())
     ];
   }
 
@@ -251,6 +259,17 @@ class HeartbeatMissed implements IAction<ConnectionState, ConnectionEvent, Conne
   }
 }
 
+class MessageEnvelopeReceived implements IAction<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
+
+  execute(evt: ConnectionEvent, ctx: ConnectionCtx, param?: StateParam) {
+    const envelope = param as IMessageEnvelope;
+    if (envelope) {
+      ctx.envelopeSubject.next(envelope);
+    }
+  }
+
+}
+
 class UserLoginRs {
 
   constructor(
@@ -270,6 +289,15 @@ export class UserLoginRq {
   }
 }
 
+class SendMessage implements IAction<ConnectionState, ConnectionEvent, ConnectionCtx, StateParam> {
+  execute(evt: ConnectionEvent, ctx: ConnectionCtx, param?: StateParam) {
+    const envelope = param as IMessageEnvelope;
+    if (envelope) {
+      ctx.hubConnection.send('sendEnv', envelope);
+    }
+  }
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -279,7 +307,8 @@ export class SignalrConnectionService {
   private readonly connectionCtx = new ConnectionCtx();
 
   constructor(
-    ngZone: NgZone
+    private ngZone: NgZone,
+    private pendMessageService: PendingMessageService
   ) {
     this.connectionStateMachine
       .addState(new NotConnectedState())
@@ -290,6 +319,12 @@ export class SignalrConnectionService {
     ;
     this.connectionCtx.currentState = ConnectionState.NotConnected;
     this.connectionStateMachine.registerCtx(this.connectionCtx);
+    this.pendMessageService.sendEnvelopeObservable.subscribe((env) => {
+      this.sendEnv(env);
+    });
+    this.connectionCtx.envelopeSubject.subscribe(env => {
+      pendMessageService.processEnvelope(env);
+    });
   }
 
   /**
@@ -311,5 +346,19 @@ export class SignalrConnectionService {
 
   auth(userLogin: UserLoginRq) {
     this.connectionCtx.add(ConnectionEvent.UserAuthenticate, userLogin);
+  }
+
+  private sendEnv(envelope: IMessageEnvelope) {
+    this.connectionCtx.add(
+      ConnectionEvent.SendMessageEnvelope,
+      envelope);
+  }
+
+  send<T>(message: Message<PayloadType, string>): Observable<IResultMonad<T>> {
+    const subject = new Subject<IResultMonad<T>>();
+    this.pendMessageService.addMessage(
+      message,
+      subject);
+    return subject.asObservable();
   }
 }
