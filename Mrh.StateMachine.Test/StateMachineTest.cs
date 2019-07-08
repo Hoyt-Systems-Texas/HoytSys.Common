@@ -22,7 +22,7 @@ namespace Mrh.StateMachine.Test
         {
             var retryHandler = A.Fake<IRetryHandle<FakeStateType, FakeEventType, FakeContext, string>>();
             var backgroundHandler = A.Fake<IBackgroundTransition<FakeStateType, FakeEventType, FakeContext, string>>();
-            var stateMachine = new StateMachine<FakeStateType, FakeEventType,FakeContext, string>(
+            var stateMachine = new PersistedStateMachine<FakeStateType, FakeEventType,FakeContext, string>(
                 this.name,
                 retryHandler,
                 this.transitionStore,

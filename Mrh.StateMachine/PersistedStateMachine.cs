@@ -16,7 +16,7 @@ namespace Mrh.StateMachine
     /// <typeparam name="TEvent"></typeparam>
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TMessage"></typeparam>
-    public class StateMachine<TState, TEvent, TContext, TMessage> where TState : struct
+    public class PersistedStateMachine<TState, TEvent, TContext, TMessage> where TState : struct
         where TEvent : struct
         where TContext : IEventContext<TState>
     {
@@ -35,7 +35,7 @@ namespace Mrh.StateMachine
 
         private readonly Action<Exception, TEvent, TContext, TMessage> errorHandler;
 
-        public StateMachine(
+        public PersistedStateMachine(
             string name,
             IRetryHandle<TState, TEvent, TContext, TMessage> retryHandler,
             ITransitionStore<TState, TEvent, TContext, TMessage> transitionStore,
@@ -138,7 +138,7 @@ namespace Mrh.StateMachine
         /// <param name="state">The state for the state machine.</param>
         /// <returns>The state machine to provide a fluent api.</returns>
         /// <exception cref="DuplicateStateRegisterException<TState>"></exception>
-        public StateMachine<TState, TEvent, TContext, TMessage> Add(IState<TState, TEvent, TContext, TMessage> state)
+        public PersistedStateMachine<TState, TEvent, TContext, TMessage> Add(IState<TState, TEvent, TContext, TMessage> state)
         {
             if (this.stateLookup.ContainsKey(state.State))
             {
