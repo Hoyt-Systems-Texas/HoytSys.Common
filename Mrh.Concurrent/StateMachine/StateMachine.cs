@@ -65,44 +65,57 @@ namespace Mrh.Concurrent.StateMachine
 
         private async Task HandleNextEvent(TCtx ctx)
         {
-            if (ctx.Next(out var @event))
+            while (ctx.Next(out var @event))
             {
-                if (!this.states.TryGetValue(ctx.CurrentState, out var stateNode))
+                try
                 {
-                    throw new UnableToFindStateException<TState>(ctx.CurrentState);
-                }
-                if (stateNode.TryGetNode(@event.Event, out var eventAction))
-                {
-                    switch (eventAction.EventAction)
+                    if (!this.states.TryGetValue(ctx.CurrentState, out var stateNode))
                     {
-                        case EventActionType.Defer:
-                            throw new ArgumentException("Deferred currently not supported.");
-                        
-                        case EventActionType.Do:
-                            await eventAction.Action.Execute(
-                                @event.Event,
-                                ctx,
-                                @event.Param);
-                            break;
-                        
-                        case EventActionType.Goto:
-                            await stateNode.State.Exit(
-                                @event.Event,
-                                ctx,
-                                @event.Param);
-                            ctx.CurrentState = eventAction.State.Value;
-                            if (this.states.TryGetValue(ctx.CurrentState, out var node))
-                            {
-                                await node.State.Entry(
+                        throw new UnableToFindStateException<TState>(ctx.CurrentState);
+                    }
+
+                    if (stateNode.TryGetNode(@event.Event, out var eventAction))
+                    {
+                        switch (eventAction.EventAction)
+                        {
+                            case EventActionType.Defer:
+                                throw new ArgumentException("Deferred currently not supported.");
+
+                            case EventActionType.Do:
+                                await eventAction.Action.Execute(
                                     @event.Event,
                                     ctx,
                                     @event.Param);
-                            }
-                            break;
-                        
-                        case EventActionType.Ignore:
-                            break;
+                                break;
+
+                            case EventActionType.Goto:
+                                await stateNode.State.Exit(
+                                    @event.Event,
+                                    ctx,
+                                    @event.Param);
+                                ctx.CurrentState = eventAction.State.Value;
+                                if (this.states.TryGetValue(ctx.CurrentState, out var node))
+                                {
+                                    await node.State.Entry(
+                                        @event.Event,
+                                        ctx,
+                                        @event.Param);
+                                }
+                                else
+                                {
+                                    // TODO decide what to do about the error.
+                                }
+
+                                break;
+
+                            case EventActionType.Ignore:
+                                break;
+                        }
                     }
+                }
+                finally
+                {
+                    ctx.DoneWithEvent();
                 }
             }
         }

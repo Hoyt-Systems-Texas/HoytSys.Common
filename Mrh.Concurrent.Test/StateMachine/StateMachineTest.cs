@@ -63,8 +63,10 @@ namespace Mrh.Concurrent.Test.StateMachine
             stateMachine.Add(new StateA());
             stateMachine.RegisterCtx(ctx);
             ctx.Add(TestEvent.F, "hi");
+            ctx.Add(TestEvent.E, "hello");
             Thread.Sleep(5);
             Assert.IsTrue(ctx.Ran);
+            Assert.AreEqual(TestState.B, ctx.CurrentState);
             
         }
         
