@@ -50,5 +50,15 @@ namespace Mrh.Concurrent.StateMachine
                 null,
                 action);
         }
+
+        public static EventNode<TState, TEvent, TCtx, TParam> Defer(
+            TEvent @event)
+        {
+            return new EventNode<TState, TEvent, TCtx, TParam>(
+                @event,
+                EventActionType.Defer,
+                null,
+                null);
+        }
     }
 }

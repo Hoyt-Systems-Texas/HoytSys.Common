@@ -12,8 +12,15 @@ namespace Mrh.Concurrent.StateMachine
     {
 
         private static readonly ILogger log = LogManager.GetCurrentClassLogger();
+        private readonly Action<Exception> errorHandler;
         
         private readonly Dictionary<TState, StateNode> states = new Dictionary<TState, StateNode>(10);
+
+        public StateMachine(
+            Action<Exception> errorHandler = null)
+        {
+            this.errorHandler = errorHandler;
+        }
 
         /// <summary>
         ///     Used to register the context with the state machine.
@@ -79,7 +86,8 @@ namespace Mrh.Concurrent.StateMachine
                         switch (eventAction.EventAction)
                         {
                             case EventActionType.Defer:
-                                throw new ArgumentException("Deferred currently not supported.");
+                                ctx.Skip(@event);
+                                break;
 
                             case EventActionType.Do:
                                 await eventAction.Action.Execute(
@@ -100,6 +108,8 @@ namespace Mrh.Concurrent.StateMachine
                                         @event.Event,
                                         ctx,
                                         @event.Param);
+                                    // Reset the skip on a state change.
+                                    ctx.ResetSkip();
                                 }
                                 else
                                 {
@@ -112,6 +122,11 @@ namespace Mrh.Concurrent.StateMachine
                                 break;
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    errorHandler?.Invoke(ex);
+                    log.Error(ex, ex.Message);
                 }
                 finally
                 {

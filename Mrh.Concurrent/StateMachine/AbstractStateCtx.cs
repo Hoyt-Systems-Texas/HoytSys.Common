@@ -3,6 +3,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Schema;
 
 namespace Mrh.Concurrent.StateMachine
 {
@@ -21,7 +22,8 @@ namespace Mrh.Concurrent.StateMachine
 
         private int currentRunningState;
         
-        private readonly MpmcRingBuffer<EventActionNode> eventQueue = new MpmcRingBuffer<EventActionNode>(0x40);
+        private readonly SkipQueue eventQueue = new SkipQueue();
+            
         private readonly Subject<int> newEventSubject = new Subject<int>();
 
         /**
@@ -57,7 +59,7 @@ namespace Mrh.Concurrent.StateMachine
             TEvent @event,
             TParam param)
         {
-            if (this.eventQueue.Offer(new EventActionNode(@event, param)))
+            if (this.eventQueue.Add(new EventActionNode(@event, param)))
             {
                 this.newEventSubject.OnNext(1);
                 return true;
@@ -73,11 +75,21 @@ namespace Mrh.Concurrent.StateMachine
                 RUNNING,
                 IDLE) == IDLE)
             {
-                return this.eventQueue.TryPoll(out actionNode);
+                return this.eventQueue.Next(out actionNode);
             }
 
             actionNode = null;
             return false;
+        }
+
+        public bool Skip(EventActionNode node)
+        {
+            return this.eventQueue.AddDefer(node);
+        }
+
+        public void ResetSkip()
+        {
+            this.eventQueue.Reset();
         }
 
         /**
@@ -87,6 +99,67 @@ namespace Mrh.Concurrent.StateMachine
         {
             Volatile.Write(ref this.currentRunningState, IDLE);
         }
-        
+
+        private class SkipQueue
+        {
+            private CurrentQueue currentQueue;
+            private readonly MpmcRingBuffer<EventActionNode> primary;
+            /// <summary>
+            ///     For now just use the current queue. It maybe better later to just switch to a ring buffer and just
+            /// overwrite older events.
+            /// </summary>
+            private readonly MpmcRingBuffer<EventActionNode> defer;
+
+            public SkipQueue()
+            {
+                this.primary = new MpmcRingBuffer<EventActionNode>(0x40);
+                this.defer = new MpmcRingBuffer<EventActionNode>(0x20);
+                this.currentQueue = CurrentQueue.NormalQueue;
+            }
+
+            public bool Next(out EventActionNode node)
+            {
+                if (this.currentQueue == CurrentQueue.Defer)
+                {
+                    if (!this.defer.TryPoll(out node))
+                    {
+                        this.currentQueue = CurrentQueue.NormalQueue;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                return this.primary.TryPoll(out node);
+            }
+
+            public bool Add(EventActionNode node)
+            {
+                return this.primary.Offer(node);
+            }
+
+            public bool AddDefer(EventActionNode node)
+            {
+                return this.defer.Offer(node);
+            }
+
+            public void Reset()
+            {
+                if (this.defer.TryPeek(out var p))
+                {
+                    this.currentQueue = CurrentQueue.Defer;
+                }
+                else
+                {
+                    this.currentQueue = CurrentQueue.NormalQueue;
+                }
+            }
+        }
+
+        private enum CurrentQueue
+        {
+            Defer,
+            NormalQueue
+        }
     }
 }
