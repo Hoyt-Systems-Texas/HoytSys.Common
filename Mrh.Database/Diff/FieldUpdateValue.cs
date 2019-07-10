@@ -33,36 +33,36 @@ namespace Mrh.Database.Diff
             IDiffRepository<TUserId, TKey, TDbValue> diffRepository)
         {
             this.newValue = newValue;
-            this.dbValue = dbValue.Compile();
-            this.compareValue = compareValue;
-            this.setValue = ExpressionUtils.CreateSetter(dbValue);
-            this.diffRepository = diffRepository;
-        }
-
-        public UpdateRecordType Update(TEntity newValue, TDbValue value)
-        {
-            var newProp = this.newValue(newValue);
-            var oldProp = this.dbValue(value);
-            var compareResults = this.compareValue(newProp, oldProp);
-            switch (compareResults)
-            {
-                case UpdateRecordType.Same:
-                    break;
-                
-                case UpdateRecordType.Field:
-                    break;
-                
-                case UpdateRecordType.ManyToMany:
-                    break;
-                
-                case UpdateRecordType.ManyToOne:
-                    break;
-                
-                default:
-                    throw new Exception($"Unknown result type.");
-            }
-
-            return compareResults;
-        }
-    }
-}
+             this.dbValue = dbValue.Compile();
+             this.compareValue = compareValue;
+             this.setValue = ExpressionUtils.CreateSetter(dbValue);
+             this.diffRepository = diffRepository;
+         }
+ 
+         public UpdateRecordType Update(TEntity newValue, TDbValue value)
+         {
+             var newProp = this.newValue(newValue);
+             var oldProp = this.dbValue(value);
+             var compareResults = this.compareValue(newProp, oldProp);
+             switch (compareResults)
+             {
+                 case UpdateRecordType.Same:
+                     break;
+                 
+                 case UpdateRecordType.Field:
+                     break;
+                 
+                 case UpdateRecordType.ManyToMany:
+                     break;
+                 
+                 case UpdateRecordType.ManyToOne:
+                     break;
+                 
+                 default:
+                     throw new Exception($"Unknown result type.");
+             }
+ 
+             return compareResults;
+         }
+     }
+ }
