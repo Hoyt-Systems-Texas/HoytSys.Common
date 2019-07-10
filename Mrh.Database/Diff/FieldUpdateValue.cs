@@ -39,7 +39,7 @@ namespace Mrh.Database.Diff
              this.diffRepository = diffRepository;
          }
  
-         public UpdateRecordType Update(TEntity newValue, TDbValue value)
+         public bool Update(TEntity newValue, TDbValue value)
          {
              var newProp = this.newValue(newValue);
              var oldProp = this.dbValue(value);
@@ -49,20 +49,11 @@ namespace Mrh.Database.Diff
                  case UpdateRecordType.Same:
                      break;
                  
-                 case UpdateRecordType.Field:
-                     break;
-                 
-                 case UpdateRecordType.ManyToMany:
-                     break;
-                 
-                 case UpdateRecordType.ManyToOne:
-                     break;
-                 
                  default:
                      throw new Exception($"Unknown result type.");
              }
  
-             return compareResults;
+             return false;
          }
      }
  }

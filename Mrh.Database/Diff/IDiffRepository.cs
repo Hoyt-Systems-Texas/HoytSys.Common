@@ -17,7 +17,7 @@ namespace Mrh.Database.Diff
         /// <param name="records">The records to update in the database.</param>
         /// <param name="userId">The id of the user who is making the request.</param>
         /// <returns>The task that does the database.</returns>
-        Task Add(TDbValue records, TUserId userId);
+        Task Add(List<TDbValue> records, TUserId userId);
 
         /// <summary>
         /// Used to update the database with the update record.
@@ -25,7 +25,7 @@ namespace Mrh.Database.Diff
         /// <param name="records">The records for the database.</param>
         /// <param name="userId">The id of the user.</param>
         /// <returns>The task that does the database.</returns>
-        Task Update(TDbValue records, TUserId userId);
+        Task Update(List<TDbValue> records, TUserId userId);
         
         /// <summary>
         ///  Used to delete the records.
@@ -33,6 +33,6 @@ namespace Mrh.Database.Diff
         /// <param name="records">The records to update in the database.</param>
         /// <param name="userId">The id of the user who is updating the database.</param>
         /// <returns>The task that updates the database.</returns>
-        Task Delete(TDbValue records, TUserId userId);
+        Task Delete(List<TDbValue> records, TUserId userId);
     }
 }

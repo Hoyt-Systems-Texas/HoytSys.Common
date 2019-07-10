@@ -12,14 +12,16 @@ namespace Mrh.Database.Diff
         TDbProp,
         TKey,
         TChildKey,
-        TUserId> : IUpdateValue<
-        TNew,
-        TDbValue,
-        TKey> where TDbValue : AbstractDatabaseRecord<TKey>
+        TUserId> : 
+        BaseNode<TNewProp, TDbProp, TChildKey, TUserId>,
+        IUpdateManyToOne<TNew, TDbValue, TKey, TUserId> 
+        where TDbValue : AbstractDatabaseRecord<TKey>
         where TDbProp : AbstractDatabaseRecord<TChildKey>, new()
         where TNewProp : class
 
     {
+        private readonly bool immutable;
+        
         private readonly Func<TNew, TNewProp> newProp;
 
         private readonly Func<TDbValue, TDbProp> dbValue;
@@ -28,52 +30,74 @@ namespace Mrh.Database.Diff
 
         private readonly IEnumerable<IUpdateValue<TNewProp, TDbProp, TChildKey>> childValues;
 
-        private readonly IDiffRepository<TUserId, TKey, TDbValue> diffRepository;
+        private readonly IDiffRepository<TUserId, TChildKey, TDbProp> diffRepository;
 
         public UpdateManyToOne(
+            int nodeId,
+            bool immutable,
             Func<TNew, TNewProp> newProp,
             Expression<Func<TDbValue, TDbProp>> dbValue,
-            IEnumerable<IUpdateValue<TNewProp, TDbProp, TChildKey>> childValues)
+            IEnumerable<IUpdateValue<TNewProp, TDbProp, TChildKey>> childValues,
+            IDiffRepository<TUserId, TChildKey, TDbProp> diffRepository) : base(nodeId)
         {
+            this.immutable = immutable;
             this.newProp = newProp;
             this.dbValue = dbValue.Compile();
             this.setDbValue = ExpressionUtils.CreateSetter(dbValue);
             this.childValues = childValues;
+            this.diffRepository = diffRepository;
         }
 
-        public UpdateRecordType Update(TNew newValue, TDbValue value)
+        public bool Immutable => this.immutable;
+
+        public bool Update(
+            TNew newValue,
+            TDbValue value,
+            Dictionary<int, IUpdateRecords<TUserId>> updateValues)
         {
-            var newPropValue = this.newProp(newValue);
-            var oldPropValue = this.dbValue(value);
-            if (newValue == null
-                && oldPropValue == null)
+            var newModel = this.newProp(newValue);
+            var dbValue = this.dbValue(value);
+            if (newModel == null)
             {
-                return UpdateRecordType.Same;
+                this.setDbValue(value, null);
+                return true;
             }
-            else if (newValue == null)
+
+            if (dbValue == null)
             {
-                if (oldPropValue.DeleteRecord())
+                dbValue = new TDbProp();
+            }
+
+            var changed = false;
+            foreach (var updateValue in childValues)
+            {
+                changed = updateValue.Update(newModel, dbValue) || changed;
+            }
+
+            if (changed)
+            {
+                UpdateRecordImpl<TUserId, TDbProp, TChildKey> updateNode;
+                if (updateValues.TryGetValue(this.NodeId, out var node))
                 {
-                    return UpdateRecordType.ManyToOne;
+                    updateNode = (UpdateRecordImpl<TUserId, TDbProp, TChildKey>) node;
                 }
                 else
                 {
-                    return UpdateRecordType.Same;
+                    updateNode = new UpdateRecordImpl<TUserId, TDbProp, TChildKey>(this.NodeId, this.diffRepository);
+                }
+
+                if (this.immutable)
+                {
+                    updateNode.Add(dbValue);
+                    return true;
+                }
+                else
+                {
+                    updateNode.Update(dbValue);
+                    return false;
                 }
             }
-            else if (oldPropValue == null)
-            {
-                oldPropValue = new TDbProp();
-                oldPropValue.NewRecord();
-            }
-
-            var valueChanged = false;
-            foreach (var child in this.childValues)
-            {
-                // Order is important.
-            }
-
-            return UpdateRecordType.ManyToOne;
+            return changed;
         }
     }
 }

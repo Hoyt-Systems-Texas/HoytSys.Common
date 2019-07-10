@@ -14,7 +14,7 @@ namespace Mrh.Database.Diff
         ///  Returns true if the value has changed.
         /// </summary>
         /// <returns>true if the value has changed.</returns>
-        UpdateRecordType Update(TNew newValue, TDb value);
+        bool Update(TNew newValue, TDb value);
         
     }
 }

@@ -1,10 +1,17 @@
+using System.Threading.Tasks;
+
 namespace Mrh.Database.Diff
 {
-    public interface IUpdateRecords
+    public interface IUpdateRecords<TUserId>
     {
+        
+        /// <summary>
+        ///     The id of the node to perform the update.
+        /// </summary>
+        int NodeId { get; }
         /// <summary>
         ///     Called to run the update.
         /// </summary>
-        void Run();
+        Task Run(TUserId userId);
     }
 }
