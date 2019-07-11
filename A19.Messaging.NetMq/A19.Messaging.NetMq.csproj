@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NetMQ" Version="4.0.0.1" />
+      <PackageReference Include="NLog" Version="4.6.5" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\A19.Concurrent\A19.Concurrent.csproj" />
+      <ProjectReference Include="..\A19.Core\A19.Core.csproj" />
+      <ProjectReference Include="..\A19.DataStructures\A19.DataStructures.csproj" />
+      <ProjectReference Include="..\A19.Messaging\A19.Messaging.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,10 +1,10 @@
 ﻿using System;
-using Mrh.Messaging;
-using Mrh.Messaging.Client;
-using Mrh.Messaging.Common;
+using A19.Messaging;
+using A19.Messaging.Client;
+using A19.Messaging.Common;
+using A19.Messaging.NetMq;
+using A19.Messaging.NetMq.Client;
 using Mrh.Messaging.Json;
-using Mrh.Messaging.NetMq;
-using Mrh.Messaging.NetMq.Client;
 using NetMqTestCommon;
 using NLog;
 using ServiceApplicationTester;

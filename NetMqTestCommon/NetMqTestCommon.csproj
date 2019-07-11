@@ -5,9 +5,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\A19.Messaging.Json\A19.Messaging.Json.csproj" />
+      <ProjectReference Include="..\A19.Messaging.NetMq\A19.Messaging.NetMq.csproj" />
       <ProjectReference Include="..\A19.User.Common\A19.User.Common.csproj" />
-      <ProjectReference Include="..\Mrh.Messaging.Json\Mrh.Messaging.Json.csproj" />
-      <ProjectReference Include="..\Mrh.Messaging.NetMq\Mrh.Messaging.NetMq.csproj" />
     </ItemGroup>
 
 </Project>

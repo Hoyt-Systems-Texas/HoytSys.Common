@@ -2,7 +2,6 @@ using System;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using Mrh.Database;
 
 namespace A19.Database.Repository.A19Test
 {

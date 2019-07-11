@@ -16,13 +16,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Mrh.Concurrent\Mrh.Concurrent.csproj" />
-      <ProjectReference Include="..\Mrh.Core\Mrh.Core.csproj" />
-      <ProjectReference Include="..\Mrh.DataStructures\Mrh.DataStructures.csproj" />
-      <ProjectReference Include="..\Mrh.Messaging.Json\Mrh.Messaging.Json.csproj" />
-      <ProjectReference Include="..\Mrh.Messaging.NetMq\Mrh.Messaging.NetMq.csproj" />
-      <ProjectReference Include="..\Mrh.Messaging\Mrh.Messaging.csproj" />
-      <ProjectReference Include="..\Mrh.Monad\Mrh.Monad.csproj" />
+      <ProjectReference Include="..\A19.Concurrent\A19.Concurrent.csproj" />
+      <ProjectReference Include="..\A19.Core\A19.Core.csproj" />
+      <ProjectReference Include="..\A19.DataStructures\A19.DataStructures.csproj" />
+      <ProjectReference Include="..\A19.Messaging.Json\A19.Messaging.Json.csproj" />
+      <ProjectReference Include="..\A19.Messaging.NetMq\A19.Messaging.NetMq.csproj" />
+      <ProjectReference Include="..\A19.Messaging\A19.Messaging.csproj" />
+      <ProjectReference Include="..\A19.Monad\A19.Monad.csproj" />
       <ProjectReference Include="..\NetMqTestCommon\NetMqTestCommon.csproj" />
     </ItemGroup>
 

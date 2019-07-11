@@ -11,11 +11,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Mrh.Messaging.Client\Mrh.Messaging.Client.csproj" />
-      <ProjectReference Include="..\Mrh.Messaging.Common\Mrh.Messaging.Common.csproj" />
-      <ProjectReference Include="..\Mrh.Messaging.Json\Mrh.Messaging.Json.csproj" />
-      <ProjectReference Include="..\Mrh.Messaging.NetMq.Client\Mrh.Messaging.NetMq.Client.csproj" />
-      <ProjectReference Include="..\Mrh.Messaging\Mrh.Messaging.csproj" />
+      <ProjectReference Include="..\A19.Messaging.Client\A19.Messaging.Client.csproj" />
+      <ProjectReference Include="..\A19.Messaging.Common\A19.Messaging.Common.csproj" />
+      <ProjectReference Include="..\A19.Messaging.Json\A19.Messaging.Json.csproj" />
+      <ProjectReference Include="..\A19.Messaging.NetMq.Client\A19.Messaging.NetMq.Client.csproj" />
+      <ProjectReference Include="..\A19.Messaging\A19.Messaging.csproj" />
       <ProjectReference Include="..\NetMqTestCommon\NetMqTestCommon.csproj" />
     </ItemGroup>
 

@@ -1,8 +1,8 @@
 using System;
+using A19.Messaging;
+using A19.Messaging.Common;
 using Microsoft.AspNetCore.Hosting.Internal;
 using Mrh.Messaging;
-using Mrh.Messaging.Client;
-using Mrh.Messaging.Common;
 using ServiceApplicationTester;
 
 namespace TestApp

@@ -1,5 +1,6 @@
+using A19.Messaging;
+using A19.Messaging.NetMq;
 using Mrh.Messaging;
-using Mrh.Messaging.NetMq;
 
 namespace NetMqTestCommon
 {

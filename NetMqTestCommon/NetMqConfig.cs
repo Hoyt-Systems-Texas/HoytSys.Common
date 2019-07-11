@@ -1,4 +1,4 @@
-using Mrh.Messaging.NetMq;
+using A19.Messaging.NetMq;
 
 namespace ServiceApplicationTester
 {

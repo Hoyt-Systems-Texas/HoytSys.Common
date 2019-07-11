@@ -1,6 +1,6 @@
 using System;
+using A19.Messaging.Client;
 using Microsoft.AspNetCore.SignalR;
-using Mrh.Messaging.Client;
 using ServiceApplicationTester;
 using TestApp.Hubs;
 

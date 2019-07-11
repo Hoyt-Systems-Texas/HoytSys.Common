@@ -1,7 +1,7 @@
 using System;
+using A19.Messaging.Common;
+using A19.Messaging.NetMq;
 using Mrh.Messaging;
-using Mrh.Messaging.Common;
-using Mrh.Messaging.NetMq;
 
 namespace ServiceApplicationTester
 {

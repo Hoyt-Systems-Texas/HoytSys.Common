@@ -1,5 +1,5 @@
+using A19.Messaging.NetMq;
 using Mrh.Messaging.Json;
-using Mrh.Messaging.NetMq;
 
 namespace ServiceApplicationTester
 {
