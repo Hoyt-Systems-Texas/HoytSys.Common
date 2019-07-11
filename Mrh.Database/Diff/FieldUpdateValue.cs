@@ -20,23 +20,19 @@ namespace Mrh.Database.Diff
 
         private readonly Func<TDbValue, TProperty> dbValue;
 
-        private readonly Func<TProperty, TProperty, UpdateRecordType> compareValue;
+        private readonly Func<TProperty, TProperty, bool> compareValue;
 
         private readonly Action<TDbValue, TProperty> setValue;
 
-        private readonly IDiffRepository<TUserId, TKey, TDbValue> diffRepository;
-        
-        private FieldUpdateValue(
+        public FieldUpdateValue(
             Func<TEntity, TProperty> newValue,
             Expression<Func<TDbValue, TProperty>> dbValue,
-            Func<TProperty, TProperty, UpdateRecordType> compareValue,
-            IDiffRepository<TUserId, TKey, TDbValue> diffRepository)
+            Func<TProperty, TProperty, bool> compareValue)
         {
             this.newValue = newValue;
              this.dbValue = dbValue.Compile();
              this.compareValue = compareValue;
              this.setValue = ExpressionUtils.CreateSetter(dbValue);
-             this.diffRepository = diffRepository;
          }
  
          public bool Update(TEntity newValue, TDbValue value)
@@ -44,15 +40,11 @@ namespace Mrh.Database.Diff
              var newProp = this.newValue(newValue);
              var oldProp = this.dbValue(value);
              var compareResults = this.compareValue(newProp, oldProp);
-             switch (compareResults)
+             if (!compareResults)
              {
-                 case UpdateRecordType.Same:
-                     break;
-                 
-                 default:
-                     throw new Exception($"Unknown result type.");
+                 this.setValue(value, newProp);
+                 return true;
              }
- 
              return false;
          }
      }
