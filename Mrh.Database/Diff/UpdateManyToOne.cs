@@ -74,6 +74,11 @@ namespace Mrh.Database.Diff
                 changed = updateValue.Update(newModel, dbValue) || changed;
             }
 
+            // Need to run this first.
+            changed = this.RunManyToOneUpdate(
+                newModel,
+                dbValue,
+                updateValues) || changed;
             if (changed)
             {
                 UpdateRecordImpl<TUserId, TDbProp, TChildKey> updateNode;
@@ -84,19 +89,27 @@ namespace Mrh.Database.Diff
                 else
                 {
                     updateNode = new UpdateRecordImpl<TUserId, TDbProp, TChildKey>(this.NodeId, this.diffRepository);
+                    updateValues[this.NodeId] = updateNode;
                 }
 
                 if (this.immutable)
                 {
                     updateNode.Add(dbValue);
+                    dbValue.NewRecord();
                     return true;
                 }
                 else
                 {
                     updateNode.Update(dbValue);
+                    dbValue.UpdateRecord();
                     return false;
                 }
             }
+
+            changed = this.RunManyToManyUpdate(
+                          newModel,
+                          dbValue,
+                          updateValues) || changed;
             return changed;
         }
     }

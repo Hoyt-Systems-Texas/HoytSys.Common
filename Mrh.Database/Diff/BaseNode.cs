@@ -52,5 +52,36 @@ namespace Mrh.Database.Diff
         }
 
         public int NodeId => this.nodeId;
+
+        public bool RunManyToOneUpdate(
+            TNew newValue,
+            TDb value, 
+            Dictionary<int, IUpdateRecords<TUserId>> updateValues)
+        {
+            var changed = false;
+            foreach (var manyToOne in this.manyToOnes)
+            {
+                changed = manyToOne.Update(newValue, value, updateValues)
+                    || changed;
+            }
+
+            return changed;
+        }
+
+        public bool RunManyToManyUpdate(
+            TNew newValue,
+            TDb value,
+            Dictionary<int, IUpdateRecords<TUserId>> updateValues)
+        {
+            var changed = false;
+            foreach (var many in this.manyToMany)
+            {
+                changed = many.Update(
+                    newValue,
+                    value,
+                    updateValues) || changed;
+            }
+            return changed;
+        }
     }
 }
