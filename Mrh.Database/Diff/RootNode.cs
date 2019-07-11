@@ -53,9 +53,10 @@ namespace Mrh.Database.Diff
                 changed = updateValue.Update(newValue, value) || changed;
             }
 
+            changed = (this.RunManyToOneUpdate(newValue, value, updateValues) && this.immutable) || changed;
             if (changed)
             {
-                if (immutable || createdNew)
+                if (this.immutable || createdNew)
                 {
                     updateRecord.Add(value);
                 }
@@ -64,6 +65,8 @@ namespace Mrh.Database.Diff
                     updateRecord.Update(value);
                 }
             }
+
+            this.RunManyToManyUpdate(newValue, value, updateValues);
             return changed;
         }
     }

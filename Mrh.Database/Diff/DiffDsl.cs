@@ -218,7 +218,7 @@ namespace Mrh.Database.Diff
         ///     Called on the root to build the root node.
         /// </summary>
         /// <returns>Returns the root node.</returns>
-        public RootNode<TNew, TDb, TKey, TUserId> Build()
+        public (RootNode<TNew, TDb, TKey, TUserId>, int) Build()
         {
             var id = new IdPointer();
             var node = new RootNode<TNew, TDb, TKey, TUserId>(
@@ -229,7 +229,7 @@ namespace Mrh.Database.Diff
             this.Children(
                 id,
                 node);
-            return node;
+            return (node, id.Id);
         }
 
         /// <summary>

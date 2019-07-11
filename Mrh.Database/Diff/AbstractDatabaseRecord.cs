@@ -8,7 +8,7 @@ namespace Mrh.Database.Diff
     /// <typeparam name="TKey">The type for the key.</typeparam>
     public abstract class AbstractDatabaseRecord<TKey>
     {
-        public abstract TKey Id { get; }
+        public abstract TKey Id { get; set; }
 
         private const int PENDING = 0;
         private const int SAVING = 1;
