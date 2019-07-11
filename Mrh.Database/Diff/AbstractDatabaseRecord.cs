@@ -58,6 +58,16 @@ namespace Mrh.Database.Diff
                        SAME) == SAME;
         }
 
+        public bool IsNew()
+        {
+            return this.UpdateType == NEW;
+        }
+
+        public bool IsUpdate()
+        {
+            return this.UpdateType == UPDATE;
+        }
+
         public int UpdateType => updateType;
 
         /// <summary>

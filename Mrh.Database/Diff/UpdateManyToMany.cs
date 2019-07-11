@@ -87,11 +87,20 @@ namespace Mrh.Database.Diff
                     {
                         hashSetSeen.Add(newKey);
                     }
+
                     if (this.UpdateValues(nV, dbValue)
-                        || value.UpdateType == 12)
+                        || value.IsNew())
                     {
-                        dbValue.UpdateRecord();
-                        updateNode.Update(dbValue);
+                        if (this.immutable)
+                        {
+                            dbValue.NewRecord();
+                            updateNode.Add(dbValue);
+                        }
+                        else
+                        {
+                            dbValue.UpdateRecord();
+                            updateNode.Update(dbValue);
+                        }
                     }
                 }
                 else
@@ -119,6 +128,7 @@ namespace Mrh.Database.Diff
             {
                 updateNode.Delete(dbValues[key]);
             }
+
             return false;
         }
 
