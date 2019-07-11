@@ -24,7 +24,7 @@ namespace Mrh.Database.Diff
 
         private readonly Func<TNew, IEnumerable<TNewProp>> newProp;
 
-        private readonly Func<TDbValue, IEnumerable<TDbProp>> dbValue;
+        private readonly Func<TDbValue, List<TDbProp>> dbValue;
 
         private readonly IEnumerable<IUpdateValue<TNewProp, TDbProp, TChildKey>> childValues;
 
@@ -39,7 +39,7 @@ namespace Mrh.Database.Diff
             bool immutable,
             Func<TNewProp, TChildKey> newPropKey,
             Func<TNew, IEnumerable<TNewProp>> newProp,
-            Func<TDbValue, IEnumerable<TDbProp>> dbValue,
+            Func<TDbValue, List<TDbProp>> dbValue,
             IEnumerable<IUpdateValue<TNewProp, TDbProp, TChildKey>> childValues,
             Action<TDbProp, TDbValue> setParent,
             IDiffRepository<TUserId, TChildKey, TDbProp> diffRepository) : base(nodeId)
