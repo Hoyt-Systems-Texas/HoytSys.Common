@@ -96,13 +96,11 @@ namespace Mrh.Database.Diff
                 {
                     updateNode.Add(dbValue);
                     dbValue.NewRecord();
-                    return true;
                 }
                 else
                 {
                     updateNode.Update(dbValue);
                     dbValue.UpdateRecord();
-                    return false;
                 }
             }
 
