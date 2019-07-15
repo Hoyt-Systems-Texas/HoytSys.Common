@@ -9,6 +9,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\A19.Concurrent\A19.Concurrent.csproj" />
       <ProjectReference Include="..\A19.User.Common\A19.User.Common.csproj" />
     </ItemGroup>
 

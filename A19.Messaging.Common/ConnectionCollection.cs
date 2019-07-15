@@ -36,7 +36,7 @@ namespace A19.Messaging.Common
         /// </summary>
         /// <param name="connectionId">The internal connection identifier.</param>
         /// <param name="externalConnection">The external connection identifier.</param>
-        public void AddOrUpdate(Guid connectionId, TExternalConnection externalConnection)
+        public void Add(Guid connectionId, TExternalConnection externalConnection, Guid userId)
         {
             if (this.lastCleaned.Elapsed() > this.cleanAfterMs)
             {
@@ -44,27 +44,31 @@ namespace A19.Messaging.Common
                 this.lastCleaned.Reset();
             }
             ConnectionNode node;
-            if (this.connectionIdToExternal.TryGetValue(connectionId, out node))
+            if (!this.connectionIdToExternal.ContainsKey(connectionId))
             {
-                node.LastSeen.Reset();
-                if (!node.ExternalConnection.Equals(externalConnection))
-                {
-                    this.externalToConnectionId.TryRemove(externalConnection, out ConnectionNode ignore);
-                    node = new ConnectionNode(
-                        connectionId,
-                        externalConnection);
-                    this.externalToConnectionId.TryAdd(externalConnection, node);
-                    this.connectionIdToExternal[connectionId] = node;
-                }
-            }
-            else
-            {
-                node = new ConnectionNode(connectionId, externalConnection);
+                node = new ConnectionNode(
+                    connectionId,
+                    externalConnection, 
+                    userId);
                 if (this.connectionIdToExternal.TryAdd(connectionId, node))
                 {
                     this.externalToConnectionId[externalConnection] = node;
                 }
             }
+        }
+
+        public bool Update(Guid connectionId)
+        {
+            if (this.connectionIdToExternal.TryGetValue(connectionId, out var node))
+            {
+                node.LastSeen.Reset();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
         }
 
         /// <summary>
@@ -118,14 +122,17 @@ namespace A19.Messaging.Common
             public readonly Guid ConnectionId;
             public readonly TExternalConnection ExternalConnection;
             public readonly StopWatchThreadSafe LastSeen;
+            public readonly Guid userId;
 
             public ConnectionNode(
                 Guid connectionId,
-                TExternalConnection externalConnection)
+                TExternalConnection externalConnection,
+                Guid userId)
             {
                 this.ConnectionId = connectionId;
                 this.ExternalConnection = externalConnection;
                 this.LastSeen = new StopWatchThreadSafe();
+                this.userId = userId;
             }
         }
     }
