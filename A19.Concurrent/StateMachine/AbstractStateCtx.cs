@@ -108,6 +108,8 @@ namespace A19.Concurrent.StateMachine
             /// </summary>
             private readonly MpmcRingBuffer<EventActionNode> defer;
 
+            private long deferStop = 0;
+
             public SkipQueue()
             {
                 this.primary = new MpmcRingBuffer<EventActionNode>(0x40);
@@ -119,13 +121,20 @@ namespace A19.Concurrent.StateMachine
             {
                 if (this.currentQueue == CurrentQueue.Defer)
                 {
-                    if (!this.defer.TryPoll(out node))
+                    if (this.deferStop >= this.defer.ConsumerIndex)
                     {
                         this.currentQueue = CurrentQueue.NormalQueue;
                     }
                     else
                     {
-                        return true;
+                        if (!this.defer.TryPoll(out node))
+                        {
+                            this.currentQueue = CurrentQueue.NormalQueue;
+                        }
+                        else
+                        {
+                            return true;
+                        }
                     }
                 }
                 return this.primary.TryPoll(out node);
@@ -146,6 +155,7 @@ namespace A19.Concurrent.StateMachine
                 if (this.defer.TryPeek(out var p))
                 {
                     this.currentQueue = CurrentQueue.Defer;
+                    this.deferStop = this.defer.ProducerIndex;
                 }
                 else
                 {

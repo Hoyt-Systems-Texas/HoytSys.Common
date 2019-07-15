@@ -27,6 +27,10 @@ namespace A19.Concurrent
             this.buffer = new ConcurrentRingBuffer<T>(size);
         }
 
+        public long ProducerIndex => producerIndex.VolatileRead();
+
+        public long ConsumerIndex => consumerIndex.VolatileRead();
+
         public bool Offer(T value)
         {
             var capacity = this.buffer.Length;
