@@ -58,7 +58,7 @@ namespace TestApp.Hubs
 
                 if (user.Success)
                 {
-                    var connectionId = this.connectionManager.RegisterConnection(Context.ConnectionId);
+                    var connectionId = this.connectionManager.RegisterConnection(Context.ConnectionId, user.UserGuid);
                     await Clients.Caller.AuthResponse(true, connectionId);
                 }
                 else
@@ -78,7 +78,7 @@ namespace TestApp.Hubs
         /// <param name="connectionId">The id of the connection.</param>
         public void Ping(Guid connectionId)
         {
-            this.connectionManager.AddOrUpdate(connectionId, Context.ConnectionId);
+            this.connectionManager.Update(connectionId);
             Clients.Caller.Pong();
         }
 

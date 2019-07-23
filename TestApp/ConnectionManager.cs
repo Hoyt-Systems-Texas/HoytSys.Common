@@ -20,12 +20,15 @@ namespace TestApp
             this.connectionIdGenerator = connectionIdGenerator;
         }
 
-        public Guid RegisterConnection(string signalRConnection)
+        public Guid RegisterConnection(
+            string signalRConnection,
+            Guid userId)
         {
             var connectionId = this.connectionIdGenerator.Generate();
-            this.connections.AddOrUpdate(
+            this.connections.Add(
                 connectionId,
-                signalRConnection);
+                signalRConnection,
+                userId);
             return connectionId;
         }
         
@@ -35,9 +38,9 @@ namespace TestApp
             return this.connections.GetConnection(connectionId, out node);
         }
 
-        public void AddOrUpdate(Guid connectionId, string signalRConnection)
+        public void Update(Guid connectionId)
         {
-            this.connections.AddOrUpdate(connectionId, signalRConnection);
+            this.connections.Update(connectionId);
         }
     }
 }

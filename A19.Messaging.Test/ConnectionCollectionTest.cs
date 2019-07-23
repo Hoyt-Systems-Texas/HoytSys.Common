@@ -16,12 +16,14 @@ namespace A19.Messaging.Test
             var int1 = Guid.NewGuid();
             var conn2 = Guid.NewGuid();
             var int2 = Guid.NewGuid();
-            connectionCollection.AddOrUpdate(
+            connectionCollection.Add(
                 int1,
-                conn1);
-            connectionCollection.AddOrUpdate(
+                conn1,
+                Guid.NewGuid());
+            connectionCollection.Add(
                 int2,
-                conn2);
+                conn2,
+                Guid.NewGuid());
 
             ConnectionCollection<Guid>.ConnectionNode node;
             Assert.IsTrue(connectionCollection.GetConnection(
