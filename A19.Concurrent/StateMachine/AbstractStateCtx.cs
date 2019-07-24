@@ -20,7 +20,7 @@ namespace A19.Concurrent.StateMachine
 
         private int currentRunningState;
         
-        private readonly SkipQueue eventQueue = new SkipQueue();
+        private readonly SkipQueue<EventActionNode> eventQueue = new SkipQueue<EventActionNode>();
             
         private readonly Subject<int> newEventSubject = new Subject<int>();
 
@@ -96,78 +96,6 @@ namespace A19.Concurrent.StateMachine
         public void DoneWithEvent()
         {
             Volatile.Write(ref this.currentRunningState, IDLE);
-        }
-
-        private class SkipQueue
-        {
-            private CurrentQueue currentQueue;
-            private readonly MpmcRingBuffer<EventActionNode> primary;
-            /// <summary>
-            ///     For now just use the current queue. It maybe better later to just switch to a ring buffer and just
-            /// overwrite older events.
-            /// </summary>
-            private readonly MpmcRingBuffer<EventActionNode> defer;
-
-            private long deferStop = 0;
-
-            public SkipQueue()
-            {
-                this.primary = new MpmcRingBuffer<EventActionNode>(0x40);
-                this.defer = new MpmcRingBuffer<EventActionNode>(0x20);
-                this.currentQueue = CurrentQueue.NormalQueue;
-            }
-
-            public bool Next(out EventActionNode node)
-            {
-                if (this.currentQueue == CurrentQueue.Defer)
-                {
-                    if (this.deferStop >= this.defer.ConsumerIndex)
-                    {
-                        this.currentQueue = CurrentQueue.NormalQueue;
-                    }
-                    else
-                    {
-                        if (!this.defer.TryPoll(out node))
-                        {
-                            this.currentQueue = CurrentQueue.NormalQueue;
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
-                }
-                return this.primary.TryPoll(out node);
-            }
-
-            public bool Add(EventActionNode node)
-            {
-                return this.primary.Offer(node);
-            }
-
-            public bool AddDefer(EventActionNode node)
-            {
-                return this.defer.Offer(node);
-            }
-
-            public void Reset()
-            {
-                if (this.defer.TryPeek(out var p))
-                {
-                    this.currentQueue = CurrentQueue.Defer;
-                    this.deferStop = this.defer.ProducerIndex;
-                }
-                else
-                {
-                    this.currentQueue = CurrentQueue.NormalQueue;
-                }
-            }
-        }
-
-        private enum CurrentQueue
-        {
-            Defer,
-            NormalQueue
         }
     }
 }
