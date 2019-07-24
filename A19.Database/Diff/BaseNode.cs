@@ -53,7 +53,7 @@ namespace A19.Database.Diff
 
         public int NodeId => this.nodeId;
 
-        public bool RunManyToOneUpdate(
+        protected bool RunManyToOneUpdate(
             TNew newValue,
             TDb value, 
             Dictionary<int, IUpdateRecords<TUserId>> updateValues)
@@ -68,7 +68,7 @@ namespace A19.Database.Diff
             return changed;
         }
 
-        public bool RunManyToManyUpdate(
+        protected bool RunManyToManyUpdate(
             TNew newValue,
             TDb value,
             Dictionary<int, IUpdateRecords<TUserId>> updateValues)
