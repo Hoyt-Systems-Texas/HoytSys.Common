@@ -6,6 +6,7 @@ namespace A19.Database.Diff
     {
     
         bool Immutable { get; }
+        
         /// <summary>
         ///     Called on a complex object to update the values.
         /// </summary>
