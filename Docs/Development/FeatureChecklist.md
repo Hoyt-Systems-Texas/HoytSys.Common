@@ -8,7 +8,7 @@
 - [ ] How is the application going to be secured?
 - [ ] Define a glossary of terms with the business and development team.
 - [ ] Define high-level domain model.
-- [ ] Sit with the users and understand the current high-level process and pain points in the process.  Document the process and sit with the user to verify it's mostly correct.  Observe first to see if it's correct then show it to the users.
+- [ ] Sit with the users and understand the current high-level process and pain points.  Document the process and sit with the user to verify it's mostly correct.  Observe first to see if it's correct then show it to the users.
 - [ ] Does the system need to be clustered?
 - [ ] What are the availability requirements?
 
@@ -19,8 +19,8 @@
 - [ ] Can this be automated?
 - [ ] Can the workflow be changed to make it easier to code?
 - [ ] Can the workflow be changed to make it harder to make a mistake?
-- [ ] What are the business risk having this feature?
-- [ ] What are the risks not having this feature?
+- [ ] What are the business risks having this feature?
+- [ ] What are the business risks not having this feature?
 - [ ] Does the feature affect security? If it does how is the risk mitigated?
 - [ ] What is the needed performance for this feature?
 - [ ] What are the potential edge cases that could come up?
