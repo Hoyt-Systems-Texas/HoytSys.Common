@@ -1,38 +1,31 @@
 namespace A19.StateMachine.PSharpBase
 {
-    public class EventActionNodePersist<TKey, TEvent, TParam>
+    public class EventActionNodePersist<TKey, TEvent, TParam, TUserId>
     {
         /// <summary>
         ///     The id of the event.
         /// </summary>
-        public readonly long Id;
+        public long Id { get; set; }
 
         /// <summary>
         ///     The key for the state machine.
         /// </summary>
-        public readonly TKey StateMachineKey;
+        public TKey StateMachineKey { get; set; }
 
         /// <summary>
         ///     The event node.
         /// </summary>
-        public readonly TEvent Event;
+        public TEvent Event { get; set; }
 
         /// <summary>
         ///     The parameter that was passed in.
         /// </summary>
-        public readonly TParam Param;
+        public TParam Param { get; set; }
         
-        public EventActionNodePersist(
-            long id,
-            TKey stateMachineKey,
-            TEvent @event,
-            TParam param)
-        {
-            this.Id = id;
-            this.StateMachineKey = stateMachineKey;
-            this.Event = @event;
-            this.Param = param;
-        }
+        /// <summary>
+        ///     The id of the user who made the request.
+        /// </summary>
+        public TUserId CreatedBy { get; set; }
 
     }
 }
