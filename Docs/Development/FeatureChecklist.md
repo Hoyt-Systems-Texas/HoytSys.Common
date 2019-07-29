@@ -1,3 +1,17 @@
+# System/Application Checklist
+
+- [ ] What data does the application own?
+- [ ] Does the application need to be able to push events to a user or system?
+- [ ] How important is the performance of the application?
+- [ ] Are there any regulations affecting the application?
+- [ ] Define the high-level design.
+- [ ] How is the application going to be secured?
+- [ ] Define a glossary of terms with the business and development team.
+- [ ] Define high-level domain model.
+- [ ] Sit with the users and understand the current high-level process and pain points in the process.  Document the process and sit with the user to verify it's mostly correct.  Observe first to see if it's correct then show it to the users.
+- [ ] Does the system need to be clustered?
+- [ ] What are the availability requirements?
+
 # Feature Checklist
 
 - [ ] Define the current workflow.
