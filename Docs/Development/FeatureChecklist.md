@@ -20,9 +20,11 @@
 - [ ] Can the workflow be changed to make it easier to code?
 - [ ] Can the workflow be changed to make it harder to make a mistake?
 - [ ] What are the business risk having this feature?
+- [ ] What are the risks not having this feature?
 - [ ] Does the feature affect security? If it does how is the risk mitigated?
 - [ ] What is the needed performance for this feature?
 - [ ] What are the potential edge cases that could come up?
+- [ ] How often will the feature be used?
 
 # Development Checklist
 
