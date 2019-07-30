@@ -5,7 +5,7 @@ namespace A19.StateMachine.PSharpBase
     public class EventNodePersisted<TKey, TState, TEvent, TCtx, TParam, TUserId>
         where TState: struct
         where TEvent: struct
-        where TCtx: AbstractStateMachinePersistCtx<TKey, TState, TEvent, TParam, TUserId>
+        where TCtx: AbstractStateMachinePersistCtx<TKey, TState, TEvent, TParam, TCtx, TUserId>
     {
         public readonly TEvent Event;
         public readonly EventActionType EventAction;

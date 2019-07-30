@@ -12,7 +12,7 @@ namespace A19.StateMachine.PSharpBase
     public interface IPersistedStateMachineCtx<TKey, TState, TEvent, TParam, TCtx, TUserId> 
         where TState: struct
         where TEvent: struct
-        where TCtx: AbstractStateMachinePersistCtx<TKey, TState, TEvent, TParam, TUserId>
+        where TCtx: AbstractStateMachinePersistCtx<TKey, TState, TEvent, TParam, TCtx, TUserId>
     {
         /// <summary>
         ///     Used to get the context by the key.

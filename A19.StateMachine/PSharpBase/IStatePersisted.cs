@@ -6,7 +6,7 @@ namespace A19.StateMachine.PSharpBase
     public interface IStatePersisted<TKey, TState, TEvent, TCtx, TParam, TUserId>
         where TState : struct
         where TEvent : struct
-        where TCtx : AbstractStateMachinePersistCtx<TKey, TState, TEvent, TParam, TUserId>
+        where TCtx : AbstractStateMachinePersistCtx<TKey, TState, TEvent, TParam, TCtx, TUserId>
 
     {
         TState State { get; }

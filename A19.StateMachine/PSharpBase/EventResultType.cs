@@ -4,6 +4,7 @@ namespace A19.StateMachine.PSharpBase
     {
         Pending = 0,
         Retry = 1,
+        ExitCompleted = 2,
         
         Completed = 10,
         Error = 11,

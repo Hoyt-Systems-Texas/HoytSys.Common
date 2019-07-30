@@ -1,7 +1,14 @@
+using System;
+using System.Threading.Tasks;
+
 namespace A19.StateMachine.PSharpBase
 {
-    public class EventActionNodePersist<TKey, TEvent, TParam, TUserId>
+    public class EventActionNodePersist<TKey, TState, TEvent, TParam, TCtx, TUserId>
+        where TState: struct
+        where TEvent: struct
+        where TCtx: AbstractStateMachinePersistCtx<TKey, TState, TEvent, TParam, TCtx, TUserId>
     {
+        
         /// <summary>
         ///     The id of the event.
         /// </summary>
@@ -16,6 +23,16 @@ namespace A19.StateMachine.PSharpBase
         ///     The event node.
         /// </summary>
         public TEvent Event { get; set; }
+        
+        /// <summary>
+        ///     Indicates this should just run on the state machine thread.
+        /// </summary>
+        public bool RunOnThread { get; set; }
+        
+        /// <summary>
+        ///     The function to run on the main thread.
+        /// </summary>
+        public Func<TCtx, Task> FuncToRun { get; set; }
 
         /// <summary>
         ///     The parameter that was passed in.
@@ -26,6 +43,11 @@ namespace A19.StateMachine.PSharpBase
         ///     The id of the user who made the request.
         /// </summary>
         public TUserId CreatedBy { get; set; }
-
+        
+        /// <summary>
+        ///     The results of the action.
+        /// </summary>
+        public EventResultType EventResult { get; set; }
+        
     }
 }
