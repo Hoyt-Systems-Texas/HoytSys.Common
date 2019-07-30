@@ -49,11 +49,12 @@ namespace A19.StateMachine.PSharpBase
                 {
                     try
                     {
-                        await node.FuncToRun(ctx);
+                        await node.Func.Run(ctx);
                     }
                     catch (Exception ex)
                     {
                         log.Error(ex, ex.Message);
+                        node.Func.SetError(ex);
                     }
                     finally
                     {

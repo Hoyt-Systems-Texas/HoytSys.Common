@@ -32,7 +32,7 @@ namespace A19.StateMachine.PSharpBase
         /// <summary>
         ///     The function to run on the main thread.
         /// </summary>
-        public Func<TCtx, Task> FuncToRun { get; set; }
+        public IExecuteActionFunc<TKey, TState, TEvent, TParam, TCtx, TUserId> Func { get; set; }
 
         /// <summary>
         ///     The parameter that was passed in.
