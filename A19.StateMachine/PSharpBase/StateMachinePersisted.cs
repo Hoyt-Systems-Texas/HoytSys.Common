@@ -15,16 +15,13 @@ namespace A19.StateMachine.PSharpBase
         private static readonly ILogger log = LogManager.GetCurrentClassLogger();
         private readonly Action<Exception> errorHandler;
         private readonly Dictionary<TState, StateNode> states = new Dictionary<TState, StateNode>(100);
-        private readonly ITransitionStore<TKey, TState, TUserId> transitionStore;
         private readonly IEventPersistedStore<TKey, TState, TEvent, TParam, TCtx, TUserId> eventPersistedStore;
         private readonly IRetryService retryService;
 
         public StateMachinePersisted(
-            ITransitionStore<TKey, TState, TUserId> transitionStore,
             IEventPersistedStore<TKey, TState, TEvent, TParam, TCtx, TUserId> eventPersistedStore,
             IRetryService retryService)
         {
-            this.transitionStore = transitionStore;
             this.eventPersistedStore = eventPersistedStore;
             this.retryService = retryService;
         }
