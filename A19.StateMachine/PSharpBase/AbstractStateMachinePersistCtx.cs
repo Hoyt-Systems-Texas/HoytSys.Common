@@ -26,23 +26,29 @@ namespace A19.StateMachine.PSharpBase
 
         public readonly TKey StateMachineKey;
         private readonly SkipQueue<EventActionNodePersist<TKey, TState, TEvent, TParam, TCtx, TUserId>> skipQueue;
-        private readonly Subject<int> subject = new Subject<int>();
+        private readonly Subject<int> newEventSubject = new Subject<int>();
         private int currentRunningState = IDLE;
         private int retryCount = 0;
         private EventActionNodePersist<TKey, TState, TEvent, TParam, TCtx, TUserId> retryEvent;
         private readonly IEventPersistedStore<TKey, TState, TEvent, TParam, TCtx, TUserId> eventPersistedStore;
         private EventActionNodePersist<TKey, TState, TEvent, TParam, TCtx, TUserId> currentEventNode;
+        private readonly IRetryService retryService;
+        private readonly int maxDelay;
 
         public AbstractStateMachinePersistCtx(
             TKey stateMachineKey,
             TState currentState,
             uint size,
-            IEventPersistedStore<TKey, TState, TEvent, TParam, TCtx, TUserId> eventPersistedStore)
+            IEventPersistedStore<TKey, TState, TEvent, TParam, TCtx, TUserId> eventPersistedStore,
+            IRetryService retryService,
+            int maxDelay = 10 * 60)
         {
             this.CurrentState = currentState;
             this.StateMachineKey = stateMachineKey;
             this.skipQueue = new SkipQueue<EventActionNodePersist<TKey, TState, TEvent, TParam, TCtx, TUserId>>(size);
             this.eventPersistedStore = eventPersistedStore;
+            this.retryService = retryService;
+            this.maxDelay = maxDelay;
         }
 
         /// <summary>
@@ -52,7 +58,7 @@ namespace A19.StateMachine.PSharpBase
 
         public IObservable<int> NewEvent
         {
-            get { return this.subject.AsObservable(); }
+            get { return this.newEventSubject.AsObservable(); }
         }
 
         public TState CurrentState { get; set; }
@@ -144,7 +150,7 @@ namespace A19.StateMachine.PSharpBase
 
         public virtual void Dispose()
         {
-            this.subject.Dispose();
+            this.newEventSubject.Dispose();
         }
 
         /// <summary>
@@ -189,6 +195,15 @@ namespace A19.StateMachine.PSharpBase
             Volatile.Write(ref this.retryEvent, eventActionNodePersist);
             this.currentEventNode = null;
             // TODO add a delay.  Will need to use either a retry data structure or just use a timer but there is a limit to the amount of timers.
+            this.retryService.Retry(new TimeSpan(0, 0, this.CalculateDelay()), () =>
+            {
+                this.newEventSubject.Next();
+            });
+        }
+
+        private int CalculateDelay()
+        {
+            return Math.Min(this.retryCount * 2, this.maxDelay); // Lets just have the max delay to 10 minutes for now.
         }
     }
 }
