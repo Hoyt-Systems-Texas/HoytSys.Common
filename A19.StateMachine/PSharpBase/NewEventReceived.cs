@@ -18,7 +18,7 @@ namespace A19.StateMachine.PSharpBase
 
         public async Task NewEvent(TCtx stateMachinePersistCtx)
         {
-            this.stateMachinePersisted.HandleTransition(stateMachinePersistCtx);
+            await this.stateMachinePersisted.HandleTransition(stateMachinePersistCtx);
         }
     }
 }

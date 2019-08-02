@@ -34,6 +34,7 @@ namespace A19.StateMachine.PSharpBase
         private EventActionNodePersist<TKey, TState, TEvent, TParam, TCtx, TUserId> currentEventNode;
         private readonly IRetryService retryService;
         private readonly int maxDelay;
+        private readonly NewEventReceived<TKey, TState, TEvent, TCtx, TParam, TUserId> newEventReceived;
 
         public AbstractStateMachinePersistCtx(
             TKey stateMachineKey,
@@ -41,6 +42,7 @@ namespace A19.StateMachine.PSharpBase
             uint size,
             IEventPersistedStore<TKey, TState, TEvent, TParam, TCtx, TUserId> eventPersistedStore,
             IRetryService retryService,
+            NewEventReceived<TKey, TState, TEvent, TCtx, TParam, TUserId> newEventReceived,
             int maxDelay = 10 * 60)
         {
             this.CurrentState = currentState;
@@ -49,6 +51,7 @@ namespace A19.StateMachine.PSharpBase
             this.eventPersistedStore = eventPersistedStore;
             this.retryService = retryService;
             this.maxDelay = maxDelay;
+            this.newEventReceived = newEventReceived;
         }
 
         /// <summary>
@@ -80,7 +83,7 @@ namespace A19.StateMachine.PSharpBase
                     this.currentEventNode = actionNode;
                     return true;
                 }
-
+                Volatile.Write(ref this.currentRunningState, IDLE);
                 return false;
             }
             else if (Interlocked.CompareExchange(
@@ -104,7 +107,9 @@ namespace A19.StateMachine.PSharpBase
             {
                 if (actionNode.RunOnThread)
                 {
-                    return this.skipQueue.Add(actionNode);
+                    var result = this.skipQueue.Add(actionNode);
+                    await this.newEventReceived.NewEvent((TCtx) this);
+                    return result;
                 }
                 else
                 {
@@ -112,6 +117,7 @@ namespace A19.StateMachine.PSharpBase
                     var able = this.skipQueue.Add(actionNode);
                     if (able)
                     {
+                        await this.newEventReceived.NewEvent((TCtx) this);
                         return true;
                     }
                     else
@@ -175,10 +181,12 @@ namespace A19.StateMachine.PSharpBase
                                 this.currentEventNode.Id,
                                 EventResultType.Completed);
                         }
+
                         this.currentEventNode = null;
                     }
 
                     Volatile.Write(ref this.currentRunningState, IDLE);
+                    break;
                 }
                 catch (Exception ex)
                 {
@@ -195,10 +203,7 @@ namespace A19.StateMachine.PSharpBase
             Volatile.Write(ref this.retryEvent, eventActionNodePersist);
             this.currentEventNode = null;
             // TODO add a delay.  Will need to use either a retry data structure or just use a timer but there is a limit to the amount of timers.
-            this.retryService.Retry(new TimeSpan(0, 0, this.CalculateDelay()), () =>
-            {
-                this.newEventSubject.Next();
-            });
+            this.retryService.Retry(new TimeSpan(0, 0, this.CalculateDelay()), () => { this.newEventSubject.Next(); });
         }
 
         private int CalculateDelay()
