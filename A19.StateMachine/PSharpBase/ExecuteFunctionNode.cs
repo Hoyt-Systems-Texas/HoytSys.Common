@@ -9,12 +9,12 @@ namespace A19.StateMachine.PSharpBase
         where TEvent : struct
         where TCtx : AbstractStateMachinePersistCtx<TKey, TState, TEvent, TParam, TCtx, TUserId>
     {
-        public readonly Func<TCtx, Task<IResultMonad<TResult>>> Func;
+        public readonly Func<TCtx, Task<TResult>> Func;
 
-        public readonly TaskCompletionSource<IResultMonad<TResult>> TaskCompletionSource =
-            new TaskCompletionSource<IResultMonad<TResult>>(TaskCreationOptions.RunContinuationsAsynchronously);
+        public readonly TaskCompletionSource<TResult> TaskCompletionSource =
+            new TaskCompletionSource<TResult>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        public ExecuteFunctionNode(Func<TCtx, Task<IResultMonad<TResult>>> func)
+        public ExecuteFunctionNode(Func<TCtx, Task<TResult>> func)
         {
             this.Func = func;
         }
