@@ -11,6 +11,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\A19.Concurrent\A19.Concurrent.csproj" />
+      <ProjectReference Include="..\A19.Messaging.Common\A19.Messaging.Common.csproj" />
     </ItemGroup>
 
 </Project>
