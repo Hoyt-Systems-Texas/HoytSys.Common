@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace A19.StateMachine.PSharpBase.Monad
 {
     public interface IStateMachineMonadStore<TKey, TState, TEvent, TParam, TCtx, TUserId>
@@ -13,6 +15,6 @@ namespace A19.StateMachine.PSharpBase.Monad
         /// <param name="value">The value to be int he state monad.</param>
         /// <typeparam name="TValue"></typeparam>
         /// <returns>The state monad.</returns>
-        IStateMachineMonad<TKey, TState, TEvent, TParam, TCtx, TUserId, TValue> To<TValue>(TKey key, TValue value);
+        Task<IStateMachineMonad<TKey, TState, TEvent, TParam, TCtx, TUserId, TValue>> To<TValue>(TKey key, TValue value);
     }
 }

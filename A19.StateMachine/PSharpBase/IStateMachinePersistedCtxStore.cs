@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace A19.StateMachine.PSharpBase
 {
     public interface IStateMachinePersistedCtxStore<TKey, TState, TEvent, TParam, TCtx, TUserId>
@@ -10,6 +12,6 @@ namespace A19.StateMachine.PSharpBase
         /// </summary>
         /// <param name="key">The key of the state machine to load.</param>
         /// <returns>The state machine ctx.</returns>
-        AbstractStateMachinePersistCtx<TKey, TState, TEvent, TParam, TCtx, TUserId> Load(TKey key);
+        Task<TCtx> Load(TKey key);
     }
 }

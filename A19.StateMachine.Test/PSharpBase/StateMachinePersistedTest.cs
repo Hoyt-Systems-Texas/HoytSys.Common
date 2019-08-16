@@ -101,6 +101,7 @@ namespace Mrh.StateMachine.Test.PSharpBase
                 maxDelay)
             {
             }
+
         }
 
         public class StateA : IStatePersisted<long, TestState, TestEvent, Context, string, Guid>

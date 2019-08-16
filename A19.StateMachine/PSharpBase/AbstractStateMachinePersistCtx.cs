@@ -210,5 +210,10 @@ namespace A19.StateMachine.PSharpBase
         {
             return Math.Min(this.retryCount * 2, this.maxDelay); // Lets just have the max delay to 10 minutes for now.
         }
+        
+        /// <summary>
+        ///     True if it's safe to remove the node.
+        /// </summary>
+        public bool IsRemovable => Volatile.Read(ref this.currentRunningState) == IDLE;
     }
 }
