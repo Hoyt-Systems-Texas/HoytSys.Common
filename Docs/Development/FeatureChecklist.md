@@ -9,6 +9,7 @@
     - [ ] What is the maximum session length?
     - [ ] How long are biometric security valid for?
     - [ ] Session and long term keys are able to be expired.
+    - [ ] Security is upfront and not possible to ignore in the backend.  Means you have to explicitly remove or ignore.
 - [ ] What is the financial risk of a security issue or a data leak?
 - [ ] Define a glossary of terms with the business and development team.
 - [ ] Define high-level domain model.
@@ -41,6 +42,7 @@
 - [ ] What will happen if the backing data source goes away?  If something bad could happen how do we recover?
 - [ ] Does the complexity out way the usefulness?
 - [ ] Is the design flexible enough to handle any unknown edge cases?
+- [ ] All data render has been escaped unless already done.
 
 # Deployment Checklist
 
@@ -51,6 +53,7 @@
 - [ ] All numbers used for security use a secure random number generator and are at least 128 bits long.
 - [ ] Secure cookies have been used for storing the session information.
 - [ ] User is not trusted to provide security information like user id and roles unless it has been signed.
+ - [ ] User access is always validate in the code.
 
 # Possible Ways to Secure A System
 
