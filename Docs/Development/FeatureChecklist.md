@@ -6,6 +6,10 @@
 - [ ] Are there any regulations affecting the application?
 - [ ] Define the high-level design.
 - [ ] How is the application going to be secured?
+    - [ ] What is the maximum session length?
+    - [ ] How long are biometric security valid for?
+    - [ ] Session and long term keys are able to be expired.
+- [ ] What is the financial risk of a security issue or a data leak?
 - [ ] Define a glossary of terms with the business and development team.
 - [ ] Define high-level domain model.
 - [ ] Sit with the users and understand the current high-level process and pain points.  Document the process and sit with the user to verify it's mostly correct.  Observe first to see if it's correct then show it to the users.
@@ -37,3 +41,21 @@
 - [ ] What will happen if the backing data source goes away?  If something bad could happen how do we recover?
 - [ ] Does the complexity out way the usefulness?
 - [ ] Is the design flexible enough to handle any unknown edge cases?
+
+# Deployment Checklist
+
+- [ ] Have the correct security headers been applied?
+- [ ] Make sure the application forces secure connection.
+- [ ] Do not allow CORS globally in a production environment.
+- [ ] All the protected urls return unauthorized access if not an active session.
+- [ ] All numbers used for security use a secure random number generator and are at least 128 bits long.
+- [ ] Secure cookies have been used for storing the session information.
+- [ ] User is not trusted to provide security information like user id and roles unless it has been signed.
+
+# Possible Ways to Secure A System
+
+* Generating secure random numbers for exposed keys.
+* Signed urls which a shared secret or a certificate.
+* Always use the user who is requesting the data access level.
+* Separate the backend processes from user level process.
+* Always use secure cookies.
