@@ -3,19 +3,28 @@
 - [ ] What data does the application own?
 - [ ] Does the application need to be able to push events to a user or system?
 - [ ] How important is the performance of the application?
+    - [ ] If important define the expected performance.
 - [ ] Are there any regulations affecting the application?
+    - [ ] What regulations affect the application?
+    - [ ] What are the auditing requirements?
 - [ ] Define the high-level design.
 - [ ] How is the application going to be secured?
     - [ ] What is the maximum session length?
     - [ ] How long are biometric security valid for?
     - [ ] Session and long term keys are able to be expired.
-    - [ ] Security is upfront and not possible to ignore in the backend.  Means you have to explicitly remove or ignore.
+    - [ ] Security is upfront and not possible to ignore in the backend.  Means you have to explicitly remove or ignore security roles.
 - [ ] What is the financial risk of a security issue or a data leak?
 - [ ] Define a glossary of terms with the business and development team.
 - [ ] Define high-level domain model.
 - [ ] Sit with the users and understand the current high-level process and pain points.  Document the process and sit with the user to verify it's mostly correct.  Observe first to see if it's correct then show it to the users.
 - [ ] Does the system need to be clustered?
 - [ ] What are the availability requirements?
+- [ ] What features does the system have to have to get to a Pilot quickly?
+- [ ] Do we need to be able to cache data?
+    - [ ] How bad is it to show stale data?
+    - [ ] How are the caches expired?
+    - [ ] How long should the data be cached for?
+    - [ ] How does the data get refreshed?
 
 # Feature Checklist
 
@@ -43,6 +52,7 @@
 - [ ] Does the complexity out way the usefulness?
 - [ ] Is the design flexible enough to handle any unknown edge cases?
 - [ ] All data render has been escaped unless already done.
+- [ ] Any potential security issues.
 
 # Deployment Checklist
 
