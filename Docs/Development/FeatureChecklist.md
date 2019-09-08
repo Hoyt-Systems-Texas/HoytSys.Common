@@ -17,8 +17,8 @@
 - [ ] Define a glossary of terms with the business and development team.
 - [ ] Define high-level domain model.
 - [ ] Sit with the users and understand the current high-level process and pain points.  Document the process and sit with the user to verify it's mostly correct.  Observe first to see if it's correct then show it to the users.
-- [ ] Does the system need to be clustered?
 - [ ] What are the availability requirements?
+    - [ ] Does the system need to be clustered?
 - [ ] What features does the system have to have to get to a Pilot quickly?
 - [ ] Do we need to be able to cache data?
     - [ ] How bad is it to show stale data?
@@ -53,6 +53,7 @@
 - [ ] Is the design flexible enough to handle any unknown edge cases?
 - [ ] All data render has been escaped unless already done.
 - [ ] Any potential security issues.
+- [ ] Any cookies are have Set-Cookie HttpOnly, Secure.
 
 # Deployment Checklist
 
@@ -64,6 +65,8 @@
 - [ ] Secure cookies have been used for storing the session information.
 - [ ] User is not trusted to provide security information like user id and roles unless it has been signed.
  - [ ] User access is always validate in the code.
+ - [ ] TLS 1.0 and lower have access disabled.
+- [ ] Set the most restrictive headers from: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers.
 
 # Possible Ways to Secure A System
 
