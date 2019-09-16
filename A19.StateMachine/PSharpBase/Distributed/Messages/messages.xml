@@ -31,17 +31,15 @@
             <type name="varData" primitiveType="uint8" length="0"/>
         </composite>
         <type name="ServerId" primitiveType="uint16"/>
-        <composite name="Host">
-            <ref name="ServerId" type="ServerId"/>
-            <ref name="HostName" type="varStringEncoding"/>
-        </composite>
     </types>
     <sbe:message name="RegisterServerRq" id="1">
-        <field name="Server" id="1" type="Host"/>
+        <field name="Server" id="1" type="uint16"/>
+        <data name="Uri" id="2" type="varStringEncoding" />
     </sbe:message>
     <sbe:message name="ActiveServers" id="2">
         <group name="Servers" id="1">
-            <field name="Host" id="2" type="Host"/>
+            <field name="Server" id="1" type="uint16"/>
+            <data name="Uri" id="2" type="varStringEncoding" />
         </group>
     </sbe:message>
 </sbe:messageSchema>

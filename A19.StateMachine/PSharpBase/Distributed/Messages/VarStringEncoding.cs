@@ -19,7 +19,7 @@ namespace A19.StateMachine.PSharpBase.Distributed.Messages
             _buffer = buffer;
         }
 
-        public const int Size = 4;
+        public const int Size = -1;
 
         public const uint LengthNullValue = 4294967295U;
         public const uint LengthMinValue = 0U;

@@ -1,4 +1,3 @@
-
 $jar = "C:\Users\mrhoy\.nuget\packages\sbe-tool\1.13.1\tools\sbe-tool-all.jar";
 $OUTPUTDIR = "$PSScriptRoot\A19.StateMachine\PSharpBase\Distributed\Messages";
 $SCHE = "$PSScriptRoot\A19.StateMachine\PSharpBase\Distributed\Messages\messages.xml";
