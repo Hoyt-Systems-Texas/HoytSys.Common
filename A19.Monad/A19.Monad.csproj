@@ -8,4 +8,8 @@
         <RootNamespace>Mrh.Monad</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\A19.Core\A19.Core.csproj" />
+    </ItemGroup>
+
 </Project>

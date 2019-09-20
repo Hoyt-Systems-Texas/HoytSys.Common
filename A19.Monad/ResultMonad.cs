@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using A19.Core;
 
 namespace Mrh.Monad
 {
@@ -46,7 +48,7 @@ namespace Mrh.Monad
             return new ResultError<T2>(this.errors);
         }
     }
-
+    
     /// <summary>
     ///     The binds for the result monad.
     /// </summary>
@@ -77,6 +79,21 @@ namespace Mrh.Monad
             throw new UnknownTypeException(monad.GetType(), $"Unable to determine how to bind the monad {monad.GetType()}.");
         }
 
+        public static Task<IResultMonad<T2>> Bind<T1, T2>(
+            this IResultMonad<T1> monad,
+            Func<T1, Task<IResultMonad<T2>>> func)
+        {
+            if (monad is ResultSuccess<T1> success)
+            {
+                return func(success.Result);
+            }
+
+            if (monad is ResultError<T1> error)
+            {
+                return Task.FromResult(error.To<T1, T2>());
+            }
+            throw new UnknownTypeException(monad.GetType(), $"Unable to determine how to bind the monad {monad.GetType()}.");
+        }
         public static async Task<IResultMonad<T2>> Bind<T1, T2>(
             this Task<IResultMonad<T1>> monadT,
             Func<T1, Task<IResultMonad<T2>>> func)
@@ -110,6 +127,30 @@ namespace Mrh.Monad
             }
             throw new UnknownTypeException(monad.GetType(), $"Unable to determine how to bind the monad {monad.GetType()}.");
         }
-        
+
+        /// <summary>
+        ///     Converts the ValidationError to a result monad.
+        /// </summary>
+        /// <param name="errors">The list of errors.</param>
+        /// <typeparam name="T">The type of the monad.</typeparam>
+        /// <returns>The resulting monad.</returns>
+        public static IResultMonad<T> Lift<T>(
+            this List<ValidationError> errors)
+        {
+            if (errors.Any())
+            {
+                return new ResultError<T>(errors.Select(v => v.Description).ToList());
+            }
+            else
+            {
+                return new ResultSuccess<T>(default);
+            }
+        }
+
+        public static IResultMonad<T> ToResultMonad<T>(
+            this T value)
+        {
+            return new ResultSuccess<T>(value);
+        }
     }
 }

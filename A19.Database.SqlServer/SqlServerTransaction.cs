@@ -66,6 +66,7 @@ namespace A19.Database.SqlServer
                     try
                     {
                         await func(conn, trans);
+                        trans.Commit();
                     }
                     catch (Exception ex)
                     {
