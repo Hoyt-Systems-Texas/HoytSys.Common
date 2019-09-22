@@ -36,12 +36,12 @@ namespace A19.Database.SqlServer
         {
             using (var conn = new SqlConnection(this.connection))
             {
-                await conn.OpenAsync();
+                await conn.OpenAsync().ConfigureAwait(false);
                 using (var trans = conn.BeginTransaction(isolationLevel))
                 {
                     try
                     {
-                        var result = await func(conn, trans);
+                        var result = await func(conn, trans).ConfigureAwait(false);
                         trans.Commit();
                         return result;
                     }
@@ -60,12 +60,12 @@ namespace A19.Database.SqlServer
         {
             using (var conn = new SqlConnection(this.connection))
             {
-                await conn.OpenAsync();
+                await conn.OpenAsync().ConfigureAwait(false);
                 using (var trans = conn.BeginTransaction(isolationLevel))
                 {
                     try
                     {
-                        await func(conn, trans);
+                        await func(conn, trans).ConfigureAwait(false);
                         trans.Commit();
                     }
                     catch (Exception ex)

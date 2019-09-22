@@ -40,7 +40,7 @@ namespace Mrh.Monad
         /// <param name="errors">A human readable list of errors.</param>
         public ResultError(List<string> errors)
         {
-            
+            this.errors = errors;
         }
 
         public IResultMonad<T2> To<T1, T2>()
