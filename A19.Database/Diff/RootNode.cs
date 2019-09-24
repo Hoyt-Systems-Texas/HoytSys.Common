@@ -3,17 +3,17 @@ using System.Collections.Generic;
 namespace A19.Database.Diff
 {
     public class RootNode<TNew, TDb, TKey, TUserId> : BaseNode<TNew, TDb, TKey, TUserId>,
-        IUpdateRecordValue<TNew, TDb, TKey, TUserId> where TDb: AbstractDatabaseRecord<TKey>, new()
+        IUpdateRecordValue<TNew, TDb, TKey, TUserId> where TDb: AbstractDatabaseRecord<TKey, TNew>, new()
     {
 
-        private readonly IDiffRepository<TUserId, TKey, TDb> diffRepository;
+        private readonly IDiffRepository<TUserId, TKey, TDb, TNew> diffRepository;
         private readonly List<IUpdateValue<TNew, TDb, TKey>> updateValues;
         private readonly bool immutable;
         
         public RootNode(
             int nodeId,
             bool immutable,
-            IDiffRepository<TUserId, TKey, TDb> diffRepository,
+            IDiffRepository<TUserId, TKey, TDb, TNew> diffRepository,
             List<IUpdateValue<TNew, TDb, TKey>> updateValues) : base(nodeId)
         {
             this.diffRepository = diffRepository;
@@ -28,14 +28,14 @@ namespace A19.Database.Diff
             TDb value,
             Dictionary<int, IUpdateRecords<TUserId>> updateValues)
         {
-            UpdateRecordImpl<TUserId, TDb, TKey> updateRecord;
+            UpdateRecordImpl<TUserId, TDb, TKey, TNew> updateRecord;
             if (updateValues.TryGetValue(this.NodeId, out var temp))
             {
-                updateRecord = (UpdateRecordImpl<TUserId, TDb, TKey>) temp;
+                updateRecord = (UpdateRecordImpl<TUserId, TDb, TKey, TNew>) temp;
             }
             else
             {
-                updateRecord = new UpdateRecordImpl<TUserId, TDb, TKey>(
+                updateRecord = new UpdateRecordImpl<TUserId, TDb, TKey, TNew>(
                     this.NodeId,
                     this.diffRepository);
                 updateValues[this.NodeId] = updateRecord;
@@ -46,6 +46,7 @@ namespace A19.Database.Diff
             if (value == null)
             {
                 value = new TDb();
+                value.NewValue = newValue;
                 createdNew = true;
             }
             foreach (var updateValue in this.updateValues)

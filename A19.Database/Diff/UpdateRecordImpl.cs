@@ -3,19 +3,19 @@ using System.Threading.Tasks;
 
 namespace A19.Database.Diff
 {
-    public class UpdateRecordImpl<TUserId, TDb, TKey> : IUpdateRecords<TUserId>
-        where TDb: AbstractDatabaseRecord<TKey>
+    public class UpdateRecordImpl<TUserId, TDb, TKey, TNew> : IUpdateRecords<TUserId>
+        where TDb: AbstractDatabaseRecord<TKey, TNew>
 
     {
         private readonly int nodeId;
-        private readonly IDiffRepository<TUserId, TKey, TDb> diffRepository;
+        private readonly IDiffRepository<TUserId, TKey, TDb, TNew> diffRepository;
         private readonly List<TDb> add = new List<TDb>(2);
         private readonly List<TDb> update = new List<TDb>(2);
         private readonly List<TDb> delete = new List<TDb>(2);
 
         public UpdateRecordImpl(
             int nodeId,
-            IDiffRepository<TUserId, TKey, TDb> diffRepository)
+            IDiffRepository<TUserId, TKey, TDb, TNew> diffRepository)
         {
             this.nodeId = nodeId;
             this.diffRepository = diffRepository;

@@ -4,7 +4,7 @@ namespace A19.Database.Diff
         IUpdateRecordValue<TNew, TDb, TKey, TUserId>,
         IBuildDependencyGraph,
         IDbUpdateNode
-        where TDb : AbstractDatabaseRecord<TKey>
+        where TDb : AbstractDatabaseRecord<TKey, TNew>
     {
     }
 }

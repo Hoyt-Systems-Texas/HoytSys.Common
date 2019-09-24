@@ -15,8 +15,8 @@ namespace A19.Database.Diff
         TUserId> : 
         BaseNode<TNewProp, TDbProp, TChildKey, TUserId>,
         IUpdateManyToOne<TNew, TDbValue, TKey, TUserId> 
-        where TDbValue : AbstractDatabaseRecord<TKey>
-        where TDbProp : AbstractDatabaseRecord<TChildKey>, new()
+        where TDbValue : AbstractDatabaseRecord<TKey, TNew>
+        where TDbProp : AbstractDatabaseRecord<TChildKey, TNewProp>, new()
         where TNewProp : class
 
     {
@@ -30,7 +30,7 @@ namespace A19.Database.Diff
 
         private readonly IEnumerable<IUpdateValue<TNewProp, TDbProp, TChildKey>> childValues;
 
-        private readonly IDiffRepository<TUserId, TChildKey, TDbProp> diffRepository;
+        private readonly IDiffRepository<TUserId, TChildKey, TDbProp, TNewProp> diffRepository;
 
         public UpdateManyToOne(
             int nodeId,
@@ -38,7 +38,7 @@ namespace A19.Database.Diff
             Func<TNew, TNewProp> newProp,
             Expression<Func<TDbValue, TDbProp>> dbValue,
             IEnumerable<IUpdateValue<TNewProp, TDbProp, TChildKey>> childValues,
-            IDiffRepository<TUserId, TChildKey, TDbProp> diffRepository) : base(nodeId)
+            IDiffRepository<TUserId, TChildKey, TDbProp, TNewProp> diffRepository) : base(nodeId)
         {
             this.immutable = immutable;
             this.newProp = newProp;
@@ -81,14 +81,14 @@ namespace A19.Database.Diff
                 updateValues) || changed;
             if (changed)
             {
-                UpdateRecordImpl<TUserId, TDbProp, TChildKey> updateNode;
+                UpdateRecordImpl<TUserId, TDbProp, TChildKey, TNewProp> updateNode;
                 if (updateValues.TryGetValue(this.NodeId, out var node))
                 {
-                    updateNode = (UpdateRecordImpl<TUserId, TDbProp, TChildKey>) node;
+                    updateNode = (UpdateRecordImpl<TUserId, TDbProp, TChildKey, TNewProp>) node;
                 }
                 else
                 {
-                    updateNode = new UpdateRecordImpl<TUserId, TDbProp, TChildKey>(this.NodeId, this.diffRepository);
+                    updateNode = new UpdateRecordImpl<TUserId, TDbProp, TChildKey, TNewProp>(this.NodeId, this.diffRepository);
                     updateValues[this.NodeId] = updateNode;
                 }
 

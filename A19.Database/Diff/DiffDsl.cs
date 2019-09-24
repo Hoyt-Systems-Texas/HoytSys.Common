@@ -11,16 +11,16 @@ namespace A19.Database.Diff
     /// <typeparam name="TDb"></typeparam>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TUserId"></typeparam>
-    public class DiffDsl<TNew, TDb, TKey, TUserId> where TDb : AbstractDatabaseRecord<TKey>, new()
+    public class DiffDsl<TNew, TDb, TKey, TUserId> where TDb : AbstractDatabaseRecord<TKey, TNew>, new()
     {
-        private readonly IDiffRepository<TUserId, TKey, TDb> diffRepository;
+        private readonly IDiffRepository<TUserId, TKey, TDb, TNew> diffRepository;
         private readonly List<IUpdateValue<TNew, TDb, TKey>> updateValues = new List<IUpdateValue<TNew, TDb, TKey>>(10);
         private readonly List<IUpdateManyToOneNode> manyToOneNodes = new List<IUpdateManyToOneNode>(2);
         private readonly List<IUpdateManyToManyNode> manyToManyNodes = new List<IUpdateManyToManyNode>(2);
         private readonly bool immutable;
 
         public DiffDsl(
-            IDiffRepository<TUserId, TKey, TDb> diffRepository,
+            IDiffRepository<TUserId, TKey, TDb, TNew> diffRepository,
             bool immutable)
         {
             this.diffRepository = diffRepository;
@@ -44,7 +44,7 @@ namespace A19.Database.Diff
             Func<TNew, TNewProp> newProp,
             Expression<Func<TDb, TDbProp>> dbValue,
             DiffDsl<TNewProp, TDbProp, TChildKey, TUserId> diffDsl)
-            where TDbProp : AbstractDatabaseRecord<TChildKey>, new()
+            where TDbProp : AbstractDatabaseRecord<TChildKey, TNewProp>, new()
             where TNewProp: class
         {
             this.manyToOneNodes.Add(new ManyToOneNode<TNewProp,TDbProp,TChildKey>(
@@ -60,7 +60,7 @@ namespace A19.Database.Diff
             Func<TDb, List<TDbProp>> dbValue,
             Action<TDbProp, TDb> setParent,
             DiffDsl<TNewProp, TDbProp, TChildKey, TUserId> diffDsl)
-            where TDbProp : AbstractDatabaseRecord<TChildKey>, new()
+            where TDbProp : AbstractDatabaseRecord<TChildKey, TNewProp>, new()
             where TNewProp: class
         {
             this.manyToManyNodes.Add(
@@ -141,6 +141,17 @@ namespace A19.Database.Diff
                 newValues,
                 dbValue,
                 (i1, i2) => i1 == i2);
+        }
+
+        public DiffDsl<TNew, TDb, TKey, TUserId> Add<TV>(
+            Func<TNew, TV> newValue,
+            Expression<Func<TDb, TV>> dbValue)
+            where TV:struct
+        {
+            return this.Add(
+                newValue,
+                dbValue,
+                (s1, s2) => s1.Equals(s2));
         }
 
         public DiffDsl<TNew, TDb, TKey, TUserId> Add(
@@ -263,7 +274,7 @@ namespace A19.Database.Diff
 
         public class ManyToOneNode<TNewProp, TDbProp, TChildKey>
             : IUpdateManyToOneNode
-            where TDbProp : AbstractDatabaseRecord<TChildKey>, new()
+            where TDbProp : AbstractDatabaseRecord<TChildKey, TNewProp>, new()
             where TNewProp : class
         {
             public readonly Func<TNew, TNewProp> NewProp;
@@ -297,7 +308,7 @@ namespace A19.Database.Diff
         }
 
         public class ManyToManyNode<TNewProp, TDbProp, TChildKey> : IUpdateManyToManyNode
-            where TDbProp : AbstractDatabaseRecord<TChildKey>, new()
+            where TDbProp : AbstractDatabaseRecord<TChildKey, TNewProp>, new()
             where TNewProp : class
         {
             public readonly Func<TNewProp, TChildKey> NewPropKey;

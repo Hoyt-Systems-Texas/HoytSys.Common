@@ -6,7 +6,7 @@ namespace A19.Database.Diff
     ///     All diff record must inherit this class inorder to do the updates.
     /// </summary>
     /// <typeparam name="TKey">The type for the key.</typeparam>
-    public abstract class AbstractDatabaseRecord<TKey>
+    public abstract class AbstractDatabaseRecord<TKey, TNew>
     {
         public abstract TKey Id { get; set; }
 
@@ -21,6 +21,8 @@ namespace A19.Database.Diff
 
         private int currentState = PENDING;
         private int updateType = SAME;
+        
+        public TNew NewValue { get; set; }
 
         /// <summary>
         ///     They think it should save.

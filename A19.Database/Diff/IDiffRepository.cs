@@ -8,7 +8,7 @@ namespace A19.Database.Diff
     /// </summary>
     /// <typeparam name="TUserId">The type of the user.</typeparam>
     /// <typeparam name="TKey">The  type for the key in the database.</typeparam>
-    public interface IDiffRepository<TUserId, TKey, TDbValue> where TDbValue:AbstractDatabaseRecord<TKey>
+    public interface IDiffRepository<TUserId, TKey, TDbValue, TNew> where TDbValue:AbstractDatabaseRecord<TKey, TNew>
     {
         
         /// <summary>

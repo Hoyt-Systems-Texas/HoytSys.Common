@@ -7,7 +7,7 @@ namespace A19.Database.Diff
         IDbUpdateNode,
         INodeChildCollection<TNew, TDb, TKey, TUserId>,
         IBuildDependencyGraph
-        where TDb : AbstractDatabaseRecord<TKey>
+        where TDb : AbstractDatabaseRecord<TKey, TNew>
     {
         private readonly List<IUpdateManyToOne<TNew, TDb, TKey, TUserId>> manyToOnes =
             new List<IUpdateManyToOne<TNew, TDb, TKey, TUserId>>(2);

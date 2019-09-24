@@ -13,7 +13,7 @@ namespace A19.Database.Diff
     /// <typeparam name="TProperty">The property type of the value to update.</typeparam>
     /// <typeparam name="TKey">The key to update.</typeparam>
     public class FieldUpdateValue<TEntity, TDbValue, TProperty, TKey, TUserId> : IUpdateValue<
-    TEntity, TDbValue, TKey> where TDbValue:AbstractDatabaseRecord<TKey>
+    TEntity, TDbValue, TKey> where TDbValue:AbstractDatabaseRecord<TKey, TEntity>
     {
 
         private readonly Func<TEntity, TProperty> newValue;

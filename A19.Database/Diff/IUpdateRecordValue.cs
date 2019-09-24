@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace A19.Database.Diff
 {
-    public interface IUpdateRecordValue<TNew, TDb, TKey, TUserId> where TDb: AbstractDatabaseRecord<TKey>
+    public interface IUpdateRecordValue<TNew, TDb, TKey, TUserId> where TDb: AbstractDatabaseRecord<TKey, TNew>
     {
     
         bool Immutable { get; }
