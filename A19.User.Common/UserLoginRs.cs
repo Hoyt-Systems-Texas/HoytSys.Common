@@ -12,6 +12,11 @@ namespace A19.Security.User
         public bool Success { get; set; }
         
         /// <summary>
+        ///     The session key for the user.
+        /// </summary>
+        public string SessionKey { get; set; }
+        
+        /// <summary>
         ///     The user's guid id.
         /// </summary>
         public Guid UserGuid { get; set; }

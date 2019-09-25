@@ -4,4 +4,8 @@
         <TargetFramework>netcoreapp2.1</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\A19.Core\A19.Core.csproj" />
+    </ItemGroup>
+
 </Project>

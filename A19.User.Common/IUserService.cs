@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using A19.User.Common;
 
 namespace A19.Security.User
 {
