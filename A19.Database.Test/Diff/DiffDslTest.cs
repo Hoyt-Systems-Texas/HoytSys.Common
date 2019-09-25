@@ -61,6 +61,7 @@ namespace A19.Database.Test.Diff
 
         public class ManyToManyNodeDb : AbstractDatabaseRecord<int, ManyToManyNode>
         {
+            
             public override int Id { get; set; }
             
             public string Field5 { get; set; }

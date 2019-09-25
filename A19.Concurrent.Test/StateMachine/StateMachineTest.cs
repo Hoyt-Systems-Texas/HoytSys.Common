@@ -79,9 +79,9 @@ namespace A19.Concurrent.Test.StateMachine
             stateMachine.RegisterCtx(ctx);
             ctx.Add(TestEvent.G, "hel");
             ctx.Add(TestEvent.E, "hi");
-            Thread.Sleep(5);
-            Assert.IsTrue(ctx.RanG);
+            Thread.Sleep(10);
             Assert.AreEqual(TestState.B, ctx.CurrentState);
+            Assert.IsTrue(ctx.RanG);
         }
         
         private class StateA : BaseState<TestState, TestEvent, TestStateCtx, string>

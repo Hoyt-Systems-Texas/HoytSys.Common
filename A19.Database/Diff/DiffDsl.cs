@@ -61,7 +61,6 @@ namespace A19.Database.Diff
             Action<TDbProp, TDb> setParent,
             DiffDsl<TNewProp, TDbProp, TChildKey, TUserId> diffDsl)
             where TDbProp : AbstractDatabaseRecord<TChildKey, TNewProp>, new()
-            where TNewProp: class
         {
             this.manyToManyNodes.Add(
                 new ManyToManyNode<TNewProp,TDbProp,TChildKey>(
@@ -309,7 +308,6 @@ namespace A19.Database.Diff
 
         public class ManyToManyNode<TNewProp, TDbProp, TChildKey> : IUpdateManyToManyNode
             where TDbProp : AbstractDatabaseRecord<TChildKey, TNewProp>, new()
-            where TNewProp : class
         {
             public readonly Func<TNewProp, TChildKey> NewPropKey;
             public readonly Func<TNew, IEnumerable<TNewProp>> NewProp;

@@ -16,7 +16,6 @@ namespace A19.Database.Diff
         IUpdateManyToMany<TNew, TDbValue, TKey, TUserId>
         where TDbValue : AbstractDatabaseRecord<TKey, TNew>
         where TDbProp : AbstractDatabaseRecord<TChildKey, TNewProp>, new()
-        where TNewProp : class
     {
         private readonly bool immutable;
 
@@ -31,7 +30,7 @@ namespace A19.Database.Diff
         private readonly Func<TNewProp, TChildKey> newPropKey;
 
         private readonly Action<TDbProp, TDbValue> setParent;
-
+        
         public UpdateManyToMany(
             int nodeId,
             bool immutable,
