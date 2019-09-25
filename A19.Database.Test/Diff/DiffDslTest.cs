@@ -19,7 +19,7 @@ namespace A19.Database.Test.Diff
             public OneToOneNode One { get; set; }
         }
 
-        public class RootNodeDb : AbstractDatabaseRecord<int>
+        public class RootNodeDb : AbstractDatabaseRecord<int, RootNode>
         {
             public int Field1 { get; set; }
 
@@ -37,7 +37,7 @@ namespace A19.Database.Test.Diff
             public List<ManyToManyNode> Field6 { get; set; }
         }
 
-        public class OneToOneNodeDb : AbstractDatabaseRecord<int>
+        public class OneToOneNodeDb : AbstractDatabaseRecord<int, OneToOneNode>
         {
             public OneToOneNodeDb()
             {
@@ -59,7 +59,7 @@ namespace A19.Database.Test.Diff
             public string Field5 { get; set; }
         }
 
-        public class ManyToManyNodeDb : AbstractDatabaseRecord<int>
+        public class ManyToManyNodeDb : AbstractDatabaseRecord<int, ManyToManyNode>
         {
             public override int Id { get; set; }
             
@@ -206,7 +206,7 @@ namespace A19.Database.Test.Diff
         private DiffDsl<RootNode, RootNodeDb, int, Guid> CreateDiffDsl()
         {
             return new DiffDsl<RootNode, RootNodeDb, int, Guid>(
-                    A.Fake<IDiffRepository<Guid, int, RootNodeDb>>(),
+                    A.Fake<IDiffRepository<Guid, int, RootNodeDb, RootNode>>(),
                     false)
                 .Add(
                     n => n.Field1,
@@ -218,7 +218,7 @@ namespace A19.Database.Test.Diff
                     n => n.One,
                     d => d.One,
                     new DiffDsl<OneToOneNode,OneToOneNodeDb,int,Guid>(
-                        A.Fake<IDiffRepository<Guid, int, OneToOneNodeDb>>(),
+                        A.Fake<IDiffRepository<Guid, int, OneToOneNodeDb, OneToOneNode>>(),
                         true)
                         .Add(
                             n => n.Field3,
@@ -232,7 +232,7 @@ namespace A19.Database.Test.Diff
                             d => d.Field6,
                             (c, p) => p.Field6.Add(c),
                             new DiffDsl<ManyToManyNode, ManyToManyNodeDb, int, Guid>(
-                                A.Fake<IDiffRepository<Guid, int, ManyToManyNodeDb>>(),
+                                A.Fake<IDiffRepository<Guid, int, ManyToManyNodeDb, ManyToManyNode>>(),
                                 true)
                                 .Add(
                                     n => n.Id,
