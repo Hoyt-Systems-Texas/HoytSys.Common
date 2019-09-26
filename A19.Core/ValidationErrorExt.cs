@@ -121,5 +121,23 @@ namespace A19.Core
             }
             return errors;
         }
+        
+        public static List<ValidationError> MaxValue(
+            this List<ValidationError> errors,
+            int maxValue,
+            string fieldName,
+            int value,
+            string prefix = "")
+        {
+            if (value > maxValue)
+            {
+                errors.Add(new ValidationError
+                {
+                    FieldName = fieldName,
+                    Description = $"The field {prefix}{fieldName} maximum value is {maxValue}."
+                });
+            }
+            return errors;
+        }
     }
 }
