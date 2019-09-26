@@ -14,6 +14,11 @@ namespace A19.User.Common
         /// </summary>
         public int SystemId { get; set; }
         
+        /// <summary>
+        ///     The ip address for the user who is trying to login.
+        /// </summary>
+        public string IpAddress { get; set; }
+        
         public List<ValidationError> Validate(List<ValidationError> errors)
         {
             errors

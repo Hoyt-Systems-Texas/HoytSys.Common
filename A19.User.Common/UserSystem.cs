@@ -24,5 +24,10 @@ namespace A19.User.Common
         /// </summary>
         public DateTime LastScene { get; set; }
         
+        /// <summary>
+        ///     The user session timeout.
+        /// </summary>
+        public DateTime Timeout { get; set; }
+        
     }
 }
