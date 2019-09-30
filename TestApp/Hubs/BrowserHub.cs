@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using A19.Messaging.Client;
 using A19.Messaging.Common;
 using A19.Security.User;
+using A19.User.Common;
 using Microsoft.AspNetCore.SignalR;
 using Mrh.Messaging;
 using NLog;

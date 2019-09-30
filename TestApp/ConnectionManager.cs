@@ -1,9 +1,6 @@
 using System;
 using A19.Messaging;
 using A19.Messaging.Common;
-using Microsoft.AspNetCore.Hosting.Internal;
-using Mrh.Messaging;
-using ServiceApplicationTester;
 
 namespace TestApp
 {

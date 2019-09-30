@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace A19.Database.Repository.A19Test
 {
-    public class A19DatabaseConnection : IDatabaseTransaction
+    public class A19DatabaseConnection : IDatabaseTransaction<SqlConnection, SqlTransaction>
     {
 
         private readonly string databaseConnection;

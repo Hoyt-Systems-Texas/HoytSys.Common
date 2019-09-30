@@ -46,7 +46,7 @@ namespace TestApp
             });
 
             services.AddSignalR(o => { o.EnableDetailedErrors = true; });
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(o => { o.EnableEndpointRouting = false; }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddSingleton<
                     IConnectionIdGenerator>(
                     new ConnectionIdGenerator())
