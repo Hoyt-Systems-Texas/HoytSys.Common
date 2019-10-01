@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace A19.Messaging.Rest
 {
-    public class MessageResultError : IMessageResult
+    public class MessageResultError<T> : IMessageResult<T>
     {
         public MessageResultType ResultType => MessageResultType.Error;
         

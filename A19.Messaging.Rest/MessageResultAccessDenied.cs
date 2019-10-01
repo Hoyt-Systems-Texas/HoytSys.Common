@@ -1,6 +1,6 @@
 namespace A19.Messaging.Rest
 {
-    public class MessageResultAccessDenied : IMessageResult
+    public class MessageResultAccessDenied<T> : IMessageResult<T>
     {
         public MessageResultType ResultType => MessageResultType.AccessDenied;
     }

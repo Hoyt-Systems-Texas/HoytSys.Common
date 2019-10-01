@@ -2,17 +2,22 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.0</TargetFramework>
+
+        <IsPackable>false</IsPackable>
+
         <LangVersion>8</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\A19.Core\A19.Core.csproj" />
-      <ProjectReference Include="..\A19.Messaging.Common\A19.Messaging.Common.csproj" />
-      <ProjectReference Include="..\A19.Messaging.Json\A19.Messaging.Json.csproj" />
+        <PackageReference Include="nunit" Version="3.12.0" />
+        <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\A19.Messaging.Rest\A19.Messaging.Rest.csproj" />
-      <ProjectReference Include="..\A19.Messaging\A19.Messaging.csproj" />
-      <ProjectReference Include="..\A19.Monad\A19.Monad.csproj" />
       <ProjectReference Include="..\A19.User.Common\A19.User.Common.csproj" />
+      <ProjectReference Include="..\A19.User.Rest\A19.User.Rest.csproj" />
     </ItemGroup>
 
 </Project>

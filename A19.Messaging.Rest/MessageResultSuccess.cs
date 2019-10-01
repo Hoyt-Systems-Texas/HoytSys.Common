@@ -1,6 +1,6 @@
 namespace A19.Messaging.Rest
 {
-    public sealed class MessageResultSuccess<T> : IMessageResult
+    public sealed class MessageResultSuccess<T> : IMessageResult<T>
     {
 
         public MessageResultType ResultType => MessageResultType.Success;
