@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using A19.Core;
+using A19.Messaging.Common;
 
 namespace A19.User.Common
 {
-    public class UserLoginRq : IValidatable
+    public class UserLoginRq : IValidatable, IRequest
     {
         public string Username { get; set; }
         

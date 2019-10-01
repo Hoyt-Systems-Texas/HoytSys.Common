@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using A19.User.Common;
+using A19.Messaging.Common;
 
-namespace A19.Security.User
+namespace A19.User.Common
 {
-    public class UserLoginRs
+    public class UserLoginRs : IResponse
     {
         /// <summary>
         ///     true if they where able to login successfully.

@@ -7,6 +7,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\A19.Core\A19.Core.csproj" />
+      <ProjectReference Include="..\A19.Messaging.Common\A19.Messaging.Common.csproj" />
     </ItemGroup>
 
 </Project>

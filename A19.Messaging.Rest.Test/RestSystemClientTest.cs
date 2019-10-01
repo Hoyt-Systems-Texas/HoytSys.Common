@@ -1,4 +1,3 @@
-using A19.Security.User;
 using A19.User.Common;
 using Mrh.Monad;
 using NUnit.Framework;
