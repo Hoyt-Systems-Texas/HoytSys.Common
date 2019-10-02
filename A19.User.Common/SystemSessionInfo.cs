@@ -1,6 +1,6 @@
 using System;
 
-namespace A19.System.Common
+namespace A19.User.Common
 {
     public class SystemSessionInfo
     {

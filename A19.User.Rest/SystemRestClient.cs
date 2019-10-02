@@ -1,7 +1,6 @@
-using System.Net.Http;
 using System.Threading.Tasks;
 using A19.Messaging.Rest;
-using A19.System.Common;
+using A19.User.Common;
 using Mrh.Monad;
 
 namespace A19.System.Rest
@@ -15,9 +14,9 @@ namespace A19.System.Rest
         private readonly IRestClient _restClient;
 
         public SystemRestClient(
-            ISystemClientSettings systemClientSettings)
+            IUserClientSettings userClientSettings)
         {
-            _restClient = new RestSystemClient(systemClientSettings.ResultUrl);
+            _restClient = new RestSystemClient(userClientSettings.UserLoginUrl);
         }
 
         public async Task<IResultMonad<SystemLoginRs>> Login(SystemLoginRq systemLoginRq)
