@@ -5,12 +5,12 @@ using Mrh.Monad;
 
 namespace A19.User.Rest
 {
-    public class UserRestClient : IUserRestClient
+    public class UserClient : IUserClient
     {
 
         private readonly IRestClient _restClient;
 
-        public UserRestClient(
+        public UserClient(
             IUserClientSettings userClientSettings)
         {
             _restClient = new RestSystemClient(userClientSettings.UserLoginUrl);

@@ -8,12 +8,12 @@ namespace A19.System.Rest
     /// <summary>
     ///     The rest client for connecting to a system.
     /// </summary>
-    public class SystemRestClient : ISystemRestClient
+    public class SystemClient : ISystemClient
     {
 
         private readonly IRestClient _restClient;
 
-        public SystemRestClient(
+        public SystemClient(
             IUserClientSettings userClientSettings)
         {
             _restClient = new RestSystemClient(userClientSettings.UserLoginUrl);

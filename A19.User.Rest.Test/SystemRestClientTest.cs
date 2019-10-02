@@ -8,7 +8,7 @@ namespace A19.User.Rest.Test
     public class SystemRestClientTest
     {
         
-        private readonly SystemRestClient client = new SystemRestClient(new UserClientSettingsTest());
+        private readonly SystemClient client = new SystemClient(new UserClientSettingsTest());
 
         [Test]
         public void UserSystemAuthTest()

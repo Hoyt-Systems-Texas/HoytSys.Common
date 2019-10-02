@@ -1,10 +1,9 @@
 using System.Threading.Tasks;
-using A19.User.Common;
 using Mrh.Monad;
 
-namespace A19.User.Rest
+namespace A19.User.Common
 {
-    public interface IUserRestClient
+    public interface IUserClient
     {
         /// <summary>
         ///     Used to login a user into a system.

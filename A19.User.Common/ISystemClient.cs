@@ -1,10 +1,9 @@
 using System.Threading.Tasks;
-using A19.User.Common;
 using Mrh.Monad;
 
-namespace A19.System.Rest
+namespace A19.User.Common
 {
-    public interface ISystemRestClient
+    public interface ISystemClient
     {
         Task<IResultMonad<SystemLoginRs>> Login(SystemLoginRq systemLoginRq);
         Task<IResultMonad<ExtendSystemSessionRs>> Extend(ExtendSystemSessionRq request);
