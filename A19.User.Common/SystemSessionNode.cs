@@ -1,4 +1,5 @@
 using System;
+using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using A19.Messaging.Common;
@@ -17,7 +18,9 @@ namespace A19.User.Common
         ///     The id of the system we are accessing.
         /// </summary>
         public readonly int AccessingSystemId;
+
         private readonly int _systemId;
+
         /// <summary>
         ///     The session key to use for authentication
         /// </summary>
@@ -33,16 +36,12 @@ namespace A19.User.Common
         /// </summary>
         private DateTime _expires;
 
-        /// <summary>
-        ///     The session key.
-        /// </summary>
-        public string SessionKey => _sessionKey;
-
         private readonly ISystemClient _systemClient;
         private Timer _timer;
         private Timer _extendSession;
         private readonly TimeSpan _retryAfter = new TimeSpan(0, 1, 0);
         private readonly TimeSpan _extendSessionBuffer = new TimeSpan(0, 30, 0);
+        private readonly Subject<string> _sessionChanged = new Subject<string>();
 
         public SystemSessionNode(
             int accessingSystemId,
@@ -54,6 +53,23 @@ namespace A19.User.Common
             _passCode = passCode;
             _systemClient = systemClient;
             _systemId = systemId;
+        }
+
+        public string SessionKey => _sessionKey;
+
+        public IObservable<string> SessionObservable
+        {
+            get
+            {
+                if (CurrentState == SystemSessionState.Pending)
+                {
+                    Task.Run(async () =>
+                    {
+                        await this.ChangeState(SystemSessionEvent.Authenticate);
+                    });
+                }
+                return _sessionChanged;
+            }
         }
 
         private async Task ChangeState(SystemSessionEvent @event)
@@ -77,14 +93,16 @@ namespace A19.User.Common
                         _extendSession = null;
                         await ExtendSession();
                     }
+
                     break;
-                
+
                 case SystemSessionEvent.SessionExpired:
                     // Go back to pending since the session has expired.
                     if (CompareAndExchangeState(SystemSessionState.Authenticated, SystemSessionState.Pending))
                     {
                         await ChangeState(SystemSessionEvent.Authenticate);
                     }
+
                     break;
 
                 case SystemSessionEvent.Retry:
@@ -133,16 +151,20 @@ namespace A19.User.Common
                 {
                     _sessionKey = l.SystemSessionInfo.SessionId;
                     await this.ChangeState(SystemSessionEvent.Authenticated);
+                    _sessionChanged.OnNext(_sessionKey);
                     var timeSpan = l.SystemSessionInfo.ExpiresOn.Subtract(DateTime.Now).Subtract(_extendSessionBuffer);
                     if (_extendSession != null)
                     {
                         _extendSession.Dispose();
                         _extendSession = null;
                     }
-                    _extendSession = new Timer((o) =>
-                        {
-                            Task.Run(async () => { await this.ChangeState(SystemSessionEvent.SessionExpiring); });
-                        }, null, timeSpan, timeSpan);
+
+                    _extendSession =
+                        new Timer(
+                            (o) =>
+                            {
+                                Task.Run(async () => { await this.ChangeState(SystemSessionEvent.SessionExpiring); });
+                            }, null, timeSpan, timeSpan);
                     return l.ToResultMonad();
                 }).Error(async e =>
                 {
@@ -171,16 +193,23 @@ namespace A19.User.Common
                     if (r.Success)
                     {
                         _expires = r.SystemSessionInfo.ExpiresOn;
-                        var timespan = r.SystemSessionInfo.ExpiresOn.Subtract(DateTime.Now).Subtract(_extendSessionBuffer);
+                        var timespan = r.SystemSessionInfo.ExpiresOn.Subtract(DateTime.Now)
+                            .Subtract(_extendSessionBuffer);
                         if (_extendSession != null)
                         {
                             _extendSession.Dispose();
                             _extendSession = null;
                         }
-                        _extendSession = new Timer(_ =>
-                            {
-                                Task.Run(async () => { await this.ChangeState(SystemSessionEvent.SessionExpiring); });
-                            }, null, timespan, timespan);
+
+                        _extendSession =
+                            new Timer(
+                                _ =>
+                                {
+                                    Task.Run(async () =>
+                                    {
+                                        await this.ChangeState(SystemSessionEvent.SessionExpiring);
+                                    });
+                                }, null, timespan, timespan);
                     }
                     else
                     {
@@ -197,19 +226,47 @@ namespace A19.User.Common
             }
         }
 
+        /// <summary>
+        ///     Tries to get the current session id.
+        /// </summary>
+        /// <param name="sessionId">The id of the session to try and get.</param>
+        /// <returns>true if successfully got the session id.</returns>
+        public bool TryGetSessionId(out string sessionId)
+        {
+            switch (CurrentState)
+            {
+                case SystemSessionState.Authenticated:
+                    sessionId = _sessionKey;
+                    return false;
+
+                case SystemSessionState.Pending:
+                    Task.Run(async () => { await this.ChangeState(SystemSessionEvent.Authenticate); });
+                    break;
+            }
+            sessionId = null;
+            return false;
+        }
+
         private bool CompareAndExchangeState(SystemSessionState expectedState, SystemSessionState newState)
         {
-            log.Trace($"Attempt to change state from {CurrentState}:{expectedState} to {newState}.");
             var eSi = (int) expectedState;
             var nSi = (int) newState;
-            return Interlocked.CompareExchange(
-                       ref _currentState,
-                       nSi,
-                       eSi) == eSi;
+            var result = Interlocked.CompareExchange(
+                             ref _currentState,
+                             nSi,
+                             eSi) == eSi;
+            if (result)
+            {
+                log.Trace($"State change from {expectedState} to {newState}.");
+            }
+
+            return result;
         }
 
         private void SetState(SystemSessionState newState)
         {
+            log.Trace($"Change the state to {newState}.");
+            Interlocked.MemoryBarrier();
             Volatile.Write(ref _currentState, (int) newState);
         }
 

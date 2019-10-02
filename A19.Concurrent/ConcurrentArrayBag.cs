@@ -151,7 +151,7 @@ namespace A19.Concurrent
 
                 // We need the write barriers for this to work.
                 Volatile.Write(ref this.nodes, newArray);
-                // Set the state back to idle.
+                Interlocked.MemoryBarrier();
                 Volatile.Write(ref this.state, IDLE);
                 return true;
             }
