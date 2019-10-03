@@ -22,12 +22,14 @@ namespace A19.User.Common
         /// <summary>
         ///     The last time the user has been seen.
         /// </summary>
-        public DateTime LastScene { get; set; }
+        public DateTime LastSeen { get; set; }
         
         /// <summary>
         ///     The user session timeout.
         /// </summary>
         public DateTime Timeout { get; set; }
+        
+        public bool Saved { get; set; }
 
 
         public bool IsActive
