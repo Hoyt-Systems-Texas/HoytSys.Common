@@ -28,6 +28,11 @@ namespace A19.User.Common
         ///     The user session timeout.
         /// </summary>
         public DateTime Timeout { get; set; }
-        
+
+
+        public bool IsActive
+        {
+            get { return Timeout > DateTime.Now;  }
+        }
     }
 }
