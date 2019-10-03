@@ -11,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="NLog" Version="4.5.11" />
+      <PackageReference Include="NLog" Version="4.6.7" />
       <PackageReference Include="System.Reactive" Version="4.1.6" />
     </ItemGroup>
 
