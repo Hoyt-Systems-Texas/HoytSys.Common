@@ -20,10 +20,21 @@ namespace A19.Messaging.Rest
             _url = url;
         }
 
+        /// <summary>
+        ///     Used to make a post to a server.
+        /// </summary>
+        /// <param name="service">The name of the service to connect to.</param>
+        /// <param name="action">The name of the action.</param>
+        /// <param name="body">The body.</param>
+        /// <param name="serviceKey">The key to use for that service.</param>
+        /// <typeparam name="TBody">The body to send.</typeparam>
+        /// <typeparam name="TR">The result type.</typeparam>
+        /// <returns>The task that does the request.</returns>
         public async Task<IResultMonad<TR>> PostAsync<TBody, TR>(
             string service,
             string action,
-            TBody body)
+            TBody body,
+            string serviceKey = null)
         {
             var bodyS = JsonHelper.Encode(body);
             using (var requestMessage = new HttpRequestMessage(
@@ -31,6 +42,10 @@ namespace A19.Messaging.Rest
                 $"{_url}/{service}/{action}"))
             {
                 requestMessage.Content = new StringContent(bodyS, Encoding.UTF8, "application/json");
+                if (!string.IsNullOrWhiteSpace(serviceKey))
+                {
+                    requestMessage.Headers.Add("service", serviceKey);
+                }
                 var result = await HttpClient.SendAsync(requestMessage);
                 if (result.StatusCode == HttpStatusCode.OK)
                 {
