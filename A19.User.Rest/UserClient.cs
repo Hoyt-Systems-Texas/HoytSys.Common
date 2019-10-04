@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using A19.Messaging.Rest;
 using A19.User.Common;
@@ -42,6 +43,18 @@ namespace A19.User.Rest
                 "Login",
                 "destroy-session",
                 request);
+        }
+
+        /// <summary>
+        ///    Used to get a user information.
+        /// </summary>
+        /// <param name="userId">The id of the user to get the information for.</param>
+        /// <returns>The result of trying to get the user.</returns>
+        public async Task<IResultMonad<Common.User>> Get(Guid userId)
+        {
+            return await _restClient.GetAsync<Common.User>(
+                "UserSearch",
+                userId.ToString());
         }
     }
 }

@@ -45,6 +45,29 @@ namespace A19.Messaging.Rest
             }
         }
 
+        public async Task<IResultMonad<TR>> GetAsync<TR>(
+            string service,
+            string action,
+            IEnumerable<KeyValuePair<string, string>> queryString = null)
+        {
+            using (var requestMessage = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"{_url}/{service}/{action}"))
+            {
+                var result = await HttpClient.SendAsync(requestMessage);
+                if (result.StatusCode == HttpStatusCode.OK)
+                {
+                    var stringR = await result.Content.ReadAsStringAsync();
+                    var r = JsonHelper.Decode<TextMessageResult>(stringR);
+                    return r.ResultType.ToResultMonad<TR>(stringR);
+                }
+                else
+                {
+                    return HandleErrors<TR>(result);
+                }
+            }
+        }
+        
         private IResultMonad<TR> HandleErrors<TR>(HttpResponseMessage result)
         {
             if (result.StatusCode == HttpStatusCode.Forbidden)
