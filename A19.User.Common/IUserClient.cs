@@ -14,6 +14,7 @@ namespace A19.User.Common
         Task<IResultMonad<UserLoginRs>> Login(UserLoginRq request);
 
         Task<IResultMonad<UserSessionExtRs>> ExtendSession(UserSessionExtRq request);
+        
         Task<IResultMonad<DestroySessionRs>> DestroySession(DestroySessionRq request);
 
         /// <summary>
