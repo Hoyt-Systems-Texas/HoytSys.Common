@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using A19.DocumentStore.Common.Message;
 
 namespace A19.Document.Common
 {
@@ -39,7 +38,7 @@ namespace A19.Document.Common
         /// <summary>
         ///     The system who submitted the document.
         /// </summary>
-        public System System { get; set; }
+        public int SystemId { get; set; }
 
         /// <summary>
         ///     The date the document is to be delete.
