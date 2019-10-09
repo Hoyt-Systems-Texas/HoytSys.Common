@@ -3,23 +3,23 @@ using System.Collections.Generic;
 
 namespace A19.Document.Common
 {
-    public class Document 
+    public class Document
     {
         /// <summary>
         ///     The id of the document.
         /// </summary>
         public Guid DocumentId { get; set; }
-
+        
         /// <summary>
-        ///     The current version of the document.
+        ///     The document version.
         /// </summary>
         public Guid DocumentVersionId { get; set; }
-
+        
         /// <summary>
         ///     The owner of the document.
         /// </summary>
         public Owner Owner { get; set; }
-
+        
         /// <summary>
         ///     The name of the document.
         /// </summary>
@@ -55,16 +55,9 @@ namespace A19.Document.Common
         /// </summary>
         public bool Immutable { get; set; }
         
-        public DocumentStatus Status { get; set; }
-        
-        public string Comment { get; set; }
-
-        public Guid CreatedBy { get; set; }
-
-        public DateTime CreatedOn { get; set; }
-
-        public DateTime UpdateOn { get; set; }
-
-        public Guid UpdatedBy { get; set; }
+        /// <summary>
+        ///     The comment for the document.
+        /// </summary>
+        public string Comment { get; set;  }
     }
 }
