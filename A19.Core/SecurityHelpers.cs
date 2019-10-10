@@ -1,3 +1,4 @@
+using System;
 using System.Security.Cryptography;
 
 namespace A19.Core
@@ -14,6 +15,18 @@ namespace A19.Core
             using (var hash = SHA512.Create())
             {
                 return hash.ComputeHash(value);
+            }
+        }
+
+        public static Span<byte> Hmac512(
+            byte[] key,
+            byte[] value,
+            int start,
+            int count)
+        {
+            using (var hmac = new HMACSHA512(key))
+            {
+                return hmac.ComputeHash(value, start, count);
             }
         }
     }

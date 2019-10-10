@@ -152,5 +152,27 @@ namespace Mrh.Monad
         {
             return new ResultSuccess<T>(value);
         }
+
+        public static IResultMonad<T> Success<T>(
+            this IResultMonad<T> monad,
+            Action<T> act)
+        {
+            if (monad is ResultSuccess<T> s)
+            {
+                act(s.Result);
+            }
+            return monad;
+        }
+
+        public static IResultMonad<T> Error<T>(
+            this IResultMonad<T> monad,
+            Action err)
+        {
+            if (monad is IResultError<T> er)
+            {
+                err();
+            }
+            return monad;
+        }
     }
 }
