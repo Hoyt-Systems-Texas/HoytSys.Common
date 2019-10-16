@@ -2,7 +2,7 @@ namespace A19.Document.Common
 {
     public enum MimeType
     {
-        Pdf = 0,
-        Tiff = 1,
+        Pdf = 355,
+        Tiff = 509,
     }
 }

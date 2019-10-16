@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using A19.Core;
 using Mrh.Messaging.Json;
@@ -12,7 +11,7 @@ namespace A19.Security.Web
     ///     A signed token for passing values around that the user can't modify.'
     ///  
     /// </summary>
-    public class SecureTokenJsonGenerator
+    public class SecureTokenJsonGenerator : ISecureTokenJsonGenerator
     {
         private readonly byte[] _sharedSecret;
         private readonly ISecureKeyGenerator _secureKeyGenerator;
