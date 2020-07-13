@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -17,7 +18,7 @@ namespace A19.Concurrent
 
         static StopWatchThreadSafe()
         {
-            QueryPerformanceFrequency(out long frequency);
+            var frequency = QueryPerformanceFrequency();
             tickFrequency = 10000000.0;
             tickFrequency /= (double) frequency;
         }
@@ -50,16 +51,15 @@ namespace A19.Concurrent
             return (long) (value / tickFrequency);
         }
         
-        [DllImport("kernel32.dll")]
-        internal static extern bool QueryPerformanceCounter(out long value);
+    [DllImport("System.Native", EntryPoint = "SystemNative_GetTimestamp")]
+        internal static extern long QueryPerformanceCounter();
         
-        [DllImport("kernel32.dll")]
-        internal static extern bool QueryPerformanceFrequency(out long value);
+    [DllImport("System.Native", EntryPoint = "SystemNative_GetTimestampResolution")]
+        internal static extern long QueryPerformanceFrequency();
         
         public static long GetTimestamp()
         {
-          QueryPerformanceCounter(out long value);
-          return value;
+          return QueryPerformanceCounter();
         }
     }
 }

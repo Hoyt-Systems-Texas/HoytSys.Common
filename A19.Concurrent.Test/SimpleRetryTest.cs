@@ -23,7 +23,7 @@ namespace A19.Concurrent.Test
             retry.Retry(
                 new TimeSpan(0, 0, 0, 0, 5),
                 () => { Interlocked.Exchange(ref success, 1); });
-            Thread.Sleep(15);
+            Thread.Sleep(20);
             Assert.AreEqual(1, Volatile.Read(ref success));
         }
         

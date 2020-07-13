@@ -12,7 +12,7 @@ namespace A19.Concurrent.Test
         {
             var watch = new StopWatchThreadSafe();
             Thread.Sleep(5);
-            Assert.AreEqual(StopWatchThreadSafe.MillsToFrequency(5), watch.Elapsed(), 100000);
+            Assert.AreEqual(StopWatchThreadSafe.MillsToFrequency(5), watch.Elapsed(), 500000);
         }
     }
 }

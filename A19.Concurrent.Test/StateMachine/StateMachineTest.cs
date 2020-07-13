@@ -79,7 +79,7 @@ namespace A19.Concurrent.Test.StateMachine
             stateMachine.RegisterCtx(ctx);
             ctx.Add(TestEvent.G, "hel");
             ctx.Add(TestEvent.E, "hi");
-            Thread.Sleep(10);
+            Thread.Sleep(15);
             Assert.AreEqual(TestState.B, ctx.CurrentState);
             Assert.IsTrue(ctx.RanG);
         }
