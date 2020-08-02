@@ -7,6 +7,6 @@ namespace A19.Core
         New = 2,
         Deleted = 3,
         Abandon = 4,
-        None,
+        None = 5,
     }
 }
