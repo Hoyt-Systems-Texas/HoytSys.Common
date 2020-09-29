@@ -17,13 +17,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\A19.Concurrent\A19.Concurrent.csproj" />
-      <ProjectReference Include="..\A19.Core\A19.Core.csproj" />
-      <ProjectReference Include="..\A19.DataStructures\A19.DataStructures.csproj" />
-      <ProjectReference Include="..\A19.Messaging.Json\A19.Messaging.Json.csproj" />
-      <ProjectReference Include="..\A19.Messaging.NetMq\A19.Messaging.NetMq.csproj" />
-      <ProjectReference Include="..\A19.Messaging\A19.Messaging.csproj" />
-      <ProjectReference Include="..\A19.Monad\A19.Monad.csproj" />
+      <ProjectReference Include="..\HoytSys.Concurrent\HoytSys.Concurrent.csproj" />
+      <ProjectReference Include="..\HoytSys.Core\HoytSys.Core.csproj" />
+      <ProjectReference Include="..\HoytSys.DataStructures\HoytSys.DataStructures.csproj" />
+      <ProjectReference Include="..\HoytSys.Messaging.Json\HoytSys.Messaging.Json.csproj" />
+      <ProjectReference Include="..\HoytSys.Messaging.NetMq\HoytSys.Messaging.NetMq.csproj" />
+      <ProjectReference Include="..\HoytSys.Messaging\HoytSys.Messaging.csproj" />
+      <ProjectReference Include="..\HoytSys.Monad\HoytSys.Monad.csproj" />
       <ProjectReference Include="..\NetMqTestCommon\NetMqTestCommon.csproj" />
     </ItemGroup>
 

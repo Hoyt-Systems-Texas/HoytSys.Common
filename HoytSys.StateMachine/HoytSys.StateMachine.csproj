@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <LangVersion>8</LangVersion>
+        <RootNamespace>A19.StateMachine</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NLog" Version="4.6.7" />
+      <PackageReference Include="sbe-dll" Version="1.13.0" />
+      <PackageReference Include="sbe-tool" Version="1.13.1" />
+      <PackageReference Include="System.Reactive" Version="4.1.6" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\HoytSys.Concurrent\HoytSys.Concurrent.csproj" />
+      <ProjectReference Include="..\HoytSys.Messaging.Common\HoytSys.Messaging.Common.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -20,17 +20,17 @@
 
 
     <ItemGroup>
-      <ProjectReference Include="..\A19.Concurrent\A19.Concurrent.csproj" />
-      <ProjectReference Include="..\A19.Core\A19.Core.csproj" />
-      <ProjectReference Include="..\A19.Database.Repository\A19.Database.Repository.csproj" />
-      <ProjectReference Include="..\A19.Database\A19.Database.csproj" />
-      <ProjectReference Include="..\A19.Messaging.Client\A19.Messaging.Client.csproj" />
-      <ProjectReference Include="..\A19.Messaging.Json\A19.Messaging.Json.csproj" />
-      <ProjectReference Include="..\A19.Messaging.NetMq.Client\A19.Messaging.NetMq.Client.csproj" />
-      <ProjectReference Include="..\A19.Messaging.NetMq\A19.Messaging.NetMq.csproj" />
-      <ProjectReference Include="..\A19.Messaging\A19.Messaging.csproj" />
-      <ProjectReference Include="..\A19.Security.User\A19.Security.User.csproj" />
-      <ProjectReference Include="..\A19.User.Common\A19.User.Common.csproj" />
+      <ProjectReference Include="..\HoytSys.Concurrent\HoytSys.Concurrent.csproj" />
+      <ProjectReference Include="..\HoytSys.Core\HoytSys.Core.csproj" />
+      <ProjectReference Include="..\HoytSys.Database.Repository\HoytSys.Database.Repository.csproj" />
+      <ProjectReference Include="..\HoytSys.Database\HoytSys.Database.csproj" />
+      <ProjectReference Include="..\HoytSys.Messaging.Client\HoytSys.Messaging.Client.csproj" />
+      <ProjectReference Include="..\HoytSys.Messaging.Json\HoytSys.Messaging.Json.csproj" />
+      <ProjectReference Include="..\HoytSys.Messaging.NetMq.Client\HoytSys.Messaging.NetMq.Client.csproj" />
+      <ProjectReference Include="..\HoytSys.Messaging.NetMq\HoytSys.Messaging.NetMq.csproj" />
+      <ProjectReference Include="..\HoytSys.Messaging\HoytSys.Messaging.csproj" />
+      <ProjectReference Include="..\HoytSys.Security.User\HoytSys.Security.User.csproj" />
+      <ProjectReference Include="..\HoytSys.User.Common\HoytSys.User.Common.csproj" />
       <ProjectReference Include="..\NetMqTestCommon\NetMqTestCommon.csproj" />
     </ItemGroup>
 

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <LangVersion>8</LangVersion>
+        <RootNamespace>A19.Messaging</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\HoytSys.Concurrent\HoytSys.Concurrent.csproj" />
+      <ProjectReference Include="..\HoytSys.Core\HoytSys.Core.csproj" />
+      <ProjectReference Include="..\HoytSys.DataStructures\HoytSys.DataStructures.csproj" />
+      <ProjectReference Include="..\HoytSys.Messaging.Common\HoytSys.Messaging.Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NLog" Version="4.6.7" />
+    </ItemGroup>
+
+</Project>

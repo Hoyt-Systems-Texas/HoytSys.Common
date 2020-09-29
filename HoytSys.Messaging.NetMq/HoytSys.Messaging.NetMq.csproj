@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+        <LangVersion>8</LangVersion>
+        <RootNamespace>A19.Messaging.NetMq</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NetMQ" Version="4.0.0.207" />
+      <PackageReference Include="NLog" Version="4.6.7" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\HoytSys.Concurrent\HoytSys.Concurrent.csproj" />
+      <ProjectReference Include="..\HoytSys.Core\HoytSys.Core.csproj" />
+      <ProjectReference Include="..\HoytSys.DataStructures\HoytSys.DataStructures.csproj" />
+      <ProjectReference Include="..\HoytSys.Messaging\HoytSys.Messaging.csproj" />
+    </ItemGroup>
+
+</Project>

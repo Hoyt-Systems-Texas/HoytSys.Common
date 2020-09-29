@@ -12,11 +12,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\A19.Messaging.Client\A19.Messaging.Client.csproj" />
-      <ProjectReference Include="..\A19.Messaging.Common\A19.Messaging.Common.csproj" />
-      <ProjectReference Include="..\A19.Messaging.Json\A19.Messaging.Json.csproj" />
-      <ProjectReference Include="..\A19.Messaging.NetMq.Client\A19.Messaging.NetMq.Client.csproj" />
-      <ProjectReference Include="..\A19.Messaging\A19.Messaging.csproj" />
+      <ProjectReference Include="..\HoytSys.Messaging.Client\HoytSys.Messaging.Client.csproj" />
+      <ProjectReference Include="..\HoytSys.Messaging.Common\HoytSys.Messaging.Common.csproj" />
+      <ProjectReference Include="..\HoytSys.Messaging.Json\HoytSys.Messaging.Json.csproj" />
+      <ProjectReference Include="..\HoytSys.Messaging.NetMq.Client\HoytSys.Messaging.NetMq.Client.csproj" />
+      <ProjectReference Include="..\HoytSys.Messaging\HoytSys.Messaging.csproj" />
       <ProjectReference Include="..\NetMqTestCommon\NetMqTestCommon.csproj" />
     </ItemGroup>
 

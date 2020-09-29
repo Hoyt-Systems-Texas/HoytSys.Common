@@ -1,48 +1,48 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Monad", "A19.Monad\A19.Monad.csproj", "{8D20A465-04D8-4D88-80CE-51A9AD3FBF3E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Monad", "HoytSys.Monad\HoytSys.Monad.csproj", "{8D20A465-04D8-4D88-80CE-51A9AD3FBF3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Concurrent", "A19.Concurrent\A19.Concurrent.csproj", "{C186B331-66EC-4718-BB56-879B4576E6DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Concurrent", "HoytSys.Concurrent\HoytSys.Concurrent.csproj", "{C186B331-66EC-4718-BB56-879B4576E6DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Core", "A19.Core\A19.Core.csproj", "{339CFAEA-8EF6-4DAA-B731-1C2C80ED0DC5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Core", "HoytSys.Core\HoytSys.Core.csproj", "{339CFAEA-8EF6-4DAA-B731-1C2C80ED0DC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Concurrent.Test", "A19.Concurrent.Test\A19.Concurrent.Test.csproj", "{C622F815-E437-4AE4-9475-DB56A16727CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Concurrent.Test", "HoytSys.Concurrent.Test\HoytSys.Concurrent.Test.csproj", "{C622F815-E437-4AE4-9475-DB56A16727CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Concurrent.Console.Test", "A19.Concurrent.Console.Test\A19.Concurrent.Console.Test.csproj", "{9AE11A7B-E0F6-426F-AA9C-6885B55761D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Concurrent.Console.Test", "HoytSys.Concurrent.Console.Test\HoytSys.Concurrent.Console.Test.csproj", "{9AE11A7B-E0F6-426F-AA9C-6885B55761D1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{9A58C240-41FE-4DC1-82B9-62A0054BB364}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.DataStructures", "A19.DataStructures\A19.DataStructures.csproj", "{361FCC93-3264-43D2-9022-51666F110D07}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.DataStructures", "HoytSys.DataStructures\HoytSys.DataStructures.csproj", "{361FCC93-3264-43D2-9022-51666F110D07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.DataStructure.Test", "A19.DataStructure.Test\A19.DataStructure.Test.csproj", "{24801666-3F6E-48AE-A46B-372630F40F53}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.DataStructure.Test", "HoytSys.DataStructure.Test\HoytSys.DataStructure.Test.csproj", "{24801666-3F6E-48AE-A46B-372630F40F53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Database", "A19.Database\A19.Database.csproj", "{B585EE44-3C72-43BF-8052-B13CA6AD3467}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Database", "HoytSys.Database\HoytSys.Database.csproj", "{B585EE44-3C72-43BF-8052-B13CA6AD3467}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Database.Test", "A19.Database.Test\A19.Database.Test.csproj", "{FBBD7B2D-B481-4AB6-84C8-2B074AE9BD86}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Database.Test", "HoytSys.Database.Test\HoytSys.Database.Test.csproj", "{FBBD7B2D-B481-4AB6-84C8-2B074AE9BD86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Core.Test", "A19.Core.Test\A19.Core.Test.csproj", "{1449CFB5-E3B0-41C9-BE31-AD165B9F4FBC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Core.Test", "HoytSys.Core.Test\HoytSys.Core.Test.csproj", "{1449CFB5-E3B0-41C9-BE31-AD165B9F4FBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Distributed", "A19.Distributed\A19.Distributed.csproj", "{C1FC043F-8BD5-47EE-B4E2-D10EB74A384F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Distributed", "HoytSys.Distributed\HoytSys.Distributed.csproj", "{C1FC043F-8BD5-47EE-B4E2-D10EB74A384F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.StateMachine", "A19.StateMachine\A19.StateMachine.csproj", "{807411D6-C10A-4E34-8F9D-D5272ECB518C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.StateMachine", "HoytSys.StateMachine\HoytSys.StateMachine.csproj", "{807411D6-C10A-4E34-8F9D-D5272ECB518C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.StateMachine.Test", "A19.StateMachine.Test\A19.StateMachine.Test.csproj", "{7059517E-1841-4209-8BA7-C043F01E1678}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.StateMachine.Test", "HoytSys.StateMachine.Test\HoytSys.StateMachine.Test.csproj", "{7059517E-1841-4209-8BA7-C043F01E1678}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{79827CA1-E39A-417A-B936-2BE7D9DE8730}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{6551BA3E-C073-48FB-A44F-E81085E7BF55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Messaging", "A19.Messaging\A19.Messaging.csproj", "{285053BE-D172-4D04-9B68-6BD9354CE797}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Messaging", "HoytSys.Messaging\HoytSys.Messaging.csproj", "{285053BE-D172-4D04-9B68-6BD9354CE797}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Messaging.Test", "A19.Messaging.Test\A19.Messaging.Test.csproj", "{FD70561C-727D-4818-9FEF-81D1CE8B3355}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Messaging.Test", "HoytSys.Messaging.Test\HoytSys.Messaging.Test.csproj", "{FD70561C-727D-4818-9FEF-81D1CE8B3355}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Messaging.Json", "A19.Messaging.Json\A19.Messaging.Json.csproj", "{3E7E876C-F930-4B93-B956-41614DE13E1B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Messaging.Json", "HoytSys.Messaging.Json\HoytSys.Messaging.Json.csproj", "{3E7E876C-F930-4B93-B956-41614DE13E1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Messaging.Json.Test", "A19.Messaging.Json.Test\A19.Messaging.Json.Test.csproj", "{04C9C6FE-3CFA-43A2-93D9-FA63A549E9D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Messaging.Json.Test", "HoytSys.Messaging.Json.Test\HoytSys.Messaging.Json.Test.csproj", "{04C9C6FE-3CFA-43A2-93D9-FA63A549E9D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Messaging.NetMq", "A19.Messaging.NetMq\A19.Messaging.NetMq.csproj", "{389B888E-8BAC-4F17-944F-C6D27AA9CB20}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Messaging.NetMq", "HoytSys.Messaging.NetMq\HoytSys.Messaging.NetMq.csproj", "{389B888E-8BAC-4F17-944F-C6D27AA9CB20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Messaging.NetMq.Test", "A19.Messaging.NetMq.Test\A19.Messaging.NetMq.Test.csproj", "{5FC09397-7346-4A50-97B6-57313B451D84}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Messaging.NetMq.Test", "HoytSys.Messaging.NetMq.Test\HoytSys.Messaging.NetMq.Test.csproj", "{5FC09397-7346-4A50-97B6-57313B451D84}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestApplication", "TestApplication", "{24101FFA-5E91-4AC7-9E8B-B22BE30B5CE3}"
 EndProject
@@ -50,11 +50,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceApplicationTester", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messaging", "Messaging", "{A186D9A0-2253-4CE4-B101-35167A8FC683}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Messaging.NetMq.Client", "A19.Messaging.NetMq.Client\A19.Messaging.NetMq.Client.csproj", "{FF631F5A-B5B9-46AC-9A93-943F9577B8C5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Messaging.NetMq.Client", "HoytSys.Messaging.NetMq.Client\HoytSys.Messaging.NetMq.Client.csproj", "{FF631F5A-B5B9-46AC-9A93-943F9577B8C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Messaging.Client", "A19.Messaging.Client\A19.Messaging.Client.csproj", "{D1C6A261-ED73-457C-868A-F66076A66CF1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Messaging.Client", "HoytSys.Messaging.Client\HoytSys.Messaging.Client.csproj", "{D1C6A261-ED73-457C-868A-F66076A66CF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Messaging.Common", "A19.Messaging.Common\A19.Messaging.Common.csproj", "{32AA1C77-0175-4326-B737-54FC3503015E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Messaging.Common", "HoytSys.Messaging.Common\HoytSys.Messaging.Common.csproj", "{32AA1C77-0175-4326-B737-54FC3503015E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMqClientTest", "NetMqClientTest\NetMqClientTest.csproj", "{43314979-8301-49BC-A804-E0E665266B28}"
 EndProject
@@ -62,17 +62,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMqTestCommon", "NetMqTes
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Security", "Security", "{151ED674-23C7-4CAD-AC35-235A7357C531}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Security.User", "A19.Security.User\A19.Security.User.csproj", "{9AA8229E-A578-49D6-A616-30B436B56EEA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Security.User", "HoytSys.Security.User\HoytSys.Security.User.csproj", "{9AA8229E-A578-49D6-A616-30B436B56EEA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.User.Common", "A19.User.Common\A19.User.Common.csproj", "{1BCD30A4-F26B-49BD-A5D4-BBF8E2C36CE3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.User.Common", "HoytSys.User.Common\HoytSys.User.Common.csproj", "{1BCD30A4-F26B-49BD-A5D4-BBF8E2C36CE3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{BE09808D-6570-48DF-85A9-572E38F45E35}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Security", "Security", "{20C3D408-9E56-4FE8-B1FB-9DFA2A552A42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Security.User.Test", "A19.Security.User.Test\A19.Security.User.Test.csproj", "{9DD73D36-88A1-4EBF-B363-820F1A1654AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Security.User.Test", "HoytSys.Security.User.Test\HoytSys.Security.User.Test.csproj", "{9DD73D36-88A1-4EBF-B363-820F1A1654AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A19.Database.Repository", "A19.Database.Repository\A19.Database.Repository.csproj", "{B26AC46C-87AD-4C8C-91C2-85580AD28062}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoytSys.Database.Repository", "HoytSys.Database.Repository\HoytSys.Database.Repository.csproj", "{B26AC46C-87AD-4C8C-91C2-85580AD28062}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
