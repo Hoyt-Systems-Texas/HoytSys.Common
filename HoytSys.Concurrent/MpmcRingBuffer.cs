@@ -44,7 +44,7 @@ namespace A19.Concurrent
                 {
                     return false;
                 }
-            } while (this.buffer.HasValue(pIndex) // Need to go around again if a value is still at that position.
+            } while (!this.buffer.IsEmpty(pIndex) // Need to go around again if a value is still at that position.
                 || !this.producerIndex.CompareExchange(pIndex + 1, pIndex));
 
             var set = this.buffer.Set(pIndex, value);
@@ -65,7 +65,8 @@ namespace A19.Concurrent
                     value = default(T);
                     return false;
                 }
-            } while (this.buffer.IsEmpty(cIndex) || !this.consumerIndex.CompareExchange(cIndex + 1, cIndex));
+            } while (!this.buffer.HasValue(cIndex) 
+                || !this.consumerIndex.CompareExchange(cIndex + 1, cIndex));
 
             var get = this.buffer.TryGet(cIndex, out value);
             this.buffer.Clear(cIndex);
