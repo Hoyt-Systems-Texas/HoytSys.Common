@@ -62,5 +62,29 @@ namespace HoytSys.DataStructure.Test
             bitStore.Write(1, 0);
             Assert.AreEqual(0, bitStore.Read(1));
         }
+
+        [Test]
+        public void BinarySearchTest()
+        {
+            var bitStore = new BitStore(11, 20);
+            bitStore.Write(0, 1);
+            bitStore.Write(1, 2);
+            bitStore.Write(2, 3);
+            bitStore.Write(3, 3);
+            bitStore.Write(4, 4);
+            bitStore.Write(5, 5);
+            bitStore.Write(6, 6);
+            bitStore.Write(7, 7);
+            bitStore.Write(8, 7);
+            bitStore.Write(9, 7);
+            bitStore.Write(10, 10);
+            var pos = bitStore.BinarySearch(3, 1);
+            Assert.AreEqual(2, pos);
+            Assert.AreEqual(5, bitStore.BinarySearch(5, 1));
+            Assert.AreEqual(6, bitStore.BinarySearch(6, 1));
+            Assert.AreEqual(7, bitStore.BinarySearch(7, 1));
+            Assert.AreEqual(10, bitStore.BinarySearch(10, 1));
+            Assert.AreEqual(0, bitStore.BinarySearch(1, 1));
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace HoytSys.DataStructures
         private readonly ulong mask;
         private readonly ulong bits;
         private readonly int length;
+        private readonly int size;
 
         public BitStore(
             int size,
@@ -22,6 +23,73 @@ namespace HoytSys.DataStructures
             this.bits = (ulong) bits;
             this.length = (int) Math.Ceiling((bits * size) / 64.0);
             this.values = new ulong[this.length];
+            this.size = size;
+        }
+
+        public ulong BinarySearch(ulong value, ulong increments)
+        {
+            // Divided by the increments the total length.  Don't allow to overflow!
+            var searchLength = (ulong) this.size / increments;
+            var start = 0ul;
+            var middle = searchLength / 2;
+            var end = searchLength;
+            var pos = increments * middle;
+            while (true)
+            {
+                var valueAtPos = Read(pos);
+                if (value > valueAtPos)
+                {
+                    start = pos + 1;
+                    pos = CalculateHigh(start, end, increments);
+                    if (pos == end)
+                    {
+                        break;
+                    }
+                } 
+                else if (value < valueAtPos)
+                {
+                    end = pos - 1;
+                    pos = CalculateLow(start, end, increments);
+                    if (pos == start)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    // Value is equal
+                    end = pos;
+                    pos = CalculateLow(start, end, increments);
+                    if (pos == end)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            var matchedValue = Read(pos);
+            if (matchedValue == value)
+            {
+                return pos;
+            }
+            else
+            {
+                return UInt64.MaxValue;
+            }
+        }
+
+        private ulong CalculateLow(ulong start, ulong end, ulong increments)
+        {
+            var range = end - start;
+            var middle = range / 2;
+            return middle * increments + start;
+        }
+
+        private ulong CalculateHigh(ulong start, ulong end, ulong increments)
+        {
+            var range = end - start;
+            var middle = range / 2;
+            return middle * increments + start;
         }
 
         /// <summary>
