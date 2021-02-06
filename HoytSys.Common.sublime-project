@@ -1,0 +1,31 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+		}
+	],
+	"settings": {
+		"LSP": {
+			"omnisharp":
+			{
+				"command":
+				[
+					"/home/mrh0057/omnisharp/run",
+					"-lsp",
+					"-s", "/home/mrh0057/GitProjects/A19.Common/Mrh.Common.sln"
+				],
+				"enabled": true,
+				"languageId": "csharp",
+				"scopes":
+				[
+					"source.cs"
+				],
+				"syntaxes":
+				[
+					"Packages/C#/C#.sublime-syntax"
+				],
+			},
+		}
+	}
+}

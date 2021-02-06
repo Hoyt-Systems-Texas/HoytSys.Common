@@ -13,23 +13,17 @@ namespace HoytSys.DataStructures.Graph
     {
 
         private readonly TKey[] keys;
-        private readonly ulong mask;
-        private readonly ulong bits;
-        private readonly ulong[] edges;
         private readonly int keyCount;
+        private readonly BitStore bitStore;
 
         public ImmutableSparseGraph(
             TKey[] keys,
             int keyCount,
-            ulong mask,
-            ulong bits,
-            ulong[] edges)
+            BitStore bitStore)
         {
             this.keys = keys;
             this.keyCount = keyCount;
-            this.mask = mask;
-            this.bits = bits;
-            this.edges = edges;
+            this.bitStore = bitStore;
         }
 
         public static ImmutableSparseGraph<TKey> Create(
@@ -38,23 +32,18 @@ namespace HoytSys.DataStructures.Graph
             var dict = CreateLookup(edges);
             var count = dict.Count;
             var size = Pow2.MinimumBits(count);
-            var mask = (ulong) 1 << size - 1;
             var keys = new TKey[count];
             foreach (var key in dict)
             {
                 keys[key.Value] = key.Key;
             }
             var totalPairs = (ulong) edges.Count();
-            var totalSizeBits = totalPairs * 2 * (ulong) size;
-            var totalSize = (int) Math.Ceiling(totalSizeBits / 64.0);
-            var edgesArray = new ulong[totalSize];
+            var bitStore = new BitStore((int) (totalPairs * 2), size);
 
             return new ImmutableSparseGraph<TKey>(
                 keys,
                 count,
-                mask,
-                (ulong) size,
-                edgesArray);
+                bitStore);
         }
 
         /// <summary>
