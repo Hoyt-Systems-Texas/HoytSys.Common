@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using A19.DataStructures.Graph;
+using HoytSys.DataStructures.Graph;
 
 namespace A19.Database.Diff
 {

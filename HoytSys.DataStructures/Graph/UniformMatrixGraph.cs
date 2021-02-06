@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace A19.DataStructures.Graph
+namespace HoytSys.DataStructures.Graph
 {
     /// <summary>
     ///     A very basic matrix graph where its n x n matrix backend by an array for speed.  Do NOT use for very large graphs

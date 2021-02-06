@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace A19.DataStructures
+namespace HoytSys.DataStructures
 {
     public interface IMultiMap<TKey, TValue, TContainerType> : IEnumerable<KeyValuePair<TKey, TValue>> where TContainerType: IEnumerable<TValue>
     {

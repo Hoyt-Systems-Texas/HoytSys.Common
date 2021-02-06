@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using A19.DataStructures;
+using HoytSys.DataStructures;
 using NUnit.Framework;
 
 namespace A19.DataStructure.Test

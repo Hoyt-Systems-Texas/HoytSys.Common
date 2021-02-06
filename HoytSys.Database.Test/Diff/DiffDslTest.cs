@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using A19.Database.Diff;
-using A19.DataStructures.Graph;
+using HoytSys.DataStructures.Graph;
 using FakeItEasy;
 using NUnit.Framework;
 

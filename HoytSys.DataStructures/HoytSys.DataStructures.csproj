@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <LangVersion>8</LangVersion>
-        <RootNamespace>A19.DataStructures</RootNamespace>
+        <RootNamespace>HoytSys.DataStructures</RootNamespace>
     </PropertyGroup>
 
 </Project>

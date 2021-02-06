@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using A19.DataStructures;
+using HoytSys.DataStructures;
 
 namespace A19.Concurrent
 {

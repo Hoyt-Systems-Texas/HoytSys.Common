@@ -1,4 +1,4 @@
-using A19.DataStructures.Graph;
+using HoytSys.DataStructures.Graph;
 using NUnit.Framework;
 
 namespace A19.DataStructure.Test.Graph

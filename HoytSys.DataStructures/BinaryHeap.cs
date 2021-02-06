@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace A19.DataStructures
+namespace HoytSys.DataStructures
 {
     /// <summary>
     ///     A simple binary heap that is array back.

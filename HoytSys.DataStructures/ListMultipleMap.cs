@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace A19.DataStructures
+namespace HoytSys.DataStructures
 {
     /// <summary>
     ///     A basic list map implementation.
