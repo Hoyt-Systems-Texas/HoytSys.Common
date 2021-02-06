@@ -29,7 +29,7 @@ namespace HoytSys.DataStructures
         /// </summary>
         /// <param name="pos">The position to read in.</param>
         /// <returns>The unit value at that position.</returns>
-        public ulong ReadUint(ulong pos)
+        public ulong Read(ulong pos)
         {
             var (start, reminder) = Start(pos);
             
@@ -53,7 +53,7 @@ namespace HoytSys.DataStructures
             return value;
         }
 
-        public void WriteUint(ulong pos, ulong value)
+        public void Write(ulong pos, ulong value)
         {
             var (start, reminder) = Start(pos);
             

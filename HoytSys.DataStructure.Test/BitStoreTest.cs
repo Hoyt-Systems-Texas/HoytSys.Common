@@ -15,17 +15,17 @@ namespace HoytSys.DataStructure.Test
         {
             var bitStore = new BitStore(6, 20);
             var maxValue = (uint) (1 << 20) - 1;
-            bitStore.WriteUint(0, 93);
-            bitStore.WriteUint(1, maxValue);
-            bitStore.WriteUint(2, 13424);
+            bitStore.Write(0, 93);
+            bitStore.Write(1, maxValue);
+            bitStore.Write(2, 13424);
             
-            Assert.AreEqual((uint) 93, bitStore.ReadUint(0));
-            Assert.AreEqual(maxValue, bitStore.ReadUint(1));
-            Assert.AreEqual(13424, bitStore.ReadUint(2));
+            Assert.AreEqual((uint) 93, bitStore.Read(0));
+            Assert.AreEqual(maxValue, bitStore.Read(1));
+            Assert.AreEqual(13424, bitStore.Read(2));
             
             // Wipe out all of the 1s with 0s to make sure it workes.
-            bitStore.WriteUint(1, 0);
-            Assert.AreEqual(0, bitStore.ReadUint(1));
+            bitStore.Write(1, 0);
+            Assert.AreEqual(0, bitStore.Read(1));
         }
         
         /// <summary>
@@ -37,30 +37,30 @@ namespace HoytSys.DataStructure.Test
             var bitStore = new BitStore(7, 20);
             var maxValue = (uint) (1 << 20) - 1;
             // Random writes.
-            bitStore.WriteUint(0, 93);
-            bitStore.WriteUint(5, 13424);
-            bitStore.WriteUint(2, 13424);
-            bitStore.WriteUint(1, maxValue);
-            bitStore.WriteUint(3, maxValue);
-            bitStore.WriteUint(7, 13424);
-            bitStore.WriteUint(6, 13424);
-            bitStore.WriteUint(4, 13424);
+            bitStore.Write(0, 93);
+            bitStore.Write(5, 13424);
+            bitStore.Write(2, 13424);
+            bitStore.Write(1, maxValue);
+            bitStore.Write(3, maxValue);
+            bitStore.Write(7, 13424);
+            bitStore.Write(6, 13424);
+            bitStore.Write(4, 13424);
             
-            Assert.AreEqual((uint) 93, bitStore.ReadUint(0));
-            Assert.AreEqual(maxValue, bitStore.ReadUint(1));
-            Assert.AreEqual(maxValue, bitStore.ReadUint(3));
-            Assert.AreEqual(13424, bitStore.ReadUint(4));
-            Assert.AreEqual(13424, bitStore.ReadUint(7));
-            Assert.AreEqual(13424, bitStore.ReadUint(2));
-            Assert.AreEqual(13424, bitStore.ReadUint(5));
-            Assert.AreEqual(13424, bitStore.ReadUint(6));
-            Assert.AreEqual(13424, bitStore.ReadUint(7));
-            Assert.AreEqual(13424, bitStore.ReadUint(5));
-            Assert.AreEqual(13424, bitStore.ReadUint(6));
+            Assert.AreEqual((uint) 93, bitStore.Read(0));
+            Assert.AreEqual(maxValue, bitStore.Read(1));
+            Assert.AreEqual(maxValue, bitStore.Read(3));
+            Assert.AreEqual(13424, bitStore.Read(4));
+            Assert.AreEqual(13424, bitStore.Read(7));
+            Assert.AreEqual(13424, bitStore.Read(2));
+            Assert.AreEqual(13424, bitStore.Read(5));
+            Assert.AreEqual(13424, bitStore.Read(6));
+            Assert.AreEqual(13424, bitStore.Read(7));
+            Assert.AreEqual(13424, bitStore.Read(5));
+            Assert.AreEqual(13424, bitStore.Read(6));
             
             // Wipe out all of the 1s with 0s to make sure it workes.
-            bitStore.WriteUint(1, 0);
-            Assert.AreEqual(0, bitStore.ReadUint(1));
+            bitStore.Write(1, 0);
+            Assert.AreEqual(0, bitStore.Read(1));
         }
     }
 }

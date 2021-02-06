@@ -25,7 +25,13 @@ namespace HoytSys.DataStructures.Graph
             this.keyCount = keyCount;
             this.bitStore = bitStore;
         }
-
+        
+        /// <summary>
+        ///     Used to create an immutable sparse graph.  Make sure the edges are
+        /// already shorted by the first edge.
+        /// </summary>
+        /// <param name="edges"></param>
+        /// <returns></returns>
         public static ImmutableSparseGraph<TKey> Create(
             IEnumerable<(TKey, TKey)> edges)
         {
@@ -39,6 +45,12 @@ namespace HoytSys.DataStructures.Graph
             }
             var totalPairs = (ulong) edges.Count();
             var bitStore = new BitStore((int) (totalPairs * 2), size);
+            var pos = 0ul;
+            foreach (var (p, c) in edges)
+            {
+                bitStore.Write(pos++, dict[p]);
+                bitStore.Write(pos++, dict[c]);
+            }
 
             return new ImmutableSparseGraph<TKey>(
                 keys,
@@ -49,10 +61,10 @@ namespace HoytSys.DataStructures.Graph
         /// <summary>
         ///     Creates a simple lookup dictionary for looking up the values.
         /// </summary>
-        private static Dictionary<TKey, int> CreateLookup(IEnumerable<(TKey, TKey)> edges)
+        private static Dictionary<TKey, ulong> CreateLookup(IEnumerable<(TKey, TKey)> edges)
         {
-            var dict = new Dictionary<TKey, int>(1000); 
-            var id = 0;
+            var dict = new Dictionary<TKey, ulong>(1000); 
+            var id = 0ul;
             foreach (var (v1, v2) in edges)
             {
                 if (!dict.ContainsKey(v1)) 
