@@ -1,3 +1,4 @@
+using System;
 using HoytSys.DataStructures;
 using NUnit.Framework;
 
@@ -85,6 +86,7 @@ namespace HoytSys.DataStructure.Test
             Assert.AreEqual(7, bitStore.BinarySearch(7, 1));
             Assert.AreEqual(10, bitStore.BinarySearch(10, 1));
             Assert.AreEqual(0, bitStore.BinarySearch(1, 1));
+            Assert.AreEqual(UInt64.MaxValue, bitStore.BinarySearch(11, 1));
         }
     }
 }

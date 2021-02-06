@@ -26,6 +26,12 @@ namespace HoytSys.DataStructures
             this.size = size;
         }
 
+        /// <summary>
+        ///     A binary search for the bit store.  It assume the store is in order.
+        /// </summary>
+        /// <param name="value">The value we are looking for.</param>
+        /// <param name="increments">The increments to use to search for.</param>
+        /// <returns>The position of the value start. If not found returns UInt64.MaxValue</returns>
         public ulong BinarySearch(ulong value, ulong increments)
         {
             // Divided by the increments the total length.  Don't allow to overflow!
@@ -48,7 +54,8 @@ namespace HoytSys.DataStructures
                 } 
                 else if (value < valueAtPos)
                 {
-                    end = pos - 1;
+                    // Value low so we know it must be less than this.
+                    end = pos - 1; // Subtract one off of it.
                     pos = CalculateLow(start, end, increments);
                     if (pos == start)
                     {
@@ -57,7 +64,7 @@ namespace HoytSys.DataStructures
                 }
                 else
                 {
-                    // Value is equal
+                    // Value is equal.  We keep doing so we can support duplicate values.
                     end = pos;
                     pos = CalculateLow(start, end, increments);
                     if (pos == end)
