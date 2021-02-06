@@ -44,6 +44,17 @@ namespace HoytSys.Core
         }
 
         /// <summary>
+        ///     The minimum number of bits needed to represent a value.
+        /// </summary>
+        /// <param name="value">The value to represent.</param>
+        /// <returns>The number of bits.</returns>
+        public static int MinimumBits(int value)
+        {
+            var powOf2  = RoundToPowerOfTwo(value);
+            return (int) Math.Log(powOf2, 2);
+        }
+
+        /// <summary>
         ///  Checks to see if the value is a power of 2
         /// </summary>
         /// <param name="value">The value to see if it's a power of 2</param>

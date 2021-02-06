@@ -519,123 +519,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "HoytSys.DataStructures/Graph/ImmutableSparseGraph.cs",
-			"settings":
-			{
-				"buffer_size": 1786,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			},
-			"undo_stack":
-			[
-				[
-					11,
-					1,
-					"sequence",
-					{
-						"commands":
-						[
-							[
-								"_vi_o",
-								{
-									"count": 1,
-									"mode": "mode_internal_normal"
-								}
-							],
-							[
-								"insert",
-								{
-									"characters": "udinh"
-								}
-							],
-							[
-								"insert",
-								{
-									"characters": " "
-								}
-							],
-							[
-								"left_delete",
-								null
-							],
-							[
-								"left_delete",
-								null
-							],
-							[
-								"left_delete",
-								null
-							],
-							[
-								"left_delete",
-								null
-							],
-							[
-								"left_delete",
-								null
-							],
-							[
-								"insert",
-								{
-									"characters": "sing"
-								}
-							],
-							[
-								"insert",
-								{
-									"characters": " Hoyt"
-								}
-							],
-							[
-								"insert_completion",
-								{
-									"completion": "HoytSys",
-									"format": "text",
-									"keep_prefix": false,
-									"must_insert": false,
-									"trigger": "HoytSys"
-								}
-							],
-							[
-								"insert",
-								{
-									"characters": ".core;"
-								}
-							],
-							[
-								"left_delete",
-								null
-							],
-							[
-								"left_delete",
-								null
-							],
-							[
-								"left_delete",
-								null
-							],
-							[
-								"left_delete",
-								null
-							],
-							[
-								"left_delete",
-								null
-							],
-							[
-								"insert",
-								{
-									"characters": "Core;"
-								}
-							]
-						]
-					},
-					"JwAAACEAAAAAAAAAIgAAAAAAAAAAAAAAIgAAAAAAAAAjAAAAAAAAAAAAAAAjAAAAAAAAACQAAAAAAAAAAAAAACQAAAAAAAAAJQAAAAAAAAAAAAAAJQAAAAAAAAAmAAAAAAAAAAAAAAAmAAAAAAAAACcAAAAAAAAAAAAAACcAAAAAAAAAKAAAAAAAAAAAAAAAJwAAAAAAAAAnAAAAAAAAAAEAAAAgJgAAAAAAAAAmAAAAAAAAAAEAAABoJQAAAAAAAAAlAAAAAAAAAAEAAABuJAAAAAAAAAAkAAAAAAAAAAEAAABpIwAAAAAAAAAjAAAAAAAAAAEAAABkIwAAAAAAAAAkAAAAAAAAAAAAAAAkAAAAAAAAACUAAAAAAAAAAAAAACUAAAAAAAAAJgAAAAAAAAAAAAAAJgAAAAAAAAAnAAAAAAAAAAAAAAAnAAAAAAAAACgAAAAAAAAAAAAAACgAAAAAAAAAKQAAAAAAAAAAAAAAKQAAAAAAAAAqAAAAAAAAAAAAAAAqAAAAAAAAACsAAAAAAAAAAAAAACsAAAAAAAAALAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAQAAABIb3l0KAAAAAAAAAAvAAAAAAAAAAAAAAAvAAAAAAAAADAAAAAAAAAAAAAAADAAAAAAAAAAMQAAAAAAAAAAAAAAMQAAAAAAAAAyAAAAAAAAAAAAAAAyAAAAAAAAADMAAAAAAAAAAAAAADMAAAAAAAAANAAAAAAAAAAAAAAANAAAAAAAAAA1AAAAAAAAAAAAAAA0AAAAAAAAADQAAAAAAAAAAQAAADszAAAAAAAAADMAAAAAAAAAAQAAAGUyAAAAAAAAADIAAAAAAAAAAQAAAHIxAAAAAAAAADEAAAAAAAAAAQAAAG8wAAAAAAAAADAAAAAAAAAAAQAAAGMwAAAAAAAAADEAAAAAAAAAAAAAADEAAAAAAAAAMgAAAAAAAAAAAAAAMgAAAAAAAAAzAAAAAAAAAAAAAAAzAAAAAAAAADQAAAAAAAAAAAAAADQAAAAAAAAANQAAAAAAAAAAAAAA",
-					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8"
-				]
-			]
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -1250,12 +1133,57 @@
 	"expanded_folders":
 	[
 		"/home/mrh0057/GitProjects/A19.Common",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core.Test",
 		"/home/mrh0057/GitProjects/A19.Common/HoytSys.DataStructures",
 		"/home/mrh0057/GitProjects/A19.Common/HoytSys.DataStructures/Graph"
 	],
 	"file_history":
 	[
 		"/home/mrh0057/GitProjects/A19.Common/HoytSys.DataStructures/Graph/ImmutableSparseGraph.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/Pow2.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core.Test/DateTimeTest.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/HoytSys.Core.csproj",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core.Test/HoytSys.Core.Test.csproj",
+		"/home/mrh0057/GitProjects/A19.Common/A19.Document.Common/DocumentType.cs",
+		"/home/mrh0057/GitProjects/A19.Common/A19.Document.Common/Tag.cs",
+		"/home/mrh0057/GitProjects/A19.Common/A19.Messaging.Rest/IUserClientSettings.cs",
+		"/home/mrh0057/GitProjects/A19.Common/A19.Security.Web/SecureTokenJsonGenerator.cs",
+		"/home/mrh0057/GitProjects/A19.Common/A19.Security.Web.Test/SecureTokenJsonGeneratorTest.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Concurrent/ConcurrentRingBuffer.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Concurrent/Agent/AgentStore.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/ByteArrayHelper.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/Change.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/ChangeState.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/DateTimeExt.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/ExpressionUtils.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/GuidExt.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/ICreated.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/ICreatedUpdatable.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/IEnumerableExt.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/ISecureKeyGenerator.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/IStartable.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/IStoppable.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/ISystemSettings.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/IUpdatable.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/IValidatable.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/SecureKeyGenerator.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/SecurityHelpers.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/UserAuthenticateType.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/ValidationError.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core/ValidationErrorExt.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Core.Test/ExpressionUtilsTest.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Database/Diff/FieldUpdateValue.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Database/Diff/UpdateManyToMany.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Database/Diff/UpdateManyToOne.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Messaging/IIncomingMessageHandler.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Messaging.Client/IForwardingClient.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Messaging.NetMq/IncomingConnection.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.Monad/ResultMonad.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.User.Common/SystemSessionService.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.User.Common/User.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.User.Common/UserLoginRq.cs",
+		"/home/mrh0057/GitProjects/A19.Common/HoytSys.User.Common/UserSearchRq.cs",
+		"/home/mrh0057/GitProjects/A19.Common/ServiceApplicationTester/MyTestService.cs",
 		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/common_test/security_test.ml",
 		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/database_test/organization_test.ml",
 		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/common/organization.ml",
@@ -1338,51 +1266,7 @@
 		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/common/dune",
 		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/HoytOCaml/core/protocol_buffers.ml",
 		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/external_api/dune",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/_opam/lib/base/string.ml",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/HoytOCaml/messaging/common.ml",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/core/hoyt_food_core.ml",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/config/dune",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/database/dune",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/common/person.ml",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/common/user.mli",
-		"/home/mrh0057/GitProjects/Hoyt-Food/db/procedures/person/R__update_person.sql",
-		"/home/mrh0057/GitProjects/Hoyt-Food/db/procedures/person/R__get_person.sql",
-		"/home/mrh0057/GitProjects/Hoyt-Food/db/procedures/user/R__insert_user.sql",
-		"/home/mrh0057/GitProjects/Hoyt-Food/db/procedures/user/R__update_user.sql",
-		"/home/mrh0057/GitProjects/Hoyt-Food/db/procedures/user/R__get_user.sql",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/logic_test/dune",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/logic_test/password_test.ml",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/external_api_lib/profile",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/common/profile.ml",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/HoytOCaml/core/protocol_buffers.mli",
-		"/home/mrh0057/GitProjects/Hoyt-Food/proto/sso_provider.proto",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/database_test/connection.ml",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/messaging/dune",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/database_test/dune",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/core_lib",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/model/dune",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/config/hosts.ml",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/router/dune",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/router/hoyt_food_router.ml",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/config/validation.mli",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/web/header.mli",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/web/dune",
-		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/external_api/external_api.ml",
-		"/home/mrh0057/GitProjects/BiaPlatform/ocaml/external_api_lib/session.mli",
-		"/home/mrh0057/GitProjects/BiaPlatform/ocaml/external_api_lib/common.ml",
-		"/home/mrh0057/GitProjects/BiaPlatform/ocaml/web/header.ml",
-		"/home/mrh0057/GitProjects/BiaPlatform/ocaml/external_api/bia_external_api.ml",
-		"/home/mrh0057/GitProjects/BiaPlatform/ocaml/dune-project",
-		"/home/mrh0057/GitProjects/BiaPlatform/ocaml/config/connection.ml",
-		"/home/mrh0057/GitProjects/BiaPlatform/ocaml/external_api_lib/location.ml",
-		"/home/mrh0057/GitProjects/BiaPlatform/ocaml/web/header.mli",
-		"/home/mrh0057/GitProjects/BiaPlatform/ocaml/external_api_lib/employee.ml",
-		"/home/mrh0057/GitProjects/BiaPlatform/ocaml/org_bia_service/org_bia_service.ml",
-		"/home/mrh0057/GitProjects/BiaPlatform/ocaml/org_bia_service_lib/location.ml",
-		"/home/mrh0057/GitProjects/BiaPlatform/ocaml/external_api_lib/location_type.ml",
-		"/home/mrh0057/GitProjects/BiaPlatform/ocaml/external_api_lib/login.ml",
-		"/home/mrh0057/GitProjects/BiaPlatform/ocaml/database/organization.ml",
-		"/home/mrh0057/GitProjects/BiaPlatform/ocaml/external_api_lib/organization.ml"
+		"/home/mrh0057/GitProjects/Hoyt-Food/ocaml/_opam/lib/base/string.ml"
 	],
 	"find":
 	{
@@ -1393,6 +1277,8 @@
 		"height": 99.0,
 		"where_history":
 		[
+			"*.cs",
+			""
 		]
 	},
 	"find_state":
@@ -1400,6 +1286,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			":wall",
+			"A19.Core"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1407,6 +1295,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"HoytSys.Core"
 		],
 		"reverse": false,
 		"scrollbar_highlights": true,
@@ -1427,53 +1316,6 @@
 		{
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "HoytSys.DataStructures/Graph/ImmutableSparseGraph.cs",
-					"selected": true,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1786,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								447,
-								447
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C#/C#.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true,
-							"vintage":
-							{
-								"_vintageous_glue_until_normal_mode": false,
-								"action": null,
-								"action_count": "",
-								"mode": "mode_normal",
-								"motion": null,
-								"motion_count": "",
-								"must_capture_register_name": false,
-								"normal_insert_count": "1",
-								"partial_sequence": "",
-								"register": "\"",
-								"sequence": "",
-								"xpos": 38
-							}
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"stack_multiselect": false,
-					"type": "text"
-				}
 			]
 		},
 		{
@@ -1565,6 +1407,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"Pow",
+				"HoytSys.Core/Pow2.cs"
+			],
 			[
 				"Immuta",
 				"HoytSys.DataStructures/Graph/ImmutableSparseGraph.cs"
@@ -2072,10 +1918,6 @@
 			[
 				"header.mli",
 				"ocaml/web/header.mli"
-			],
-			[
-				"Header",
-				"ocaml/web/header.ml"
 			]
 		],
 		"width": 0.0
@@ -2269,6 +2111,8 @@
 	"selected_group": 0,
 	"settings":
 	{
+		"_vintageous_last_char_search_command": "vi_t",
+		"_vintageous_last_character_search": ";",
 		"_vintageous_reset_during_init": true,
 		"vintage":
 		{

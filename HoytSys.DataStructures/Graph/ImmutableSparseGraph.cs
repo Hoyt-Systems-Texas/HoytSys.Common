@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using HoytSys.Core;
 
 namespace HoytSys.DataStructures.Graph 
 {
@@ -10,19 +13,22 @@ namespace HoytSys.DataStructures.Graph
     {
 
         private readonly TKey[] keys;
-        private readonly ulong size;
+        private readonly ulong mask;
+        private readonly ulong bits;
         private readonly ulong[] edges;
         private readonly int keyCount;
 
         public ImmutableSparseGraph(
             TKey[] keys,
             int keyCount,
-            ushort size,
+            ulong mask,
+            ulong bits,
             ulong[] edges)
         {
             this.keys = keys;
             this.keyCount = keyCount;
-            this.size = size;
+            this.mask = mask;
+            this.bits = bits;
             this.edges = edges;
         }
 
@@ -30,13 +36,25 @@ namespace HoytSys.DataStructures.Graph
             IEnumerable<(TKey, TKey)> edges)
         {
             var dict = CreateLookup(edges);
-            var number = dict.Count;
+            var count = dict.Count;
+            var size = Pow2.MinimumBits(count);
+            var mask = (ulong) 1 << size - 1;
+            var keys = new TKey[count];
+            foreach (var key in dict)
+            {
+                keys[key.Value] = key.Key;
+            }
+            var totalPairs = (ulong) edges.Count();
+            var totalSizeBits = totalPairs * 2 * (ulong) size;
+            var totalSize = (int) Math.Ceiling(totalSizeBits / 64.0);
+            var edgesArray = new ulong[totalSize];
 
             return new ImmutableSparseGraph<TKey>(
-                new TKey[0],
-                0,
-                0,
-                new ulong[0]);
+                keys,
+                count,
+                mask,
+                (ulong) size,
+                edgesArray);
         }
 
         /// <summary>
