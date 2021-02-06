@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using HoytSys.DataStructures;
 using NUnit.Framework;
 
-namespace A19.DataStructure.Test
+namespace HoytSys.DataStructure.Test
 {
     [TestFixture]
     public class BinaryHeapTest

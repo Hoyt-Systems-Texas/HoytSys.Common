@@ -1,7 +1,7 @@
 using HoytSys.DataStructures.Graph;
 using NUnit.Framework;
 
-namespace A19.DataStructure.Test.Graph
+namespace HoytSys.DataStructure.Test.Graph
 {
     [TestFixture]
     public class UniformMatrixGraphTest
