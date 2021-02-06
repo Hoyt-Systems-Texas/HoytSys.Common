@@ -129,7 +129,7 @@ namespace TestApp
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            app.UseSignalR(routes => { routes.MapHub<BrowserHub>("/browser"); });
+            //app.UseSignalR(routes => { routes.MapHub<BrowserHub>("/browser"); });
         }
     }
 }
