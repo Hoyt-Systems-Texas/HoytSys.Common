@@ -12,18 +12,44 @@ namespace HoytSys.DataStructures.Graph
     public class ImmutableSparseGraph<TKey>
     {
 
+        private readonly Dictionary<TKey, ulong> pos;
         private readonly TKey[] keys;
         private readonly int keyCount;
         private readonly BitStore bitStore;
+        private readonly ulong totalEdges;
 
         public ImmutableSparseGraph(
+            Dictionary<TKey, ulong> values,
             TKey[] keys,
             int keyCount,
-            BitStore bitStore)
+            BitStore bitStore,
+            ulong totalEdges)
         {
+            this.pos = values;
             this.keys = keys;
             this.keyCount = keyCount;
             this.bitStore = bitStore;
+            this.totalEdges = totalEdges;
+        }
+
+        /// <summary>
+        ///     Finds all of the pairs.
+        /// </summary>
+        /// <param name="value">The value to find.</param>
+        /// <param name="found">The function to call when the value is found.</param>
+        public void Find(TKey value, Action<TKey> found)
+        {
+            if (this.pos.TryGetValue(value, out var idx))
+            {
+                var start = this.bitStore.BinarySearch(idx, 2);
+                var count = (ulong) this.bitStore.Count;
+                for (var i = start; i < count
+                        && this.bitStore.Read(i) == idx; i+=2)
+                {
+                    var v = (int) this.bitStore.Read(i  + 1);
+                    found(this.keys[v]);
+                }
+            }
         }
         
         /// <summary>
@@ -53,9 +79,11 @@ namespace HoytSys.DataStructures.Graph
             }
 
             return new ImmutableSparseGraph<TKey>(
+                dict,
                 keys,
                 count,
-                bitStore);
+                bitStore,
+                totalPairs);
         }
 
         /// <summary>

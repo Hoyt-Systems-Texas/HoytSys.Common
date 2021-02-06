@@ -26,6 +26,8 @@ namespace HoytSys.DataStructures
             this.size = size;
         }
 
+        public int Count => this.size;
+
         /// <summary>
         ///     A binary search for the bit store.  It assume the store is in order.
         /// </summary>
@@ -39,14 +41,14 @@ namespace HoytSys.DataStructures
             var start = 0ul;
             var middle = searchLength / 2;
             var end = searchLength;
-            var pos = increments * middle;
+            var pos = middle;
             while (true)
             {
-                var valueAtPos = Read(pos);
+                var valueAtPos = Read(pos * increments);
                 if (value > valueAtPos)
                 {
                     start = pos + 1;
-                    pos = CalculateHigh(start, end, increments);
+                    pos = CalculateHigh(start, end);
                     if (pos == end)
                     {
                         break;
@@ -56,7 +58,7 @@ namespace HoytSys.DataStructures
                 {
                     // Value low so we know it must be less than this.
                     end = pos - 1; // Subtract one off of it.
-                    pos = CalculateLow(start, end, increments);
+                    pos = CalculateLow(start, end);
                     if (pos == start)
                     {
                         break;
@@ -66,7 +68,7 @@ namespace HoytSys.DataStructures
                 {
                     // Value is equal.  We keep doing so we can support duplicate values.
                     end = pos;
-                    pos = CalculateLow(start, end, increments);
+                    pos = CalculateLow(start, end);
                     if (pos == end)
                     {
                         break;
@@ -74,10 +76,10 @@ namespace HoytSys.DataStructures
                 }
             }
 
-            var matchedValue = Read(pos);
+            var matchedValue = Read(pos * increments);
             if (matchedValue == value)
             {
-                return pos;
+                return pos * increments;
             }
             else
             {
@@ -85,18 +87,18 @@ namespace HoytSys.DataStructures
             }
         }
 
-        private ulong CalculateLow(ulong start, ulong end, ulong increments)
+        private ulong CalculateLow(ulong start, ulong end)
         {
             var range = end - start;
             var middle = range / 2;
-            return middle * increments + start;
+            return middle + start;
         }
 
-        private ulong CalculateHigh(ulong start, ulong end, ulong increments)
+        private ulong CalculateHigh(ulong start, ulong end)
         {
             var range = end - start;
             var middle = range / 2;
-            return middle * increments + start;
+            return middle + start;
         }
 
         /// <summary>
