@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Threading;
-using A19.Core;
+using HoytSys.Core;
 using A19.Messaging;
 using A19.Messaging.NetMq;
 using Microsoft.Extensions.Configuration;

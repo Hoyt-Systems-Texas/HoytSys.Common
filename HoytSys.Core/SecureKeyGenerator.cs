@@ -1,7 +1,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace A19.Core
+namespace HoytSys.Core
 {
     public class SecureKeyGenerator : ISecureKeyGenerator
     {

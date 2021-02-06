@@ -1,6 +1,6 @@
 using System;
 
-namespace A19.Core
+namespace HoytSys.Core
 {
     public static class DateTimeExt
     {

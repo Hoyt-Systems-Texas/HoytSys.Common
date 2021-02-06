@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace A19.Core
+namespace HoytSys.Core
 {
     public interface IValidatable
     {

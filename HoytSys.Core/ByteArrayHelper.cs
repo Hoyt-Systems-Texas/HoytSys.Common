@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace A19.Core
+namespace HoytSys.Core
 {
     public static class ByteArrayHelper
     {

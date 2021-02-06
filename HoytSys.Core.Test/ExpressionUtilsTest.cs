@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace A19.Core.Test
+namespace HoytSys.Core.Test
 {
     [TestFixture]
     public class ExpressionUtilsTest

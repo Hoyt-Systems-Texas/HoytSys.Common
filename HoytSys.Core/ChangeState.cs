@@ -1,4 +1,4 @@
-namespace A19.Core
+namespace HoytSys.Core
 {
     public enum ChangeState
     {

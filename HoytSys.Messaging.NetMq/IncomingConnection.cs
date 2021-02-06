@@ -1,6 +1,6 @@
 using System;
 using System.Threading;
-using A19.Core;
+using HoytSys.Core;
 using A19.Messaging.Common;
 using NetMQ;
 using NetMQ.Sockets;

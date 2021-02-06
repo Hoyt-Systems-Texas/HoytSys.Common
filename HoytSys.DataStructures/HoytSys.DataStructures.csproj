@@ -6,4 +6,8 @@
         <RootNamespace>HoytSys.DataStructures</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\HoytSys.Core\HoytSys.Core.csproj" />
+    </ItemGroup>
+
 </Project>

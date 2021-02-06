@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <RootNamespace>A19.Core</RootNamespace>
+        <RootNamespace>HoytSys.Core</RootNamespace>
         <LangVersion>8</LangVersion>
     </PropertyGroup>
 

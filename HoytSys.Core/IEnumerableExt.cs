@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace A19.Core
+namespace HoytSys.Core
 {
     public static class IEnumerableExt
     {

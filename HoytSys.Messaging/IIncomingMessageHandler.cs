@@ -1,4 +1,4 @@
-using A19.Core;
+using HoytSys.Core;
 using A19.Messaging.Common;
 
 namespace A19.Messaging

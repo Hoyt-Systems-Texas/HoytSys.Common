@@ -1,4 +1,4 @@
-using A19.Core;
+using HoytSys.Core;
 
 namespace A19.Messaging.Rest
 {

@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <RootNamespace>A19.Core.Test</RootNamespace>
+        <RootNamespace>HoytSys.Core.Test</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

@@ -6,7 +6,7 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace A19.Core
+namespace HoytSys.Core
 {
     public static class ExpressionUtils
     {
