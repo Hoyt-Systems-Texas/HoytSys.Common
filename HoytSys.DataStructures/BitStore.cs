@@ -29,7 +29,7 @@ namespace HoytSys.DataStructures
         /// </summary>
         /// <param name="pos">The position to read in.</param>
         /// <returns>The unit value at that position.</returns>
-        public uint ReadUint(ulong pos)
+        public ulong ReadUint(ulong pos)
         {
             var (start, reminder) = Start(pos);
             
@@ -50,13 +50,12 @@ namespace HoytSys.DataStructures
             var fix = ((int) this.bits - shiftBits) * (end - start);
             endValue = endValue << fix;
             value |= endValue;
-            return (uint) value;
+            return value;
         }
 
-        public void WriteUint(ulong pos, uint value)
+        public void WriteUint(ulong pos, ulong value)
         {
             var (start, reminder) = Start(pos);
-            var longValue = (ulong) value;
             
             // Need the mask for the position we want to write to.
             var newMask = this.mask << reminder;
@@ -64,7 +63,7 @@ namespace HoytSys.DataStructures
             var zeroPosition = UInt64.MaxValue ^ newMask;
             var valueAtPos = this.values[start];
             // Shift the value to that position.
-            longValue = longValue << reminder;
+            var longValue = value << reminder;
             // Zero out the position.
             valueAtPos &= zeroPosition;
             // Added our new value.
@@ -76,12 +75,12 @@ namespace HoytSys.DataStructures
             var (end, shiftBits) = End(start, reminder);
             var shiftValue = (ulong) (end - start);
             var fix = ((int) this.bits - shiftBits);
-            // Get the end position.
-            newMask = (shiftValue << shiftBits) - shiftValue;
-            // Get the zero mask.
+            // Get the end position. zero out the value if start matches end.
+            newMask = ((shiftValue << shiftBits) - shiftValue) * shiftValue;
             zeroPosition = UInt64.MaxValue ^ newMask;
             valueAtPos = this.values[end];
-            longValue = longValue >> fix;
+            // If we are at the start/end zero out the value.
+            longValue = (longValue >> fix) * shiftValue;
             valueAtPos &= zeroPosition;
             valueAtPos |= longValue;
             this.values[end] = valueAtPos;
