@@ -135,7 +135,7 @@ namespace HoytSys.DataStructures
         }
 
         /// <summary>
-        ///     Read the specific position in the block. No branching at in reed for speed.
+        ///     Read the specific position in the block. No branching at in reed for speed.  The reason it's so much faster is due to the fact branch misses are really expensive so by eliminating them the code runs much faster.
         /// </summary>
         /// <param name="pos">The position to read in.</param>
         /// <returns>The unit value at that position.</returns>
@@ -153,17 +153,20 @@ namespace HoytSys.DataStructures
             value = value >> reminder;
             
             var (end, shiftBits) = End(start, reminder);
-            ulong hasReminder = (ulong) (end - start);
+            // the hasReminder can either be 1 or 0 and we can use this fact to wipe out a
+            // value using multiplication and shift with a starting bit set since it's 1.
+            ulong hasReminderUl = (ulong) (end - start);
+            int hasReminder = (end - start);
             // Creates the mask if there is a reminder.  Reminder is 1 when we want to modify
             // it so we can use that fact to create the mask.
             // Doing a shift of 0 is zero so this works just fine.
-            valueMask = (hasReminder << shiftBits) - hasReminder;
+            valueMask = (hasReminderUl << shiftBits) - hasReminderUl;
             // Gets the ending value.
             var endValue = this.values[end];
             // Get the value here using the mask. when there isn't a reminder this will be 0.
             endValue &= valueMask;
             // gets the position to shift the value to.  we we don't want to do that we use the fact when end-start is equal it's 0 so we can get fix of 0.
-            var fix = ((int) this.bits - shiftBits) * (end - start);
+            var fix = ((int) this.bits - shiftBits) * hasReminder;
             endValue = endValue << fix;
             // Add the reminder value onto the value.
             value |= endValue;
@@ -196,19 +199,19 @@ namespace HoytSys.DataStructures
             longValue = value;
             var (end, shiftBits) = End(start, reminder);
             // A trick to get 0 if we don't want to update the value.  This will either be 1 or 0.
-            var updateValue = (ulong) (end - start);
+            var hasReminder = (ulong) (end - start);
             // The reminder bits to update.
             var fix = ((int) this.bits - shiftBits);
             // Get the end position. zero out the value if start matches end.
             // If update value is 0 then it will create a mask of all 0s.
-            newMask = ((updateValue << shiftBits) - updateValue) * updateValue;
+            newMask = (hasReminder << shiftBits) - hasReminder;
             // Uses and xor with the new mask to 0 out the values since the mask will all be 1s at the position.
             // When the update value is 0 the new masks is all 0s so nothing gets updated.
             zeroPosition = UInt64.MaxValue ^ newMask;
             valueAtPos = this.values[end];
             // If we are at the start/end zero out the value.
             // If we don't want to overwrite the longValue is now 0.
-            longValue = (longValue >> fix) * updateValue;
+            longValue = (longValue >> fix) * hasReminder;
             // Use logical and to zero those series of bytes with the ones we are about to write are 0.
             // if update value is 0 then zeroPosition is all ones so value at position doesn't change.
             valueAtPos &= zeroPosition;
