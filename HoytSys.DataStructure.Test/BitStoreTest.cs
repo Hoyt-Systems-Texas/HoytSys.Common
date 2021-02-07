@@ -80,6 +80,7 @@ namespace HoytSys.DataStructure.Test
             bitStore.Write(9, 7);
             bitStore.Write(10, 10);
             bitStore.Write(11, 10);
+
             var pos = bitStore.BinarySearch(3, 1);
             Assert.AreEqual(2, pos);
             Assert.AreEqual(5, bitStore.BinarySearch(5, 1));
