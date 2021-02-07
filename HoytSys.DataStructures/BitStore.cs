@@ -233,6 +233,7 @@ namespace HoytSys.DataStructures
         /// <returns>The starting index of the value in the bit vector.</returns>
         private (int, int) Start(ulong pos)
         {
+            // We need at leas a long here since it could easily overflow on a large array.
             var posInBits = pos * bits;
             // Get the starting index by shifting by 6 to cut of the reminder.
             var startIdx = (int) (posInBits >> shift);
