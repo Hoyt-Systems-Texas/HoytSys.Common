@@ -62,6 +62,7 @@ namespace HoytSys.DataStructure.Test.Graph
                 ("a", "d"),
                 ("b", "c"),
                 ("c", "f"),
+                ("c", "a"),
                 ("d", "c"),
                 ("f", "d"),
                 ("f", "a"),

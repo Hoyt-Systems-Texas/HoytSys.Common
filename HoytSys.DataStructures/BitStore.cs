@@ -3,7 +3,8 @@ using System;
 namespace HoytSys.DataStructures
 {
     /// <summary>
-    ///     A simple bit store used for compacting values.
+    ///     A simple bit store used for compacting values.  The goal is to have a simple structure
+    /// to minimize memory needed but it's not as efficient as compact data structures.
     /// </summary>
     public class BitStore
     {
