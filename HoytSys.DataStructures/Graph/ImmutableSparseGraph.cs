@@ -139,6 +139,47 @@ namespace HoytSys.DataStructures.Graph
                 return new List<TKey>(0);
             }
         }
+
+        /// <summary>
+        ///     Used to get the minimum spanning tree from the starting value.
+        /// </summary>
+        /// <param name="start">The starting value to get the minimum spanning tree.</param>
+        /// <returns>The list of edges for the minimum spanning tree.</returns>
+        public List<(TKey, TKey)> MinimumSpanningTree(TKey startKey)
+        {
+            if (this.pos.TryGetValue(startKey, out var start))
+            {
+                // Keep track of the previous nodes ot prevent a cycle.
+                var previousNodes = new HashSet<ulong>();
+                // The queue to use for the BFS
+                var queue = new Queue<ulong>();
+                queue.Enqueue(start);
+                previousNodes.Add(start);
+                List<(TKey, TKey)> edges = new List<(TKey, TKey)>(16);
+                while (true)
+                {
+                    if (queue.TryDequeue(out var currentNode))
+                    {
+                        this.Find(currentNode, newNode =>
+                        {
+                            if (previousNodes.Add(newNode))
+                            {
+                                edges.Add((this.keys[currentNode], this.keys[newNode]));
+                                queue.Enqueue(newNode);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        return edges;
+                    }
+                }
+            }
+            else
+            {
+                return new List<(TKey, TKey)>(0);
+            }
+        }
         
         /// <summary>
         ///     Used to create an immutable sparse graph.  Make sure the edges are

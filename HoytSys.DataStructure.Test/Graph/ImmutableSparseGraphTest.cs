@@ -81,5 +81,34 @@ namespace HoytSys.DataStructure.Test.Graph
                 result,
                 new List<string>{"a", "b", "c", "f", "g"});
         }
+        
+        [Test]
+        public void MinimumSpanningTreeTest()
+        {
+            var edges = new List<(string, string)>
+            {
+                ("a", "b"),
+                ("a", "d"),
+                ("b", "c"),
+                ("c", "f"),
+                ("c", "a"),
+                ("d", "c"),
+                ("f", "d"),
+                ("f", "a"),
+                ("f", "c"),
+                ("f", "b"),
+                ("f", "g"),
+                ("g", "b"),
+                ("g", "a"),
+                ("g", "c"),
+                ("g", "d"),
+            };
+            var graph = ImmutableSparseGraph<string>.Create(edges);
+            
+            var result = graph.MinimumSpanningTree("a");
+            CollectionAssert.AreEqual(
+                result,
+                new List<(string, string)>{("a", "b"), ("a", "d"), ("b", "c"), ("c", "f"), ("f", "g")});
+        }
     }
 }
