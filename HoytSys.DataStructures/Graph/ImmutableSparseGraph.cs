@@ -92,17 +92,21 @@ namespace HoytSys.DataStructures.Graph
                     {
                         if (queue.TryDequeue(out var value))
                         {
+                            // Get the current path for the node.
                             var (last, path) = value;
+                            // Read the current value at that position.
                             var currentNode = path.Read(last);
+                            // If we find a path, this is where it will be.
                             List<TKey> foundPath = null;
                             this.Find(currentNode, newNode =>
                             {
                                 if (foundPath != null)
                                 {
-                                   // Do Nothing
+                                   // Do Nothing since path is found
                                 }
                                 else if (newNode == end)
                                 {
+                                    // Found the path and now need to get the keys represented by the number.
                                     foundPath = new List<TKey>();
                                     for (var i = 0ul; i < (ulong) path.Count; i++)
                                     {
@@ -113,10 +117,14 @@ namespace HoytSys.DataStructures.Graph
                                 }
                                 else
                                 {
+                                    // Check to see if we already visited a node.
+                                    // Since we support graphs we need to support cycles.
                                     if (previousNodes.Add(newNode))
                                     {
+                                        // Create a copy of the current path.
                                         var newPath = path.Clone(path.Count + 1);
                                         var pos = last + 1;
+                                        // Write the new path.
                                         newPath.Write(pos, newNode);
                                         queue.Enqueue((pos, newPath));
                                     }
@@ -147,12 +155,15 @@ namespace HoytSys.DataStructures.Graph
         /// <returns>The list of edges for the minimum spanning tree.</returns>
         public List<(TKey, TKey)> MinimumSpanningTree(TKey startKey)
         {
+            // Pretty much the same as breath first search except we stop when
+            // their nothing left in the queue.
             if (this.pos.TryGetValue(startKey, out var start))
             {
                 // Keep track of the previous nodes ot prevent a cycle.
                 var previousNodes = new HashSet<ulong>();
                 // The queue to use for the BFS
                 var queue = new Queue<ulong>();
+                // Enqueue the first value.
                 queue.Enqueue(start);
                 previousNodes.Add(start);
                 List<(TKey, TKey)> edges = new List<(TKey, TKey)>(16);
@@ -162,6 +173,8 @@ namespace HoytSys.DataStructures.Graph
                     {
                         this.Find(currentNode, newNode =>
                         {
+                            // Check to verify we don't have cycles and we don't want to
+                            // add them since we want a tree.
                             if (previousNodes.Add(newNode))
                             {
                                 edges.Add((this.keys[currentNode], this.keys[newNode]));
@@ -177,6 +190,7 @@ namespace HoytSys.DataStructures.Graph
             }
             else
             {
+                // Doesn't contain a tree so return empty list.
                 return new List<(TKey, TKey)>(0);
             }
         }
@@ -190,6 +204,7 @@ namespace HoytSys.DataStructures.Graph
         public static ImmutableSparseGraph<TKey> Create(
             IEnumerable<(TKey, TKey)> edges)
         {
+            // Create a dictionary lookup for the key to value.
             var dict = CreateLookup(edges);
             var count = dict.Count;
             var size = Pow2.MinimumBits(count);
