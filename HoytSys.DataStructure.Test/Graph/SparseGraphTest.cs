@@ -15,8 +15,9 @@ namespace HoytSys.DataStructure.Test.Graph
             var edges = new List<(string, string)>
             {
                 ("a", "b"),
-                ("a", "c"),
                 ("a", "f"),
+                ("a", "g"),
+                ("a", "c"),
                 ("b", "c"),
                 ("d", "c"),
                 ("f", "d"),
@@ -32,7 +33,7 @@ namespace HoytSys.DataStructure.Test.Graph
             var matches = new List<string>(10);
             graph.Find("a", matches.Add);
             CollectionAssert.AreEquivalent(
-                new [] {"b", "c", "f"},
+                new [] {"b", "c", "f", "g"},
                 matches);
 
             matches = new List<string>(10);
@@ -75,7 +76,9 @@ namespace HoytSys.DataStructure.Test.Graph
             var graph = ImmutableSparseGraph<string>.Create(edges);
             
             var result = graph.Bfs("a", "g");
-            CollectionAssert.IsNotEmpty(result);
+            CollectionAssert.AreEqual(
+                result,
+                new List<string>{"a", "b", "c", "f", "g"});
         }
     }
 }
