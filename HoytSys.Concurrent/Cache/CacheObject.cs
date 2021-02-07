@@ -95,7 +95,6 @@ namespace A19.Concurrent.Cache
                     if (StateChange(CacheState.Loading, CacheState.Loaded))
                     {
                         Volatile.Write(ref _value, value);
-                        Interlocked.MemoryBarrier(); // Need this here to prevent read/write reordering. (LoadStore barrier)
                         Volatile.Write(ref _currentState, (int) CacheState.Active);
                         _stopWatchThreadSafe.Reset();
                         lock (_lock)
