@@ -13,8 +13,10 @@ namespace HoytSys.DataStructures
         private ulong[] values;
         private readonly ulong mask;
         private readonly ulong bits;
+        private readonly int bitsI;
         private readonly int length;
         private readonly int size;
+        private readonly ulong sizeL;
 
         public BitStore(
             int size,
@@ -22,9 +24,11 @@ namespace HoytSys.DataStructures
         {
             this.mask = (ulong) (1 << bits) - 1;
             this.bits = (ulong) bits;
+            this.bitsI = bits;
             this.length = (int) Math.Ceiling((bits * size) / 64.0);
             this.values = new ulong[this.length];
             this.size = size;
+            this.sizeL = (ulong) size;
         }
 
         /// <summary>
@@ -33,7 +37,7 @@ namespace HoytSys.DataStructures
         /// <returns>A new bit vector using the same number of bits with the new specified size.</returns>
         public BitStore CreateNew(int newSize)
         {
-            return new BitStore(newSize, (int) this.bits);
+            return new BitStore(newSize, this.bitsI);
         }
 
         /// <summary>
@@ -50,7 +54,7 @@ namespace HoytSys.DataStructures
             }
             else
             {
-                var vector = new BitStore(newSize, (int) this.bits);
+                var vector = new BitStore(newSize, this.bitsI);
                 for (var i = 0; i < this.length; i++)
                 {
                     vector.values[i] = this.values[i];
@@ -70,7 +74,7 @@ namespace HoytSys.DataStructures
         public ulong BinarySearch(ulong value, ulong increments)
         {
             // Divided by the increments the total length.  Don't allow to overflow!
-            var searchLength = (ulong) this.size / increments;
+            var searchLength =  this.sizeL / increments;
             var start = 0ul;
             var middle = searchLength / 2;
             var end = searchLength;
@@ -166,7 +170,7 @@ namespace HoytSys.DataStructures
             // Get the value here using the mask. when there isn't a reminder this will be 0.
             endValue &= valueMask;
             // gets the position to shift the value to.  we we don't want to do that we use the fact when end-start is equal it's 0 so we can get fix of 0.
-            var fix = ((int) this.bits - shiftBits) * hasReminder;
+            var fix = (this.bitsI - shiftBits) * hasReminder;
             endValue = endValue << fix;
             // Add the reminder value onto the value.
             value |= endValue;
@@ -201,7 +205,7 @@ namespace HoytSys.DataStructures
             // A trick to get 0 if we don't want to update the value.  This will either be 1 or 0.
             var hasReminder = (ulong) (end - start);
             // The reminder bits to update.
-            var fix = ((int) this.bits - shiftBits);
+            var fix = (this.bitsI - shiftBits);
             // Get the end position. zero out the value if start matches end.
             // If update value is 0 then it will create a mask of all 0s.
             newMask = (hasReminder << shiftBits) - hasReminder;
@@ -244,10 +248,9 @@ namespace HoytSys.DataStructures
         /// <returns>The ending position in the array.</returns>
         private (int, int) End(int start, int reminder)
         {
-            var bitsU = (int) this.bits;
             // If it overflows to the ulong it will set the 7 bit to 1 and we just
             // need to shift 6 to get the value.
-            var stopPosition = reminder + bitsU;
+            var stopPosition = reminder + this.bitsI;
             // Will get the reminder if it overflows into the next ulong.
             var endReminder = stopPosition & 63;
             // A trick to see if we should add one.
