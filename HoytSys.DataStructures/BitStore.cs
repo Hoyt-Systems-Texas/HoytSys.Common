@@ -134,7 +134,7 @@ namespace HoytSys.DataStructures
         }
 
         /// <summary>
-        ///     Read the specific position in the block.
+        ///     Read the specific position in the block. No branching at in reed for speed.
         /// </summary>
         /// <param name="pos">The position to read in.</param>
         /// <returns>The unit value at that position.</returns>
@@ -162,6 +162,11 @@ namespace HoytSys.DataStructures
             return value;
         }
 
+        /// <summary>
+        ///     Writes a value to a position.  Doesn't have any branching to improve speed.
+        /// </summary>
+        /// <param name="pos">The position to write the value to.</param>
+        /// <param name="value">The value to write.</param>
         public void Write(ulong pos, ulong value)
         {
             var (start, reminder) = Start(pos);
