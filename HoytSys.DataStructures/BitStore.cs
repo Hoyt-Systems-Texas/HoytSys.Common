@@ -153,12 +153,19 @@ namespace HoytSys.DataStructures
             value = value >> reminder;
             
             var (end, shiftBits) = End(start, reminder);
-            ulong shiftValue = (ulong) (end - start);
-            valueMask = (shiftValue << shiftBits) - shiftValue;
+            ulong hasReminder = (ulong) (end - start);
+            // Creates the mask if there is a reminder.  Reminder is 1 when we want to modify
+            // it so we can use that fact to create the mask.
+            // Doing a shift of 0 is zero so this works just fine.
+            valueMask = (hasReminder << shiftBits) - hasReminder;
+            // Gets the ending value.
             var endValue = this.values[end];
+            // Get the value here using the mask. when there isn't a reminder this will be 0.
             endValue &= valueMask;
+            // gets the position to shift the value to.  we we don't want to do that we use the fact when end-start is equal it's 0 so we can get fix of 0.
             var fix = ((int) this.bits - shiftBits) * (end - start);
             endValue = endValue << fix;
+            // Add the reminder value onto the value.
             value |= endValue;
             return value;
         }
@@ -188,16 +195,27 @@ namespace HoytSys.DataStructures
             // We will go through similar logic.
             longValue = value;
             var (end, shiftBits) = End(start, reminder);
-            var shiftValue = (ulong) (end - start);
+            // A trick to get 0 if we don't want to update the value.  This will either be 1 or 0.
+            var updateValue = (ulong) (end - start);
+            // The reminder bits to update.
             var fix = ((int) this.bits - shiftBits);
             // Get the end position. zero out the value if start matches end.
-            newMask = ((shiftValue << shiftBits) - shiftValue) * shiftValue;
+            // If update value is 0 then it will create a mask of all 0s.
+            newMask = ((updateValue << shiftBits) - updateValue) * updateValue;
+            // Uses and xor with the new mask to 0 out the values since the mask will all be 1s at the position.
+            // When the update value is 0 the new masks is all 0s so nothing gets updated.
             zeroPosition = UInt64.MaxValue ^ newMask;
             valueAtPos = this.values[end];
             // If we are at the start/end zero out the value.
-            longValue = (longValue >> fix) * shiftValue;
+            // If we don't want to overwrite the longValue is now 0.
+            longValue = (longValue >> fix) * updateValue;
+            // Use logical and to zero those series of bytes with the ones we are about to write are 0.
+            // if update value is 0 then zeroPosition is all ones so value at position doesn't change.
             valueAtPos &= zeroPosition;
+            // Use logical or to update just those bytes.
+            // when update value is 0 long value is 0 so the value remains unchanged.
             valueAtPos |= longValue;
+            // Update the value with the new one.
             this.values[end] = valueAtPos;
         }
 
@@ -209,8 +227,12 @@ namespace HoytSys.DataStructures
         private (int, int) Start(ulong pos)
         {
             var posInBits = pos * bits;
-            return ((int) (posInBits >> shift)
-                ,(int) (posInBits & posMask));
+            // Get the starting index by shifting by 6 to cut of the reminder.
+            var startIdx = (int) (posInBits >> shift);
+            // Calculating starting off offset by get the reminder using an logical and of the mask.
+            var startOffset = (int) (posInBits & posMask);
+            return (startIdx
+                ,startOffset);
         }
 
         /// <summary>
@@ -220,9 +242,14 @@ namespace HoytSys.DataStructures
         private (int, int) End(int start, int reminder)
         {
             var bitsU = (int) this.bits;
+            // If it overflows to the ulong it will set the 7 bit to 1 and we just
+            // need to shift 6 to get the value.
             var stopPosition = reminder + bitsU;
+            // Will get the reminder if it overflows into the next ulong.
             var endReminder = stopPosition & 63;
-            return (start + (stopPosition >> 6), endReminder);
+            // A trick to see if we should add one.
+            var stop = start + (stopPosition >> 6);
+            return (stop, endReminder);
         }
     }
 }
