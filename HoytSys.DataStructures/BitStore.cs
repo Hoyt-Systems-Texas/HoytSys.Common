@@ -26,6 +26,38 @@ namespace HoytSys.DataStructures
             this.size = size;
         }
 
+        /// <summary>
+        ///     Used to create an empty bit store with the same bits
+        /// </summary>
+        /// <returns>A new bit vector using the same number of bits with the new specified size.</returns>
+        public BitStore CreateNew(int newSize)
+        {
+            return new BitStore(newSize, (int) this.bits);
+        }
+
+        /// <summary>
+        ///     Create a new bit bitvector with the new specified size.
+        /// </summary>
+        /// <param name="newSize">The neww size of the vector.  Must be at least as big as the current bit vector.</param>
+        /// <returns>The new bit store.</returns>
+        /// <exception cref="ArgumentException"></exception>
+        public BitStore Clone(int newSize)
+        {
+            if (newSize < this.size)
+            {
+                throw new ArgumentException($"Must be at least the same size as the current vector", nameof(newSize));
+            }
+            else
+            {
+                var vector = new BitStore(newSize, (int) this.bits);
+                for (var i = 0; i < this.length; i++)
+                {
+                    vector.values[i] = this.values[i];
+                }
+                return vector;
+            }
+        }
+
         public int Count => this.size;
 
         /// <summary>
@@ -49,7 +81,7 @@ namespace HoytSys.DataStructures
                 {
                     start = pos + 1;
                     pos = CalculateHigh(start, end);
-                    if (pos == end)
+                    if (pos >= end)
                     {
                         break;
                     }
@@ -59,7 +91,7 @@ namespace HoytSys.DataStructures
                     // Value low so we know it must be less than this.
                     end = pos - 1; // Subtract one off of it.
                     pos = CalculateLow(start, end);
-                    if (pos == start)
+                    if (pos <= start)
                     {
                         break;
                     }
@@ -69,7 +101,7 @@ namespace HoytSys.DataStructures
                     // Value is equal.  We keep doing so we can support duplicate values.
                     end = pos;
                     pos = CalculateLow(start, end);
-                    if (pos == end)
+                    if (pos >= end)
                     {
                         break;
                     }

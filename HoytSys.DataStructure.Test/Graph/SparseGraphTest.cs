@@ -16,14 +16,23 @@ namespace HoytSys.DataStructure.Test.Graph
             {
                 ("a", "b"),
                 ("a", "c"),
+                ("a", "f"),
                 ("b", "c"),
                 ("d", "c"),
+                ("f", "d"),
+                ("f", "a"),
+                ("f", "c"),
+                ("f", "b"),
+                ("g", "b"),
+                ("g", "a"),
+                ("g", "c"),
+                ("g", "d"),
             };
             var graph = ImmutableSparseGraph<string>.Create(edges);
             var matches = new List<string>(10);
             graph.Find("a", matches.Add);
             CollectionAssert.AreEquivalent(
-                new [] {"b", "c"},
+                new [] {"b", "c", "f"},
                 matches);
 
             matches = new List<string>(10);
@@ -36,6 +45,37 @@ namespace HoytSys.DataStructure.Test.Graph
             CollectionAssert.AreEquivalent(
                 new [] {"c"},
                 matches);
+            matches = new List<string>(10);
+            graph.Find("f", matches.Add);
+            CollectionAssert.AreEquivalent(
+                new [] {"d", "a", "c", "b"},
+                matches);
+        }
+
+        [Test]
+        public void BfsTest()
+        {
+            var edges = new List<(string, string)>
+            {
+                ("a", "b"),
+                ("a", "d"),
+                ("b", "c"),
+                ("c", "f"),
+                ("d", "c"),
+                ("f", "d"),
+                ("f", "a"),
+                ("f", "c"),
+                ("f", "b"),
+                ("f", "g"),
+                ("g", "b"),
+                ("g", "a"),
+                ("g", "c"),
+                ("g", "d"),
+            };
+            var graph = ImmutableSparseGraph<string>.Create(edges);
+            
+            var result = graph.Bfs("a", "g");
+            CollectionAssert.IsNotEmpty(result);
         }
     }
 }

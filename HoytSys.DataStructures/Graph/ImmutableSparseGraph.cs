@@ -41,14 +41,102 @@ namespace HoytSys.DataStructures.Graph
         {
             if (this.pos.TryGetValue(value, out var idx))
             {
-                var start = this.bitStore.BinarySearch(idx, 2);
-                var count = (ulong) this.bitStore.Count;
-                for (var i = start; i < count
-                        && this.bitStore.Read(i) == idx; i+=2)
+                this.Find(idx, (val) =>
                 {
-                    var v = (int) this.bitStore.Read(i  + 1);
-                    found(this.keys[v]);
+                    found(this.keys[(int)val]);
+                });
+            }
+        }
+
+        private void Find(ulong idx, Action<ulong> found)
+        {
+            var start = this.bitStore.BinarySearch(idx, 2);
+            var count = (ulong) this.bitStore.Count;
+            for (var i = start; i < count
+                    && this.bitStore.Read(i) == idx; i+=2)
+            {
+                var v = this.bitStore.Read(i  + 1);
+                found(v);
+            }
+        }
+
+        /// <summary>
+        ///     Used to find a path from the starting point to the end point.  This finds the
+        /// most optimal path ad the expense of time and memory.
+        /// </summary>
+        /// <param name="start">The starting point.</param>
+        /// <param name="end">The ending point.</param>
+        public List<TKey> Bfs(TKey startKey, TKey endKey)
+        {
+            if (this.pos.TryGetValue(startKey, out var start)
+                && this.pos.TryGetValue(endKey, out var end))
+            {
+                if (start == end)
+                {
+                    return new List<TKey>
+                    {
+                        startKey
+                    };
                 }
+                else
+                {
+                    // Keep track of the previous nodes ot prevent a cycle.
+                    var previousNodes = new HashSet<ulong>();
+                    // The queue to use for the BFS
+                    var queue = new Queue<(ulong, BitStore)>();
+                    // The starting vector to use.
+                    var startVec = this.bitStore.CreateNew(1);
+                    queue.Enqueue((0ul, startVec));
+                    previousNodes.Add(start);
+                    while (true)
+                    {
+                        if (queue.TryDequeue(out var value))
+                        {
+                            var (last, path) = value;
+                            var currentNode = path.Read(last);
+                            List<TKey> foundPath = null;
+                            this.Find(currentNode, newNode =>
+                            {
+                                if (foundPath != null)
+                                {
+                                   // Do Nothing
+                                }
+                                else if (newNode == end)
+                                {
+                                    foundPath = new List<TKey>();
+                                    for (var i = 0ul; i < (ulong) path.Count; i++)
+                                    {
+                                        var val = path.Read(i);
+                                        foundPath.Add(this.keys[val]);
+                                    }
+                                    foundPath.Add(this.keys[newNode]);
+                                }
+                                else
+                                {
+                                    if (previousNodes.Add(newNode))
+                                    {
+                                        var newPath = path.Clone(path.Count + 1);
+                                        var pos = last + 1;
+                                        newPath.Write(pos, newNode);
+                                        queue.Enqueue((pos, newPath));
+                                    }
+                                }
+                            });
+                            if (foundPath != null)
+                            {
+                                return foundPath;
+                            }
+                        }
+                        else
+                        {
+                            return new List<TKey>(0);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                return new List<TKey>(0);
             }
         }
         
@@ -93,12 +181,18 @@ namespace HoytSys.DataStructures.Graph
         {
             var dict = new Dictionary<TKey, ulong>(1000); 
             var id = 0ul;
-            foreach (var (v1, v2) in edges)
+            // Make sure we add the first value sin order.
+            foreach (var (v1, _) in edges)
             {
                 if (!dict.ContainsKey(v1)) 
                 {
                     dict[v1] = id++;
                 }
+            }
+
+            // Add any remaining values.
+            foreach (var (_, v2) in edges)
+            {
                 if (!dict.ContainsKey(v2))
                 {
                     dict[v2] = id++;
