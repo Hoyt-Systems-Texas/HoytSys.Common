@@ -85,7 +85,7 @@ namespace HoytSys.DataStructures
                 if (value > valueAtPos)
                 {
                     start = pos + 1;
-                    pos = CalculateHigh(start, end);
+                    pos = CalculateMiddle(start, end);
                     if (pos >= end)
                     {
                         break;
@@ -95,7 +95,7 @@ namespace HoytSys.DataStructures
                 {
                     // Value low so we know it must be less than this.
                     end = pos - 1; // Subtract one off of it.
-                    pos = CalculateLow(start, end);
+                    pos = CalculateMiddle(start, end);
                     if (pos <= start)
                     {
                         break;
@@ -105,7 +105,7 @@ namespace HoytSys.DataStructures
                 {
                     // Value is equal.  We keep doing so we can support duplicate values.
                     end = pos;
-                    pos = CalculateLow(start, end);
+                    pos = CalculateMiddle(start, end);
                     if (pos >= end)
                     {
                         break;
@@ -124,14 +124,7 @@ namespace HoytSys.DataStructures
             }
         }
 
-        private ulong CalculateLow(ulong start, ulong end)
-        {
-            var range = end - start;
-            var middle = range / 2;
-            return middle + start;
-        }
-
-        private ulong CalculateHigh(ulong start, ulong end)
+        private ulong CalculateMiddle(ulong start, ulong end)
         {
             var range = end - start;
             var middle = range / 2;
