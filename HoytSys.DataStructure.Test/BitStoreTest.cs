@@ -35,7 +35,7 @@ namespace HoytSys.DataStructure.Test
         [Test]
         public void AcrossBoundary()
         {
-            var bitStore = new BitStore(7, 20);
+            var bitStore = new BitStore(8, 20);
             var maxValue = (uint) (1 << 20) - 1;
             // Random writes.
             bitStore.Write(0, 93);
@@ -67,7 +67,7 @@ namespace HoytSys.DataStructure.Test
         [Test]
         public void BinarySearchTest()
         {
-            var bitStore = new BitStore(11, 20);
+            var bitStore = new BitStore(12, 20);
             bitStore.Write(0, 1);
             bitStore.Write(1, 2);
             bitStore.Write(2, 3);

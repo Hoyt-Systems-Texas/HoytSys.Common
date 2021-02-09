@@ -83,6 +83,35 @@ namespace HoytSys.DataStructure.Test.Graph
         }
         
         [Test]
+        public void BfsShortTest()
+        {
+            var edges = new List<(string, string)>
+            {
+                ("a", "b"),
+                ("a", "d"),
+                ("b", "c"),
+                ("c", "f"),
+                ("c", "a"),
+                ("d", "c"),
+                ("f", "d"),
+                ("f", "a"),
+                ("f", "c"),
+                ("f", "b"),
+                ("f", "g"),
+                ("g", "b"),
+                ("g", "a"),
+                ("g", "c"),
+                ("g", "d"),
+            };
+            var graph = ImmutableSparseGraph<string>.Create(edges);
+            
+            var result = graph.Bfs("f", "g");
+            CollectionAssert.AreEqual(
+                result,
+                new List<string>{"f", "g"});
+        }
+        
+        [Test]
         public void MinimumSpanningTreeTest()
         {
             var edges = new List<(string, string)>

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace HoytSys.DataStructures
 {
@@ -75,18 +76,18 @@ namespace HoytSys.DataStructures
         {
             // Divided by the increments the total length.  Don't allow to overflow!
             var searchLength =  this.sizeL / increments;
-            var start = 0ul;
-            var middle = searchLength / 2;
-            var end = searchLength;
-            var pos = middle;
+            var startIdx = 0ul;
+            var middleIdx = searchLength / 2;
+            var endIdx = searchLength - 1;
+            var pos = middleIdx;
             while (true)
             {
                 var valueAtPos = Read(pos * increments);
                 if (value > valueAtPos)
                 {
-                    start = pos + 1;
-                    pos = CalculateMiddle(start, end);
-                    if (pos >= end)
+                    startIdx = pos + 1;
+                    pos = CalculateMiddle(startIdx, endIdx);
+                    if (pos >= endIdx)
                     {
                         break;
                     }
@@ -94,9 +95,9 @@ namespace HoytSys.DataStructures
                 else if (value < valueAtPos)
                 {
                     // Value low so we know it must be less than this.
-                    end = pos - 1; // Subtract one off of it.
-                    pos = CalculateMiddle(start, end);
-                    if (pos <= start)
+                    endIdx = pos - 1; // Subtract one off of it.
+                    pos = CalculateMiddle(startIdx, endIdx);
+                    if (pos <= startIdx)
                     {
                         break;
                     }
@@ -104,9 +105,9 @@ namespace HoytSys.DataStructures
                 else
                 {
                     // Value is equal.  We keep doing so we can support duplicate values.
-                    end = pos;
-                    pos = CalculateMiddle(start, end);
-                    if (pos >= end)
+                    endIdx = pos;
+                    pos = CalculateMiddle(startIdx, endIdx);
+                    if (pos >= endIdx)
                     {
                         break;
                     }
@@ -126,6 +127,8 @@ namespace HoytSys.DataStructures
 
         private ulong CalculateMiddle(ulong start, ulong end)
         {
+            Debug.Assert(start < this.sizeL);
+            Debug.Assert(end < this.sizeL);
             var range = end - start;
             var middle = range / 2;
             return middle + start;
@@ -138,6 +141,7 @@ namespace HoytSys.DataStructures
         /// <returns>The unit value at that position.</returns>
         public ulong Read(ulong pos)
         {
+            Debug.Assert(pos < this.sizeL);
             var (start, reminder) = Start(pos);
             
             // All we need to do here is shift the mask to the correct position.
@@ -178,6 +182,7 @@ namespace HoytSys.DataStructures
         /// <param name="value">The value to write.</param>
         public void Write(ulong pos, ulong value)
         {
+            Debug.Assert(pos < this.sizeL);
             var (start, reminder) = Start(pos);
             
             // Need the mask for the position we want to write to.
@@ -227,6 +232,7 @@ namespace HoytSys.DataStructures
         /// <returns>The starting index of the value in the bit vector.</returns>
         private (int, int) Start(ulong pos)
         {
+            Debug.Assert(pos < this.sizeL);
             // We need at leas a long here since it could easily overflow on a large array.
             var posInBits = pos * bits;
             // Get the starting index by shifting by 6 to cut of the reminder.
@@ -243,6 +249,7 @@ namespace HoytSys.DataStructures
         /// <returns>The ending position in the array.</returns>
         private (int, int) End(int start, int reminder)
         {
+            Debug.Assert(start < this.size);
             // If it overflows to the ulong it will set the 7 bit to 1 and we just
             // need to shift 6 to get the value.
             var stopPosition = reminder + this.bitsI;

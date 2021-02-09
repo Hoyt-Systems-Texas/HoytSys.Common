@@ -86,6 +86,7 @@ namespace HoytSys.DataStructures.Graph
                     var queue = new Queue<(ulong, BitStore)>();
                     // The starting vector to use.
                     var startVec = this.bitStore.CreateNew(1);
+                    startVec.Write(0ul, start);
                     queue.Enqueue((0ul, startVec));
                     previousNodes.Add(start);
                     while (true)
