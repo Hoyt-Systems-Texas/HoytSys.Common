@@ -51,6 +51,11 @@ namespace HoytSys.DataStructure.Test.Graph
             CollectionAssert.AreEquivalent(
                 new [] {"d", "a", "c", "b"},
                 matches);
+            matches = new List<string>(10);
+            graph.Find("g", matches.Add);
+            CollectionAssert.AreEquivalent(
+                new [] {"b", "a", "c", "d"},
+                matches);
         }
 
         [Test]
