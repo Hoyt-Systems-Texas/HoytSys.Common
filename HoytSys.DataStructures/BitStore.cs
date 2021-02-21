@@ -26,7 +26,7 @@ namespace HoytSys.DataStructures
             this.mask = (ulong) (1 << bits) - 1;
             this.bits = (ulong) bits;
             this.bitsI = bits;
-            this.length = ((bits * size) / 64) + 1;
+            this.length = (int) Math.Ceiling((bits * size) / 64.0);
             this.values = new ulong[this.length];
             this.size = size;
             this.sizeL = (ulong) size;
@@ -256,6 +256,7 @@ namespace HoytSys.DataStructures
             // Will get the reminder if it overflows into the next ulong.
             var endReminder = stopPosition & 63;
             // A trick to see if we should add one.
+            stopPosition = stopPosition - 1;
             var stop = start + (stopPosition >> 6);
             return (stop, endReminder);
         }
