@@ -26,7 +26,7 @@ namespace HoytSys.DataStructures
             this.mask = (ulong) (1 << bits) - 1;
             this.bits = (ulong) bits;
             this.bitsI = bits;
-            this.length = (int) Math.Ceiling((bits * size) / 64.0);
+            this.length = ((bits * size) / 64) + 1;
             this.values = new ulong[this.length];
             this.size = size;
             this.sizeL = (ulong) size;

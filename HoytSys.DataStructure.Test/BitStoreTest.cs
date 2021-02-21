@@ -33,6 +33,22 @@ namespace HoytSys.DataStructure.Test
         ///     A simple test that doesn't test the boundaries.
         /// </summary>
         [Test]
+        public void EvenTest()
+        {
+            var bitStore = new BitStore(4, 16);
+            bitStore.Write(0, 93);
+            bitStore.Write(1, 2);
+            bitStore.Write(2, 1231);
+            bitStore.Write(3, 1231);
+            
+            Assert.AreEqual((uint) 93, bitStore.Read(0));
+            Assert.AreEqual(1231, bitStore.Read(3));
+        }
+        
+        /// <summary>
+        ///     A simple test that doesn't test the boundaries.
+        /// </summary>
+        [Test]
         public void AcrossBoundary()
         {
             var bitStore = new BitStore(8, 20);
