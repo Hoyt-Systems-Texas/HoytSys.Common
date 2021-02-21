@@ -255,8 +255,9 @@ namespace HoytSys.DataStructures
             var stopPosition = reminder + this.bitsI;
             // Will get the reminder if it overflows into the next ulong.
             var endReminder = stopPosition & 63;
-            // A trick to see if we should add one.
+            // Subtract 1 off the value to handle the 0 case.
             stopPosition = stopPosition - 1;
+            // A trick to see if we should add one.
             var stop = start + (stopPosition >> 6);
             return (stop, endReminder);
         }
