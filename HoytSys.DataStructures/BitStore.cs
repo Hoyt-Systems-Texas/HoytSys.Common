@@ -87,7 +87,7 @@ namespace HoytSys.DataStructures
                 {
                     startIdx = pos + 1;
                     pos = CalculateMiddle(startIdx, endIdx);
-                    if (pos >= endIdx)
+                    if (startIdx >= endIdx)
                     {
                         break;
                     }
@@ -97,7 +97,7 @@ namespace HoytSys.DataStructures
                     // Value low so we know it must be less than this.
                     endIdx = pos - 1; // Subtract one off of it.
                     pos = CalculateMiddle(startIdx, endIdx);
-                    if (pos <= startIdx)
+                    if (startIdx >= endIdx)
                     {
                         break;
                     }
@@ -107,7 +107,7 @@ namespace HoytSys.DataStructures
                     // Value is equal.  We keep doing so we can support duplicate values.
                     endIdx = pos;
                     pos = CalculateMiddle(startIdx, endIdx);
-                    if (pos >= endIdx)
+                    if (startIdx >= endIdx)
                     {
                         break;
                     }
