@@ -93,7 +93,7 @@ namespace HoytSys.DataStructures.Graph
                     {
                         if (queue.TryDequeue(out var value))
                         {
-                            // Get the current path for the node.
+                            // CC
                             var (last, path) = value;
                             // Read the current value at that position.
                             var currentNode = path.Read(last);

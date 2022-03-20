@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace HoytSys.Core
 {
-    public static class IEnumerableExt
+    public static class EnumerableExt
     {
         public static Dictionary<TKey, TValue> ToKeyValue<TKey, TValue>(
             this IEnumerable<TValue> values,
-            Func<TValue, TKey> keyFun)
+            Func<TValue, TKey> keyFun) where TKey : notnull
         {
             return values.Aggregate(
                 new Dictionary<TKey, TValue>(10),

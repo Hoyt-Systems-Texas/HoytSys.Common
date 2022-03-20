@@ -5,7 +5,7 @@ namespace HoytSys.Core
 {
     public class SecureKeyGenerator : ISecureKeyGenerator
     {
-        private readonly RandomNumberGenerator _randomNumberGenerator = new RNGCryptoServiceProvider();
+        private readonly RandomNumberGenerator _randomNumberGenerator = RandomNumberGenerator.Create();
 
         /// <summary>
         ///     Used to generate a secure key.
